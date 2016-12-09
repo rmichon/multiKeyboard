@@ -1,0 +1,22 @@
+#!/bin/bash
+
+for p in $@; do
+	if [ $p = "-help" ] || [ $p = "-h" ]; then
+		echo "TODO"
+	elif [ "$p" = "-poly2" ]; then
+        POLY2="1"
+    elif [[ -f "$p" ]]; then
+        FILES="$FILES $p"
+    else
+        OPTIONS="$OPTIONS $p"
+    fi
+done
+
+for p in $FILES; do
+	F=$(basename "$p")
+	
+	faust -i $OPTIONS -a iosKeyboard.cpp "$p" -o "iOSKeyboard/mydsp.h" || exit
+	if [ "$POLY2" = "1" ]; then
+        faust -i -cn effect -a minimal-effect.cpp "${F%.dsp}_effect.dsp" -o "iOSKeyboard/effect.h" || exit
+    fi
+done
