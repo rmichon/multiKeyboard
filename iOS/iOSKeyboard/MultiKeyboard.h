@@ -9,11 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreMotion/CoreMotion.h>
 #import "Zone.h"
-#include "mydsp.h"
 #include "Smooth.h"
-#include "RtMidi.h"
-
-class mydsp_poly;
+#include "DspFaust.h"
 
 @interface MultiKeyboard : UIControl{
     CMMotionManager* _motionManager;
@@ -23,7 +20,7 @@ class mydsp_poly;
     NSMutableDictionary *parameters; // the list of parameters of the interface
 }
 
-- (id)initWithFrame:(CGRect)frame withPolyDSP:(mydsp_poly*)dsp;
+- (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)dsp;
 - (void)buildInterface;
 
 @end

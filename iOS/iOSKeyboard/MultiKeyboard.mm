@@ -18,6 +18,7 @@
 // - Later, glissandi should be handled using pitch bend directly from poly-dsp, but we can take care of that later
 
 #import "MultiKeyboard.h"
+#include <string>
 
 // Accelerometer useful parameters
 #define kMotionUpdateRate 30
@@ -52,15 +53,19 @@
     int *moveCount; // counts the number of movements outside the threshold for each touch
     
     // FAUST
+    DspFaust *faustDsp;
+    long *voices;
+    /* CLEAN
     MapUI **polyUI; // used to control each instance of the poly dsp object
     mydsp_poly* faustDsp; // the faust dsp modules
     APIUI fAPIUI; // used to link the value of the various sensors to the Faust DSP module
     
     rt_midi* midi_handler;
     MidiUI* midiinterface;
+     */
 }
 
-- (id)initWithFrame:(CGRect)frame withPolyDSP:(mydsp_poly*)dsp{
+- (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)dsp{
     self = [super initWithFrame:frame];
     if(self){
         faustDsp = dsp;
@@ -106,16 +111,22 @@
             }
         }
         
+        /* CLEAN
         faustDsp->buildUserInterface(&fAPIUI); // for accelerometers
-        
         midi_handler = new rt_midi();
         midiinterface = new MidiUI(midi_handler);
         faustDsp->buildUserInterface(midiinterface);
-        
+        */
+         
         // retrieving the dsp module's meta data
+        /* CLEAN
         JSONUI jsonUI(faustDsp->getNumInputs(),faustDsp->getNumOutputs());
         faustDsp->metadata(&jsonUI);
         NSString *JSONInterface = [NSString stringWithUTF8String:jsonUI.JSON().c_str()];
+        */
+         
+        NSString *JSONInterface = [NSString stringWithUTF8String:faustDsp->getJSONMeta()];
+        NSLog(@"%@", JSONInterface);
         // isolating the parameters of SmartKeyboard from the JSON description and checking if the key exist
         NSRange r1 = [JSONInterface rangeOfString:@"SmartKeyboard{"];
         
@@ -140,7 +151,8 @@
         touchDel = 2; // we just need a "2 samples delay" but we can add more if necessary
         [self buildInterface]; // screen interface is built based on the description contained in "parameters"
         [self startMotion]; // starting to retrieve sensor data
-        midiinterface->run();
+        
+        //midiinterface->run(); CLEAN
         
         if([parameters[@"quantizationMode"] intValue] == 2){
             [NSThread detachNewThreadSelector:@selector(pitchRounding) toTarget:self withObject:nil];
@@ -171,6 +183,7 @@
     moveCount = new int[[parameters[@"maxFingers"] intValue]];
     rounding = new Boolean[[parameters[@"maxFingers"] intValue]];
     smooth = new Smooth[[parameters[@"maxFingers"] intValue]];
+    voices = new long[[parameters[@"maxFingers"] intValue]];
     for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
         touchDiff[i] = 0;
         for(int j=0; j<touchDel; j++){
@@ -182,8 +195,10 @@
         moveCount[i] = 0;
         smooth[i].setSmooth([parameters[@"roundingSmoothPole"] floatValue]);
         rounding[i] = true;
+        voices[i] = -1;
     }
-    polyUI = new MapUI*[[parameters[@"maxFingers"] intValue]];
+    
+    // polyUI = new MapUI*[[parameters[@"maxFingers"] intValue]]; CLEAN
     fingersOnScreenCount = 0;
     
     zoneWidths = new CGFloat [[parameters[@"nKeyb"] intValue]];
@@ -228,7 +243,7 @@
     
     // case where no pitch keyboard is on: we trigger the main voice on startup
     if([parameters[@"maxKeybPoly"] intValue] == 0){
-        polyUI[0] = faustDsp->newVoice();
+        voices[0] = faustDsp->newVoice();
     }
 }
 
@@ -492,12 +507,12 @@
     // TODO: continuous x and y values are always sent: this should be optimized
     // TODO: might need a mechanism to check if voice is on before message gets sent
     for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
-        if(polyUI[i] != NULL){
+        if(voices[i] != -1){
             //cout << "Sending message\n";
-            polyUI[i]->setParamValue("keyboard", keyboardId);
-            polyUI[i]->setParamValue("key", keyId);
-            polyUI[i]->setParamValue(("x" + std::to_string(fingerId)), fmod(currentContinuousKey,1));
-            polyUI[i]->setParamValue(("y" + std::to_string(fingerId)), currentKeyboardY);
+            faustDsp->setVoiceParamValue("keyboard", voices[i], keyboardId);
+            faustDsp->setVoiceParamValue("key", voices[i], keyId);
+            faustDsp->setVoiceParamValue(("x" + std::to_string(fingerId)).c_str(), voices[i], fmod(currentContinuousKey,1));
+            faustDsp->setVoiceParamValue(("y" + std::to_string(fingerId)).c_str(), voices[i], currentKeyboardY);
         }
     }
 }
@@ -512,18 +527,19 @@
 -(void)sendPolySynthControlAction:(int)eventType withKeyboardId:(int)keyboardId withKeyId:(int)keyId withFingerId:(int)fingerId{
     float pitch = 0; // the MIDI pitch of the note
     // delete (note off)
-    if((eventType == 0 || (eventType == 3 && [parameters[@"quantizationMode"] intValue] == 0)) && polyUI[fingerId] != NULL){
+    if((eventType == 0 || (eventType == 3 && [parameters[@"quantizationMode"] intValue] == 0)) && voices[fingerId] != -1){
         pitch = -1;
-        polyUI[fingerId]->setParamValue("gate", 0);
-        faustDsp->deleteVoice(polyUI[fingerId]);
+        faustDsp->setVoiceParamValue("gate", voices[fingerId], 0);
+        faustDsp->deleteVoice(voices[fingerId]);
+        voices[fingerId] = -1;
         smooth[fingerId].reset();
     }
     // new (note on)
     else if (eventType == 1 || (eventType == 4 && [parameters[@"quantizationMode"] intValue] == 0)){
         // allocating new voice to finger
-        polyUI[fingerId] = faustDsp->newVoice();
-        if(polyUI[fingerId] != NULL){
-            polyUI[fingerId]->setParamValue("gate", 1);
+        voices[fingerId] = faustDsp->newVoice();
+        if(voices[fingerId] != -1){
+            faustDsp->setVoiceParamValue("gate", voices[fingerId], 1);
         }
         else{
             return;
@@ -555,12 +571,12 @@
                 pitch = [self applyScale:currentContinuousKey+[parameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]-pitchShiftCenter withKeyboardId:keyboardId];
             }
         }
-        if(polyUI[fingerId] != NULL){
+        if(voices[fingerId] != -1){
             if([parameters[@"quantizationMode"] intValue] == 1){
-                polyUI[fingerId]->setParamValue("freq", [self mtof:pitch]);
+                faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:pitch]);
             }
             else{
-                polyUI[fingerId]->setParamValue("freq", [self mtof:floor(pitch)]);
+                faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:floor(pitch)]);
             }
         }
     }
@@ -595,26 +611,26 @@
         }
         
         // sending pitch to faust
-        if(polyUI[fingerId] != NULL){
+        if(voices[fingerId] != -1){
             if([parameters[@"quantizationMode"] intValue] == 1){
-                polyUI[fingerId]->setParamValue("freq", [self mtof:pitch]);
+                faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:pitch]);
             }
             else if([parameters[@"quantizationMode"] intValue] == 2){
                 if(rounding[fingerId]){ // if rounding is activated, pitch is quantized to the nearest integer
-                    polyUI[fingerId]->setParamValue("freq", [self mtof:floor(pitch)]);
+                    faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:floor(pitch)]);
                 }
                 else{
-                    polyUI[fingerId]->setParamValue("freq", [self mtof:pitch-0.5]);
+                    faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:pitch-0.5]);
                 }
             }
         }
     }
     
     // TODO: continuous x and y values are always sent: this should be optimized
-    if(polyUI[fingerId] != NULL) polyUI[fingerId]->setParamValue("keyboard", keyboardId);
-    if(polyUI[fingerId] != NULL) polyUI[fingerId]->setParamValue("key", keyId);
-    if(polyUI[fingerId] != NULL) polyUI[fingerId]->setParamValue("x", fmod(currentContinuousKey,1));
-    if(polyUI[fingerId] != NULL) polyUI[fingerId]->setParamValue("y", currentKeyboardY);
+    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
+    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("key", voices[fingerId], keyId);
+    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("x", voices[fingerId], fmod(currentContinuousKey,1));
+    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
 }
 
 -(float)applyScale:(float)pitch withKeyboardId:(int)keyboardId{
@@ -657,9 +673,10 @@
         }
     }
     for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
-        if(polyUI[i] != NULL){
-            polyUI[i]->setParamValue("gate", 0);
-            faustDsp->deleteVoice(polyUI[i]);
+        if(voices[i] != -1){
+            faustDsp->setVoiceParamValue("gate", voices[i], 0);
+            faustDsp->deleteVoice(voices[i]);
+            voices[i] = -1;
         }
         for(int j=0; j<touchDel; j++){
             previousTouchPoints[j][i].x = -1;
@@ -703,19 +720,19 @@
 
 - (void)updateMotion
 {
-    fAPIUI.propagateAcc(0, _motionManager.accelerometerData.acceleration.x * ONE_G);
-    fAPIUI.propagateAcc(1, _motionManager.accelerometerData.acceleration.y * ONE_G);
-    fAPIUI.propagateAcc(2, _motionManager.accelerometerData.acceleration.z * ONE_G);
+    faustDsp->propagateAcc(0, _motionManager.accelerometerData.acceleration.x * ONE_G);
+    faustDsp->propagateAcc(1, _motionManager.accelerometerData.acceleration.y * ONE_G);
+    faustDsp->propagateAcc(2, _motionManager.accelerometerData.acceleration.z * ONE_G);
     
-    fAPIUI.propagateGyr(0, _motionManager.gyroData.rotationRate.x);
-    fAPIUI.propagateGyr(1, _motionManager.gyroData.rotationRate.y);
-    fAPIUI.propagateGyr(2, _motionManager.gyroData.rotationRate.z);
+    faustDsp->propagateGyr(0, _motionManager.gyroData.rotationRate.x);
+    faustDsp->propagateGyr(1, _motionManager.gyroData.rotationRate.y);
+    faustDsp->propagateGyr(2, _motionManager.gyroData.rotationRate.z);
 }
 
 - (void) pitchRounding{
     while(UIon){
         for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
-            if(touchDiff[i] != -10000 && polyUI[i] != NULL){
+            if(touchDiff[i] != -10000 && voices[i] != -1){
                 //
                 if(smooth[i].tick(touchDiff[i])>[parameters[@"roundingThreshold"] floatValue] && moveCount[i]<[parameters[@"roundingDeactCycles"] intValue]){
                     rounding[i] = false;
@@ -737,7 +754,8 @@
 -(void)clean{
     // case where no pitch keyboard is on: we stop the main voice before cleaning
     if([parameters[@"maxKeybPoly"] intValue] == 0 && UIon){
-        faustDsp->deleteVoice(polyUI[0]);
+        faustDsp->deleteVoice(voices[0]);
+        voices[0] = -1;
     }
     UIon = false;
     if([zones count] > 0){
@@ -783,12 +801,9 @@
         delete[] moveCount;
         moveCount = NULL;
     }
-    if(polyUI){
-        for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
-            delete polyUI[i];
-        }
-        delete[] polyUI;
-        polyUI = NULL;
+    if(voices){
+        delete[] voices;
+        voices = NULL;
     }
 }
 
@@ -796,8 +811,6 @@
 -(void)dealloc{
     [self clean];
     [self stopMotion];
-    delete midiinterface;
-    delete midi_handler;
 }
 
 @end

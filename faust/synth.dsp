@@ -22,11 +22,9 @@ declare interface "SmartKeyboard{
 */
 
 import("stdfaust.lib");
-
-polySmooth(g,s) = si.smooth(s*((g==g') | (g == 0))); //'
 	
 topGroup(x) = vgroup("SmartKeyboard",x);
-freq = topGroup(hslider("freq",300,50,2000,0.01)) : polySmooth(gate,0.999);
+freq = topGroup(hslider("freq",300,50,2000,0.01)) : si.polySmooth(gate,0.999,2);
 //freq = topGroup(hslider("freq",300,50,2000,0.01)) : si.smoo;
 // gain = topGroup(hslider("gain [acc: 1 0 -10 0 10]",1,0,1,0.01));
 gain = topGroup(hslider("gain",1,0,1,0.01));
@@ -34,4 +32,4 @@ gate = topGroup(button("gate"));
 //cutoff = topGroup(hslider("y1",1,0,1,0.001))*5000+50 : si.smoo;
 cutoff = topGroup(hslider("y",1,0,1,0.001))*5000+50 : si.smoo;
 
-process = os.sawtooth(freq)*(gate : si.smoo)*gain : fi.lowpass(3,cutoff);
+process = os.sawtooth(freq)*(gate*gain : si.smoo) : fi.lowpass(3,cutoff) <: _,_;

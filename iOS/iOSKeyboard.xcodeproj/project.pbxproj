@@ -20,8 +20,8 @@
 		7A391EAE1D05C8E70078B226 /* Zone.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A391EAD1D05C8E70078B226 /* Zone.mm */; };
 		7A391EB41D05C98A0078B226 /* keyDown.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A391EB21D05C98A0078B226 /* keyDown.png */; };
 		7A391EB51D05C98A0078B226 /* keyUp.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A391EB31D05C98A0078B226 /* keyUp.png */; };
+		7A74AEAF1DFA3957009942C2 /* DspFaust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */; };
 		7A91E7071DB2C4670071B829 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A91E7061DB2C4670071B829 /* CoreMIDI.framework */; };
-		7A91E70F1DB2CC7D0071B829 /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A91E70E1DB2CC7D0071B829 /* RtMidi.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,15 +54,13 @@
 		7A391EA91D05C8B30078B226 /* MultiKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiKeyboard.mm; sourceTree = "<group>"; };
 		7A391EAC1D05C8E70078B226 /* Zone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Zone.h; sourceTree = "<group>"; };
 		7A391EAD1D05C8E70078B226 /* Zone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Zone.mm; sourceTree = "<group>"; };
-		7A391EAF1D05C9010078B226 /* effect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = effect.h; sourceTree = "<group>"; };
-		7A391EB01D05C9010078B226 /* mydsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mydsp.h; sourceTree = "<group>"; };
 		7A391EB21D05C98A0078B226 /* keyDown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyDown.png; sourceTree = "<group>"; };
 		7A391EB31D05C98A0078B226 /* keyUp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyUp.png; sourceTree = "<group>"; };
+		7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DspFaust.cpp; sourceTree = "<group>"; };
+		7A74AEAE1DFA3957009942C2 /* DspFaust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DspFaust.h; sourceTree = "<group>"; };
 		7A91E6CF1DAE84B60071B829 /* Smooth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Smooth.h; sourceTree = "<group>"; };
 		7A91E7061DB2C4670071B829 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		7A91E7081DB2C6570071B829 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		7A91E70E1DB2CC7D0071B829 /* RtMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
-		7A91E7111DB2CCAE0071B829 /* RtMidi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RtMidi.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,10 +92,6 @@
 				7A391E7E1D05C8030078B226 /* iOSKeyboard */,
 				7A391E981D05C8030078B226 /* iOSKeyboardTests */,
 				7A391E7D1D05C8020078B226 /* Products */,
-				7A391EAF1D05C9010078B226 /* effect.h */,
-				7A391EB01D05C9010078B226 /* mydsp.h */,
-				7A91E7111DB2CCAE0071B829 /* RtMidi.h */,
-				7A91E70E1DB2CC7D0071B829 /* RtMidi.cpp */,
 				7A91E7051DB2C4670071B829 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -114,6 +108,8 @@
 		7A391E7E1D05C8030078B226 /* iOSKeyboard */ = {
 			isa = PBXGroup;
 			children = (
+				7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */,
+				7A74AEAE1DFA3957009942C2 /* DspFaust.h */,
 				7A391E821D05C8030078B226 /* AppDelegate.h */,
 				7A391E831D05C8030078B226 /* AppDelegate.mm */,
 				7A391E851D05C8030078B226 /* ViewController.h */,
@@ -281,10 +277,10 @@
 			files = (
 				7A391EAA1D05C8B30078B226 /* MultiKeyboard.mm in Sources */,
 				7A391E871D05C8030078B226 /* ViewController.mm in Sources */,
-				7A91E70F1DB2CC7D0071B829 /* RtMidi.cpp in Sources */,
 				7A391E841D05C8030078B226 /* AppDelegate.mm in Sources */,
 				7A391E811D05C8030078B226 /* main.m in Sources */,
 				7A391EAE1D05C8E70078B226 /* Zone.mm in Sources */,
+				7A74AEAF1DFA3957009942C2 /* DspFaust.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

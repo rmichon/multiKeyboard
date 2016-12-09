@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MultiKeyboard.h"
-#import "effect.h"
+#import "DspFaust.h"
 
 @interface ViewController : UIViewController
 

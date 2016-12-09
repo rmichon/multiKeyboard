@@ -1,3 +1,3 @@
 import("stdfaust.lib");
 
-process = _ <: dm.zita_rev1;
+process = dm.zita_rev1;
