@@ -1,6 +1,8 @@
 #!/bin/bash
 
-faust2api -ios -polyvoices 12 -poly2 -midi synth.dsp
+#faust2api -ios -polyvoices 12 -poly2 -midi synth.dsp
+#faust2api -ios -polyvoices 12 -midi noPoly.dsp
+faust2api -ios -polyvoices 12 -midi midiOnly.dsp
 unzip dsp-faust.zip
 cp dsp-faust/DspFaust.cpp ../iOS/iOSKeyboard
 cp dsp-faust/DspFaust.h ../iOS/iOSKeyboard

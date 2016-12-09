@@ -16,6 +16,7 @@
 // - The default mode in any case is that if current finger goes away the note is not transfered to another finger on the keyboard: this might have to be fixed
 // - For monoMode, slides between keyboards don't get priority over a finger already on the keyboard in any case
 // - Later, glissandi should be handled using pitch bend directly from poly-dsp, but we can take care of that later
+// - It would have been nice to have a system to automatically add new midi devices when they are connected but it seems to be more complicated than what we think...
 
 #import "MultiKeyboard.h"
 #include <string>
@@ -104,7 +105,6 @@
         }
          
         NSString *JSONInterface = [NSString stringWithUTF8String:faustDsp->getJSONMeta()];
-        NSLog(@"%@", JSONInterface);
         // isolating the parameters of SmartKeyboard from the JSON description and checking if the key exist
         NSRange r1 = [JSONInterface rangeOfString:@"SmartKeyboard{"];
         
@@ -481,15 +481,11 @@
 -(void)sendSynthControlAction:(int)keyboardId withKeyId:(int)keyId withFingerId:(int)fingerId{
     // TODO: continuous x and y values are always sent: this should be optimized
     // TODO: might need a mechanism to check if voice is on before message gets sent
-    for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
-        if(voices[i] != -1){
-            //cout << "Sending message\n";
-            faustDsp->setVoiceParamValue("keyboard", voices[i], keyboardId);
-            faustDsp->setVoiceParamValue("key", voices[i], keyId);
-            faustDsp->setVoiceParamValue(("x" + std::to_string(fingerId)).c_str(), voices[i], fmod(currentContinuousKey,1));
-            faustDsp->setVoiceParamValue(("y" + std::to_string(fingerId)).c_str(), voices[i], currentKeyboardY);
-        }
-    }
+    
+    faustDsp->setParamValue("keyboard", keyboardId);
+    faustDsp->setParamValue("key", keyId);
+    faustDsp->setParamValue(("x" + std::to_string(fingerId)).c_str(), fmod(currentContinuousKey,1));
+    faustDsp->setParamValue(("y" + std::to_string(fingerId)).c_str(), currentKeyboardY);
 }
 
 /***************************************************************************

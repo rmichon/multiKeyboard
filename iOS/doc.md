@@ -2,7 +2,7 @@
 
 TODO:
 
-* Talk about non-poly mode
+* Talk about non-poly mode (when `maxKeybPoly`, new voice is created and that's it! also -1 mode for midi is pretty cool)
 * Overall, correct typos (and there are lot). It might actually be best to completely rewrite this document.
 
 WARNING: this is a work in progress! While this architecture should theoretically work fine you use it at you own risk! 

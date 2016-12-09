@@ -6,8 +6,6 @@
 //  Copyright © 2016 CCRMA. All rights reserved.
 //
 
-#define POLY2 1
-
 #import "ViewController.h"
 
 @interface ViewController ()
