@@ -2,7 +2,6 @@
 
 TODO:
 
-* Talk about non-poly mode (when `maxKeybPoly`, new voice is created and that's it! also -1 mode for midi is pretty cool)
 * Overall, correct typos (and there are lot). It might actually be best to completely rewrite this document.
 
 WARNING: this is a work in progress! While this architecture should theoretically work fine you use it at you own risk! 
@@ -62,7 +61,9 @@ The following keys can be used to configure a `SmartKeyboard` interface:
 
 * `nKeyb`: the number of keyboards (default: 4)
 * `maxFingers`: the maximum number of fingers allowed on the interface in general. This also configures the maximum number of voices of polyphony. (default: 10)
-* `maxKeybPoly`: the maximum number of voices of polyphony for each keyboard (default: 10). 
+* `maxKeybPoly`: the maximum number of voices of polyphony for each keyboard (default: 10) with special cases:
+	* `maxKeybPoly = 0`: a voice is automatically started and the `x` and `y` parameters start to be numbered by finger (e.g. finger 0: `x0` and `y0`, etc.)
+	* `maxKeybPoly = -1`: same as 0 but no voice is started. This is very handy if we want to use the iPad screen to control parameters of a MIDI controlled synth.
 * `monoMode`: configures the way the case when the number of fingers present on a specific keyboard is greater than `maxKebPoly` is handled:
 	* `monoMode = 0`: priority goes to fingers already present on the keyboard
 	* `monoMode = 1`: priority comes to new fingers entering the keyboard
