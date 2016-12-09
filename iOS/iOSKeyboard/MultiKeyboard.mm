@@ -55,14 +55,6 @@
     // FAUST
     DspFaust *faustDsp;
     long *voices;
-    /* CLEAN
-    MapUI **polyUI; // used to control each instance of the poly dsp object
-    mydsp_poly* faustDsp; // the faust dsp modules
-    APIUI fAPIUI; // used to link the value of the various sensors to the Faust DSP module
-    
-    rt_midi* midi_handler;
-    MidiUI* midiinterface;
-     */
 }
 
 - (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)dsp{
@@ -110,20 +102,6 @@
                 parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] = [NSNumber numberWithInt:1];
             }
         }
-        
-        /* CLEAN
-        faustDsp->buildUserInterface(&fAPIUI); // for accelerometers
-        midi_handler = new rt_midi();
-        midiinterface = new MidiUI(midi_handler);
-        faustDsp->buildUserInterface(midiinterface);
-        */
-         
-        // retrieving the dsp module's meta data
-        /* CLEAN
-        JSONUI jsonUI(faustDsp->getNumInputs(),faustDsp->getNumOutputs());
-        faustDsp->metadata(&jsonUI);
-        NSString *JSONInterface = [NSString stringWithUTF8String:jsonUI.JSON().c_str()];
-        */
          
         NSString *JSONInterface = [NSString stringWithUTF8String:faustDsp->getJSONMeta()];
         NSLog(@"%@", JSONInterface);
@@ -151,8 +129,6 @@
         touchDel = 2; // we just need a "2 samples delay" but we can add more if necessary
         [self buildInterface]; // screen interface is built based on the description contained in "parameters"
         [self startMotion]; // starting to retrieve sensor data
-        
-        //midiinterface->run(); CLEAN
         
         if([parameters[@"quantizationMode"] intValue] == 2){
             [NSThread detachNewThreadSelector:@selector(pitchRounding) toTarget:self withObject:nil];
@@ -198,7 +174,6 @@
         voices[i] = -1;
     }
     
-    // polyUI = new MapUI*[[parameters[@"maxFingers"] intValue]]; CLEAN
     fingersOnScreenCount = 0;
     
     zoneWidths = new CGFloat [[parameters[@"nKeyb"] intValue]];
