@@ -69,7 +69,7 @@
         parameters = [NSMutableDictionary dictionaryWithDictionary:@{
                                                                      @"nKeyb":[NSNumber numberWithInt:4],
                                                                      @"maxFingers":[NSNumber numberWithInt:10],
-                                                                     @"maxKeybPoly":[NSNumber numberWithInt:10],
+                                                                     @"maxKeybPoly":[NSNumber numberWithInt:16],
                                                                      @"monoMode":[NSNumber numberWithInt:1],
                                                                      @"quantizationMode":[NSNumber numberWithInt:0],
                                                                      @"interKeybSlideAllowed":[NSNumber numberWithInt:1],
@@ -313,6 +313,7 @@
         else if(eventType == 1){
             // counting fingers on the keyboard...
             fingersOnKeyboardsCount[currentKeyboard]++;
+            fingersOnScreenCount++;
         }
         // if move
         else if(eventType == 2 && currentKeyboard != previousTouchedKeyboards[fingerId]){
@@ -349,10 +350,10 @@
                     // moved to another keyboard
                     if(currentKeyboard != previousTouchedKeyboards[fingerId]){
                         // cancel key in previous keyboard
-                        [self sendKeyboardAction:3 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
+                        [self sendKeyboardAction:0 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
                         // initiate new event only if there are keys available
                         if(fingersOnKeyboardsCount[currentKeyboard]<=[parameters[@"maxKeybPoly"] intValue] && [parameters[@"interKeybSlideAllowed"] boolValue]){
-                            [self sendKeyboardAction:4 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
+                            [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
                         }
                     }
                     // moved to another key within the same keyboard
@@ -385,8 +386,22 @@
                     }
                     // cancel corresponding key
                     [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
-                    currentKeyboard = -1;
-                    currentKeyIdInRow = -1;
+                    if(fingersOnKeyboardsCount[currentKeyboard]>0){
+                        float kb = currentKeyboard*zoneHeight;
+                        for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
+                            if(previousTouchPoints[0][i].y >= kb && previousTouchPoints[0][i].y < zoneHeight+kb && previousTouchPoints[0][i].y != touchPoint.y && i != monoMode_previousActiveFinger[currentKeyboard]){
+                                currentContinuousKey = previousTouchPoints[0][i].x/zoneWidths[currentKeyboard];
+                                currentKeyIdInRow = fmin(int(currentContinuousKey),([parameters[[NSString stringWithFormat:@"keyb%d_nKeys",currentKeyboard]] intValue]-1));
+                                [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:i];
+                                monoMode_previousActiveFinger[currentKeyboard] = i;
+                                break;
+                            }
+                        }
+                    }
+                    else{
+                        currentKeyboard = -1;
+                        currentKeyIdInRow = -1;
+                    }
                 }
                 // if touch down
                 else if(eventType == 1){
@@ -458,6 +473,7 @@
                 [[[zones objectAtIndex:keyboardId] objectAtIndex:keyId] setStatus:0];
             }
             [self sendPolySynthControlAction:eventType withKeyboardId:keyboardId withKeyId:keyId withFingerId:fingerId];
+            //if(fingersOnScreenCount == 0) [self resetKeyboard];
         }
     }
     // key down
@@ -469,6 +485,7 @@
     else if(eventType == 2){
         [self sendPolySynthControlAction:2 withKeyboardId:keyboardId withKeyId:keyId withFingerId:fingerId];
     }
+    if(fingersOnScreenCount == 0) [self resetKeyboard]; // TODO: this is kind of a terrible fix but it does the job for now
 }
 
 /***************************************************************************
@@ -637,6 +654,7 @@
 }
 
 -(void)resetKeyboard{
+    faustDsp->allNotesOff();
     for(int i=0; i<[parameters[@"nKeyb"] intValue]; i++){
         fingersOnKeyboardsCount[i] = 0;
         for(int j=0;j<[parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue];j++){
@@ -644,11 +662,7 @@
         }
     }
     for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
-        if(voices[i] != -1){
-            faustDsp->setVoiceParamValue("gate", voices[i], 0);
-            faustDsp->deleteVoice(voices[i]);
-            voices[i] = -1;
-        }
+        voices[i] = -1;
         for(int j=0; j<touchDel; j++){
             previousTouchPoints[j][i].x = -1;
             previousTouchPoints[j][i].y = -1;
@@ -657,6 +671,7 @@
         previousTouchedKeyboards[i] = -1;
         moveCount[i] = 0;
     }
+    fingersOnScreenCount = 0;
 }
 
 - (void)startMotion

@@ -1,8 +1,11 @@
 # Faust iOS Keyboard Documentation
 
-TODO:
-
+## Tests and TODO
 * Overall, correct typos (and there are lot). It might actually be best to completely rewrite this document.
+* In mono mode, it seems that in any case the note should be transfered to any finger remaining on the keyboard...
+* 
+
+## Introduction
 
 WARNING: this is a work in progress! While this architecture should theoretically work fine you use it at you own risk! 
 
