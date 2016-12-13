@@ -1,17 +1,18 @@
 declare interface "SmartKeyboard{
-	'nKeyb':'4',
+	'nKeyb':'5',
 	'maxKeybPoly':'1',
-	'interKeybSlideAllowed':'0',
+	'interKeybSlideAllowed':'1',
 	'monoMode':'1',
 	'keyb0_nKeys':'13',
 	'keyb1_nKeys':'13',
 	'keyb2_nKeys':'13',
 	'keyb3_nKeys':'13',
-	'keyb0_lowestKey':'72',
-	'keyb1_lowestKey':'67',
-	'keyb2_lowestKey':'62',
-	'keyb3_lowestKey':'57',
-	'keyb0_scale':'1',
+	'keyb4_nKeys':'13',
+	'keyb0_lowestKey':'77',
+	'keyb1_lowestKey':'72',
+	'keyb2_lowestKey':'67',
+	'keyb3_lowestKey':'62',
+	'keyb4_lowestKey':'57',
 	'quantizationMode':'2'
 }";
 

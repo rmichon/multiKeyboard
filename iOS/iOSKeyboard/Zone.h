@@ -14,14 +14,11 @@
     bool keyboardMode;
 }
 
-- (void)setColorOff:(UIColor*)color; // sets the color when off
-- (void)setColorOn:(UIColor*)color; // sets the color when on
-- (void)setImageOff:(UIImage*)image; // sets the background image when off
-- (void)setImageOn:(UIImage*)image; // sets the background image when on
 - (void)setText:(NSString*)label;
 - (void)setTextSize:(CGFloat)size;
 - (void)setStatus:(int)s;
 - (void)setNote:(int)note;
+- (void)drawBackground;
 - (int)getStatus;
 - (void)setKeyboardMode:(bool)mode;
 

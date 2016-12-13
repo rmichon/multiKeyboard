@@ -80,7 +80,7 @@
                                                                      @"roundingDeactCycles":[NSNumber numberWithInt:5]
                                                                      }];
         // keyboard dependent parameters
-        for(int i=0; i<[parameters[@"nKeyb"] intValue]; i++){
+        for(int i=0; i<22; i++){
             if([parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue] == 0){
                 parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] = [NSNumber numberWithInt:7];
             }
@@ -198,8 +198,7 @@
         for(int j=0;j<[parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue];j++){
             // Zones have 1 pt on each side but touch detection happens on the entire screen. With this strategy we lose 1 pt on the 2 extermities of the interface but it makes things much easier
             [[zones objectAtIndex:i] insertObject:[[Zone alloc] initWithFrame:CGRectMake(zoneWidths[i]*j+1, zoneHeight*i+1, zoneWidths[i]-2, zoneHeight-2)] atIndex:j];
-            [[[zones objectAtIndex:i] objectAtIndex:j] setImageOn:[UIImage imageNamed:@"keyDown.png"]];
-            [[[zones objectAtIndex:i] objectAtIndex:j] setImageOff:[UIImage imageNamed:@"keyUp.png"]];
+            [[[zones objectAtIndex:i] objectAtIndex:j] setKeyboardMode:[parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] boolValue]];
             // set/display note name in the key only in keyboard mode and when scale is chromatic
             if([parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] boolValue] &&
                [parameters[[NSString stringWithFormat:@"keyb%d_scale",i]] intValue]<1 &&
@@ -211,7 +210,7 @@
                     [[[zones objectAtIndex:i] objectAtIndex:j] setNote:[self applyScale:j+[parameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] intValue] withKeyboardId:i]];
                 }
             }
-            [[[zones objectAtIndex:i] objectAtIndex:j] setKeyboardMode:[parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] boolValue]];
+            [[[zones objectAtIndex:i] objectAtIndex:j] drawBackground];
             [self addSubview:[[zones objectAtIndex:i] objectAtIndex:j]];
         }
     }
@@ -386,7 +385,7 @@
                     }
                     // cancel corresponding key
                     [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
-                    if(fingersOnKeyboardsCount[currentKeyboard]>0){
+                    if(fingersOnKeyboardsCount[currentKeyboard]>0 && monoMode_previousActiveFinger[currentKeyboard] == fingerId){
                         float kb = currentKeyboard*zoneHeight;
                         for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
                             if(previousTouchPoints[0][i].y >= kb && previousTouchPoints[0][i].y < zoneHeight+kb && previousTouchPoints[0][i].y != touchPoint.y && i != monoMode_previousActiveFinger[currentKeyboard]){
@@ -405,6 +404,7 @@
                 }
                 // if touch down
                 else if(eventType == 1){
+                    //printf("Current down: %i\n",currentKeyDown);
                     if(currentKeyDown>=0){
                         [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyDown withFingerId:monoMode_previousActiveFinger[currentKeyboard]];
                     }
@@ -516,6 +516,7 @@
     float pitch = 0; // the MIDI pitch of the note
     // delete (note off)
     if((eventType == 0 || (eventType == 3 && [parameters[@"quantizationMode"] intValue] == 0)) && voices[fingerId] != -1){
+        //printf("Up: %i\n",keyId);
         pitch = -1;
         faustDsp->setVoiceParamValue("gate", voices[fingerId], 0);
         faustDsp->deleteVoice(voices[fingerId]);
@@ -527,6 +528,7 @@
         // allocating new voice to finger
         voices[fingerId] = faustDsp->newVoice();
         if(voices[fingerId] != -1){
+            //printf("Down: %i\n",keyId);
             faustDsp->setVoiceParamValue("gate", voices[fingerId], 1);
         }
         else{

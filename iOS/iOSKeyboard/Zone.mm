@@ -20,6 +20,8 @@
     UILabel *text;
     UIView *layerOn;
     NSArray *notes;
+    UIImage *darkImageOn, *darkImageOff, *brightImageOn, *brightImageOff;
+    int keyNote;
 }
 
 - (id)initWithFrame:(CGRect)frame{
@@ -47,36 +49,15 @@
         text.font = [UIFont systemFontOfSize:32];
         [self addSubview:text];
         
+        darkImageOn = [UIImage imageNamed:@"keyDownDark.png"];
+        darkImageOff = [UIImage imageNamed:@"keyUpDark.png"];
+        brightImageOn = [UIImage imageNamed:@"keyDownBright.png"];
+        brightImageOff = [UIImage imageNamed:@"keyUpBright.png"];
+        
         // background is black by default
         [self setBackgroundColor:[UIColor blackColor]];
     }
     return self;
-}
-
-- (void)setColorOff:(UIColor*)color{
-    [self setBackgroundColor:color];
-}
-
-- (void)setColorOn:(UIColor*)color{
-    [layerOn setBackgroundColor:color];
-}
-
-- (void)setImageOff:(UIImage*)image{
-    // Fills the view with an image
-    UIGraphicsBeginImageContext(self.frame.size);
-    [image drawInRect:self.bounds];
-    UIImage *pic = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    self.backgroundColor = [UIColor colorWithPatternImage:pic];
-}
-
-- (void)setImageOn:(UIImage*)image{
-    // Fills the view with an image
-    UIGraphicsBeginImageContext(self.frame.size);
-    [image drawInRect:self.bounds];
-    UIImage *pic = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    layerOn.backgroundColor = [UIColor colorWithPatternImage:pic];
 }
 
 - (void)setText:(NSString*)label{
@@ -88,7 +69,37 @@
 }
 
 - (void)setNote:(int)note{
-    [self setText:[notes objectAtIndex:note%12]];
+    keyNote = note%12;
+    [self setText:[notes objectAtIndex:keyNote]];
+}
+
+- (void)drawBackground{
+    if(keyboardMode && (keyNote == 1 || keyNote == 3 || keyNote == 6 || keyNote == 8 || keyNote == 10)){
+        UIGraphicsBeginImageContext(self.frame.size);
+        [darkImageOn drawInRect:self.bounds];
+        UIImage *picOn = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        layerOn.backgroundColor = [UIColor colorWithPatternImage:picOn];
+        
+        UIGraphicsBeginImageContext(self.frame.size);
+        [darkImageOff drawInRect:self.bounds];
+        UIImage *picOff = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        self.backgroundColor = [UIColor colorWithPatternImage:picOff];
+    }
+    else{
+        UIGraphicsBeginImageContext(self.frame.size);
+        [brightImageOn drawInRect:self.bounds];
+        UIImage *picOn = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        layerOn.backgroundColor = [UIColor colorWithPatternImage:picOn];
+        
+        UIGraphicsBeginImageContext(self.frame.size);
+        [brightImageOff drawInRect:self.bounds];
+        UIImage *picOff = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        self.backgroundColor = [UIColor colorWithPatternImage:picOff];
+    }
 }
 
 - (void)setStatus:(int)s{
