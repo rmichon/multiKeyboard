@@ -29,7 +29,7 @@
     if(self){
         self.multipleTouchEnabled = YES; // that's fucked up!
         
-        notes = @[@"C",@"C#",@"D",@"D#",@"E",@"F",@"F#",@"G",@"G#",@"A",@"A#",@"B"];
+        notes = @[@"C",@"C#",@"D",@"Eb",@"E",@"F",@"F#",@"G",@"G#",@"A",@"Bb",@"B"];
         
         // Default status is "off"
         status = 0;

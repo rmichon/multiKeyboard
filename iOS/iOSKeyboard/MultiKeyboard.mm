@@ -9,9 +9,7 @@
 //  Build a "MultiKeyboard" interface around a mydsp_poly object.
 
 // TODOs
-// - In very rare cases, note-off events are not triggered: this should be fixed
 // - If only one cell, should make sure that we use monoMode 0...
-// - We believe that MIDI is operational but it needs to be tested
 // NOTEs
 // - The default mode in any case is that if current finger goes away the note is not transfered to another finger on the keyboard: this might have to be fixed
 // - For monoMode, slides between keyboards don't get priority over a finger already on the keyboard in any case
@@ -404,7 +402,6 @@
                 }
                 // if touch down
                 else if(eventType == 1){
-                    //printf("Current down: %i\n",currentKeyDown);
                     if(currentKeyDown>=0){
                         [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyDown withFingerId:monoMode_previousActiveFinger[currentKeyboard]];
                     }
@@ -417,17 +414,43 @@
                     if(currentKeyboard != previousTouchedKeyboards[fingerId]){
                         // cancel key in previous keyboard
                         [self sendKeyboardAction:0 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
-                        // initiate new event only if there are keys available
-                        if(fingersOnKeyboardsCount[currentKeyboard]<=[parameters[@"maxKeybPoly"] intValue] && [parameters[@"interKeybSlideAllowed"] boolValue]){
+                        
+                        if([parameters[@"interKeybSlideAllowed"] boolValue]){
+                            // new note if remaining finger in previous keyboard
+                            if(fingersOnKeyboardsCount[previousTouchedKeyboards[fingerId]]>0 && previousTouchedKeys[fingerId] == previousTouchedKeys[monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]]]){
+                                float kb = previousTouchedKeyboards[fingerId]*zoneHeight;
+                                for(int i=0; i<[parameters[@"maxFingers"] intValue]; i++){
+                                    if(previousTouchPoints[0][i].y >= kb && previousTouchPoints[0][i].y < zoneHeight+kb && previousTouchPoints[0][i].y != touchPoint.y && i != monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]]){
+                                        currentContinuousKey = previousTouchPoints[0][i].x/zoneWidths[previousTouchedKeyboards[fingerId]];
+                                        int localKeyIdInRow = fmin(int(currentContinuousKey),([parameters[[NSString stringWithFormat:@"keyb%d_nKeys",previousTouchedKeyboards[fingerId]]] intValue]-1));
+                                        [self sendKeyboardAction:1 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:localKeyIdInRow withFingerId:i];
+                                        monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]] = i;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(currentKeyDown>=0){
+                                [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyDown withFingerId:monoMode_previousActiveFinger[currentKeyboard]];
+                            }
                             [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
+                            monoMode_previousActiveFinger[currentKeyboard] = fingerId;
                         }
                     }
                     // moved to another key within the same keyboard
                     else if(currentKeyIdInRow != previousTouchedKeys[fingerId] && [[[zones objectAtIndex:previousTouchedKeyboards[fingerId]] objectAtIndex:previousTouchedKeys[fingerId]] getStatus] == 1){
-                        // cancel previous key
-                        [self sendKeyboardAction:3 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
-                        // inititate new event
-                        [self sendKeyboardAction:4 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
+                        if(fingersOnKeyboardsCount[currentKeyboard]>1 && monoMode_previousActiveFinger[currentKeyboard] != fingerId){
+                            if(currentKeyDown>=0){
+                                [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyDown withFingerId:monoMode_previousActiveFinger[currentKeyboard]];
+                            }
+                            [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
+                            monoMode_previousActiveFinger[currentKeyboard] = fingerId;
+                        }
+                        else{
+                            // cancel previous key
+                            [self sendKeyboardAction:3 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
+                            // inititate new event
+                            [self sendKeyboardAction:4 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
+                        }
                     }
                     // move within the same key
                     else{
@@ -629,7 +652,8 @@
     float scaledPitch = 0; // the final scaled pitch
     
     if([parameters[[NSString stringWithFormat:@"keyb%d_scale",keyboardId]] intValue] == 1){ // major key
-        int scaleCoeff[] = {2,2,1,2,2,2,1};
+        //int scaleCoeff[] = {2,2,1,2,2,2,1};
+        int scaleCoeff[] = {2,1,2,2,1,3,1};
         int scaleAdd = 0;
         if(scaleCoeff[(int)keyboardPitch%7] == 2){
             for(int i=0; i<(int)keyboardPitch; i++){
