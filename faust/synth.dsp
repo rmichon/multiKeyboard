@@ -8,6 +8,7 @@ declare interface "SmartKeyboard{
 	'keyb2_nKeys':'13',
 	'keyb3_nKeys':'13',
 	'keyb4_nKeys':'13',
+	'keyb0_scale':'3',
 	'keyb0_lowestKey':'77',
 	'keyb1_lowestKey':'72',
 	'keyb2_lowestKey':'67',

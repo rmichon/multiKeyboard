@@ -648,26 +648,39 @@
 
 -(float)applyScale:(float)pitch withKeyboardId:(int)keyboardId{
     int refPitch = [parameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue];
+    int currentScale = [parameters[[NSString stringWithFormat:@"keyb%d_scale",keyboardId]] intValue] - 1;
     float keyboardPitch = (pitch-refPitch); // float pitch on keyboard (from 0)
     float scaledPitch = 0; // the final scaled pitch
     
-    if([parameters[[NSString stringWithFormat:@"keyb%d_scale",keyboardId]] intValue] == 1){ // major key
-        //int scaleCoeff[] = {2,2,1,2,2,2,1};
-        int scaleCoeff[] = {2,1,2,2,1,3,1};
+    int scalesCoeff[3][7] = {
+        {1,1,1,1,1,1,1}, // chromatic
+        {2,2,1,2,2,2,1}, // major
+        {2,1,2,2,1,3,1} // harm minor
+    };
+    
+    if(currentScale+1 > 0 && currentScale<4){
         int scaleAdd = 0;
-        if(scaleCoeff[(int)keyboardPitch%7] == 2){
+        if(scalesCoeff[currentScale][(int)keyboardPitch%7] == 2){
             for(int i=0; i<(int)keyboardPitch; i++){
-                if(scaleCoeff[i%7] == 1) scaleAdd--;
+                if(scalesCoeff[currentScale][i%7] == 1) scaleAdd--;
+                else if(scalesCoeff[currentScale][i%7] == 3) scaleAdd++;
             }
         }
-        else if(scaleCoeff[(int)keyboardPitch%7] == 1){
+        else if(scalesCoeff[currentScale][(int)keyboardPitch%7] == 1){
             for(int i=0; i<(int)keyboardPitch; i++){
-                if(scaleCoeff[i%7] == 2) scaleAdd++;
+                if(scalesCoeff[currentScale][i%7] == 2) scaleAdd++;
+                else if(scalesCoeff[currentScale][i%7] == 3) scaleAdd+=2;
+            }
+        }
+        else if(scalesCoeff[currentScale][(int)keyboardPitch%7] == 3){
+            for(int i=0; i<(int)keyboardPitch; i++){
+                if(scalesCoeff[currentScale][i%7] == 2) scaleAdd--;
+                else if(scalesCoeff[currentScale][i%7] == 1) scaleAdd-=2;
             }
         }
     
         scaledPitch = refPitch+scaleAdd+
-            (keyboardPitch*scaleCoeff[(int)keyboardPitch%7]);
+            (keyboardPitch*scalesCoeff[currentScale][(int)keyboardPitch%7]);
     }
     else{
         scaledPitch = pitch;
