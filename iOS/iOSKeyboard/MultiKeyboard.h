@@ -17,10 +17,11 @@
     NSTimer* _motionTimer;
     
     @public
-    NSMutableDictionary *parameters; // the list of parameters of the interface
+    NSMutableDictionary *parameters; // the list of parameters of the interface TODO: may be shouldn't be public
 }
 
 - (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)dsp;
 - (void)buildInterface;
+- (void)saveParameters;
 
 @end

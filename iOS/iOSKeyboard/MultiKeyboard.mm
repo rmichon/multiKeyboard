@@ -292,8 +292,9 @@
 -(void)processTouchEvent:(int)eventType withTouchPoint:(CGPoint)touchPoint withFingerId:(int)fingerId{
     // we calculate the position of the touch on the keyboards matrix
     int currentKeyboard = fmin(int(touchPoint.y/zoneHeight),([parameters[@"nKeyb"] intValue]-1));
-    currentContinuousKey = touchPoint.x/zoneWidths[currentKeyboard];
-    currentKeyboardY = fmod(touchPoint.y/zoneHeight,1);
+    // clipping the x/y positions to frme size, could potentially be improved
+    currentContinuousKey = fmin(fmax(0,touchPoint.x),self.frame.size.width)/zoneWidths[currentKeyboard];
+    currentKeyboardY = fmod(fmin(fmax(0,touchPoint.y),self.frame.size.height-1)/zoneHeight,1);
     int currentKeyIdInRow = fmin(int(currentContinuousKey),([parameters[[NSString stringWithFormat:@"keyb%d_nKeys",currentKeyboard]] intValue]-1));
     
     // we make sure that the touch happened inside the keyboards matrix area
@@ -644,6 +645,14 @@
     if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("key", voices[fingerId], keyId);
     if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("x", voices[fingerId], fmod(currentContinuousKey,1));
     if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
+}
+
+-(void)saveParameters{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    // TODO: currently param name is wrong (needs to be preset name)
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"params"];
+    [parameters writeToFile:filePath atomically:YES];
 }
 
 -(float)applyScale:(float)pitch withKeyboardId:(int)keyboardId{
