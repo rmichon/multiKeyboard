@@ -80,17 +80,19 @@
 
 - (IBAction)newEventOnNavBar:(NavBar*)sender{
     if(sender->touchedButton == 1){
-        [multiKeyboard saveParameters];
+        [multiKeyboard saveParameters]; // TODO: might be a better place for that
         
         if(!configDisplayOn){
-            configDisplay = [[ConfigDisplay alloc] initWithFrame:CGRectMake(multiKeyboardXOffset, multikeyboardYOffset, multiKeyboardWidth, multiKeyboardHeight) withParams:multiKeyboard->parameters];
+            configDisplay = [[ConfigDisplay alloc] initWithFrame:CGRectMake(multiKeyboardXOffset, multikeyboardYOffset, multiKeyboardWidth, multiKeyboardHeight) withParams:multiKeyboard->parameters withDspFaust:dspFaust];
             [self addSubview:configDisplay];
             configDisplayOn = true;
         }
         else{
+            [configDisplay saveState];
             [configDisplay removeFromSuperview];
             configDisplay = nil;
             configDisplayOn = false;
+            [multiKeyboard buildInterface];
         }
     }
     else if(sender->touchedButton == 4){

@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Button.h"
+#include "DspFaust.h"
 
 @interface ConfigDisplay : UIView
 
-- (id)initWithFrame:(CGRect)frame withParams:(NSMutableDictionary*)params;
+- (id)initWithFrame:(CGRect)frame withParams:(NSMutableDictionary*)params withDspFaust:(DspFaust*)dsp;
+- (void)saveState;
 
 @end

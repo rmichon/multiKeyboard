@@ -77,30 +77,6 @@
                                                                      @"roundingThreshold":[NSNumber numberWithFloat:3],
                                                                      @"roundingDeactCycles":[NSNumber numberWithInt:5]
                                                                      }];
-        // keyboard dependent parameters
-        for(int i=0; i<22; i++){
-            if([parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] = [NSNumber numberWithInt:7];
-            }
-            if(parameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] = [NSNumber numberWithInt:(48 + i*12)];
-            }
-            if(parameters[[NSString stringWithFormat:@"keyb%d_scale",i]] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_scale",i]] = [NSNumber numberWithInt:0];
-            }
-            if(parameters[[NSString stringWithFormat:@"keyb%d_showNotesName",i]] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_showNotesName",i]] = [NSNumber numberWithInt:1];
-            }
-            if(parameters[[NSString stringWithFormat:@"keyb%d_rootPos",i]] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_rootPos",i]] = [NSNumber numberWithInt:0];
-            }
-            if(parameters[[NSString stringWithFormat:@"keyb%d_orientation",i]] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_orientation",i]] = [NSNumber numberWithInt:0];
-            }
-            if(parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] == 0){
-                parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] = [NSNumber numberWithInt:1];
-            }
-        }
          
         NSString *JSONInterface = [NSString stringWithUTF8String:faustDsp->getJSONMeta()];
         // isolating the parameters of SmartKeyboard from the JSON description and checking if the key exist
@@ -145,6 +121,31 @@
 - (void)buildInterface{
     [self clean]; // dealocate previous instances first
     UIon = true;
+    
+    // keyboard dependent parameters
+    for(int i=0; i<[parameters[@"nKeyb"] intValue]; i++){
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_nKeys",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] = [NSNumber numberWithInt:7];
+        }
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_lowestKey",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] = [NSNumber numberWithInt:(48 + i*12)];
+        }
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_scale",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_scale",i]] = [NSNumber numberWithInt:0];
+        }
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_showNotesName",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_showNotesName",i]] = [NSNumber numberWithInt:1];
+        }
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_rootPos",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_rootPos",i]] = [NSNumber numberWithInt:0];
+        }
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_orientation",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_orientation",i]] = [NSNumber numberWithInt:0];
+        }
+        if([parameters objectForKey:[NSString stringWithFormat:@"keyb%d_keybMode",i]] == nil){
+            parameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] = [NSNumber numberWithInt:1];
+        }
+    }
     
     // allocate memory and initialize the different elements
     touchDiff = new float [[parameters[@"maxFingers"] intValue]];

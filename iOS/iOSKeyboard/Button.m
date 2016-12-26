@@ -39,6 +39,8 @@
 - (void)setOn{
     [layerOn setHidden:false];
     on = true;
+    if(polarity) polarity = false;
+    else polarity = true;
     [self sendActionsForControlEvents:UIControlEventValueChanged];
 }
 

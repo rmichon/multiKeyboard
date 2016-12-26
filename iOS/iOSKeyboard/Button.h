@@ -12,6 +12,7 @@
     @public
     Boolean on;
     int ID;
+    Boolean polarity;
 }
 
 - (void)setOnColor:(UIColor*)onColor;
