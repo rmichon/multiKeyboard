@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "InstrumentInterface.h"
+#import "PresetMenu.h"
 #import "MultiKeyboard.h"
 #import "DspFaust.h"
 

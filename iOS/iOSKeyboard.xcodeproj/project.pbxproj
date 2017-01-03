@@ -26,6 +26,7 @@
 		7A74AEB51DFF7339009942C2 /* keyDownDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB11DFF7339009942C2 /* keyDownDark.png */; };
 		7A74AEB61DFF7339009942C2 /* keyUpBright.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB21DFF7339009942C2 /* keyUpBright.png */; };
 		7A74AEB71DFF7339009942C2 /* keyUpDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB31DFF7339009942C2 /* keyUpDark.png */; };
+		7A8D384E1E127228006C44C3 /* PresetMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A8D384D1E127228006C44C3 /* PresetMenu.mm */; };
 		7A91E7071DB2C4670071B829 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A91E7061DB2C4670071B829 /* CoreMIDI.framework */; };
 		7AC85B311E042F7E001A98AD /* ConfigDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC85B301E042F7E001A98AD /* ConfigDisplay.mm */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,8 @@
 		7A74AEB11DFF7339009942C2 /* keyDownDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyDownDark.png; sourceTree = "<group>"; };
 		7A74AEB21DFF7339009942C2 /* keyUpBright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyUpBright.png; sourceTree = "<group>"; };
 		7A74AEB31DFF7339009942C2 /* keyUpDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyUpDark.png; sourceTree = "<group>"; };
+		7A8D384C1E127228006C44C3 /* PresetMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresetMenu.h; sourceTree = "<group>"; };
+		7A8D384D1E127228006C44C3 /* PresetMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresetMenu.mm; sourceTree = "<group>"; };
 		7A91E6CF1DAE84B60071B829 /* Smooth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Smooth.h; sourceTree = "<group>"; };
 		7A91E7061DB2C4670071B829 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		7A91E7081DB2C6570071B829 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -163,6 +166,8 @@
 				7A391EB11D05C97E0078B226 /* img */,
 				7A391EA81D05C8B30078B226 /* MultiKeyboard.h */,
 				7A391EA91D05C8B30078B226 /* MultiKeyboard.mm */,
+				7A8D384C1E127228006C44C3 /* PresetMenu.h */,
+				7A8D384D1E127228006C44C3 /* PresetMenu.mm */,
 				7A53D8941E03CC58008A4895 /* InstrumentInterface.h */,
 				7A53D8951E03CC58008A4895 /* InstrumentInterface.mm */,
 				7AC85B2F1E042F7E001A98AD /* ConfigDisplay.h */,
@@ -305,6 +310,7 @@
 			files = (
 				7A391EAA1D05C8B30078B226 /* MultiKeyboard.mm in Sources */,
 				7A391E871D05C8030078B226 /* ViewController.mm in Sources */,
+				7A8D384E1E127228006C44C3 /* PresetMenu.mm in Sources */,
 				7A53D8961E03CC58008A4895 /* InstrumentInterface.mm in Sources */,
 				7A391E841D05C8030078B226 /* AppDelegate.mm in Sources */,
 				7A391E811D05C8030078B226 /* main.m in Sources */,

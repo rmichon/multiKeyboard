@@ -58,4 +58,12 @@
     [layerOn setBackgroundColor:onColor];
 }
 
+- (void)setID:(int)i{
+    ID = i;
+}
+
+- (Boolean)getPolarity{
+    return polarity;
+}
+
 @end

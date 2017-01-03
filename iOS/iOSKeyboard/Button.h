@@ -17,5 +17,7 @@
 
 - (void)setOnColor:(UIColor*)onColor;
 - (void)setOffColor:(UIColor*)offColor;
+- (void)setID:(int)i;
+- (Boolean)getPolarity;
 
 @end

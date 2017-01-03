@@ -12,8 +12,11 @@
 #import "NavBar.h"
 #import "ConfigDisplay.h"
 
-@interface InstrumentInterface : UIView
+@interface InstrumentInterface : UIControl{
+    @public
+    int currentPreset;
+}
 
-- (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)dsp;
+- (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)faustDsp withPresetId:(int)presetId;
 
 @end

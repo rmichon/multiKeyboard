@@ -12,7 +12,6 @@
 
 @interface ConfigDisplay : UIView
 
-- (id)initWithFrame:(CGRect)frame withParams:(NSMutableDictionary*)params withDspFaust:(DspFaust*)dsp;
-- (void)saveState;
+- (id)initWithFrame:(CGRect)frame withKeyboardParams:(NSMutableDictionary*)keyboardParams withDspParamas:(NSMutableDictionary*)dspParams withDspFaust:(DspFaust*)dsp;
 
 @end
