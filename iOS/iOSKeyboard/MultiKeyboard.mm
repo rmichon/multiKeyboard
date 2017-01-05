@@ -55,7 +55,6 @@
     // FAUST
     DspFaust *faustDsp;
     long *voices;
-    NSMutableDictionary *defaultDspParams;
     
     NSString *documentsDirectory;
     NSString *currentPresetName;
@@ -78,19 +77,6 @@
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         documentsDirectory = [paths objectAtIndex:0];
-        NSString *defaultParamsFile = [documentsDirectory stringByAppendingPathComponent:@"defaultParams"];
-        
-        // if keyboard open for the first time, create a default file
-        if(![[NSFileManager defaultManager] fileExistsAtPath:defaultParamsFile]){
-            defaultDspParams = [NSMutableDictionary dictionary];
-            for(int i=0; i<faustDsp->getParamsCount(); i++){
-                defaultDspParams[[NSString stringWithUTF8String:faustDsp->getParamAddress(i)]] = [NSNumber numberWithFloat:faustDsp->getParamValue(i)];
-            }
-            [defaultDspParams writeToFile:defaultParamsFile atomically:YES];
-        }
-        else{
-            defaultDspParams = [[NSMutableDictionary alloc] initWithContentsOfFile:defaultParamsFile];
-        }
         
         if(currentPresetName == nil){
             // Declaring default parameters
@@ -101,6 +87,10 @@
                                                                      @"monoMode":[NSNumber numberWithInt:1],
                                                                      @"quantizationMode":[NSNumber numberWithInt:0],
                                                                      @"interKeybSlideAllowed":[NSNumber numberWithInt:1],
+                                                                     @"sendCurrentKey":[NSNumber numberWithInt:1],
+                                                                     @"sendCurrentKeyboard":[NSNumber numberWithInt:1],
+                                                                     @"sendX":[NSNumber numberWithInt:1],
+                                                                     @"sendY":[NSNumber numberWithInt:1],
                                                                      @"roundingUpdateSpeed":[NSNumber numberWithFloat:0.06],
                                                                      @"roundingSmoothPole":[NSNumber numberWithFloat:0.9],
                                                                      @"roundingThreshold":[NSNumber numberWithFloat:3],
@@ -568,10 +558,10 @@
     // TODO: continuous x and y values are always sent: this should be optimized
     // TODO: might need a mechanism to check if voice is on before message gets sent
     
-    faustDsp->setParamValue("keyboard", keyboardId);
-    faustDsp->setParamValue("key", keyId);
-    faustDsp->setParamValue(("x" + std::to_string(fingerId)).c_str(), fmod(currentContinuousKey,1));
-    faustDsp->setParamValue(("y" + std::to_string(fingerId)).c_str(), currentKeyboardY);
+    if([keyboardParameters[@"sendCurrentKeyboard"] intValue]) faustDsp->setParamValue("keyboard", keyboardId);
+    if([keyboardParameters[@"sendCurrentKey"] intValue]) faustDsp->setParamValue("key", keyId);
+    if([keyboardParameters[@"sendX"] intValue]) faustDsp->setParamValue(("x" + std::to_string(fingerId)).c_str(), fmod(currentContinuousKey,1));
+    if([keyboardParameters[@"sendY"] intValue]) faustDsp->setParamValue(("y" + std::to_string(fingerId)).c_str(), currentKeyboardY);
 }
 
 /***************************************************************************
@@ -585,7 +575,6 @@
     float pitch = 0; // the MIDI pitch of the note
     // delete (note off)
     if((eventType == 0 || (eventType == 3 && [keyboardParameters[@"quantizationMode"] intValue] == 0)) && voices[fingerId] != -1){
-        //printf("Up: %i\n",keyId);
         pitch = -1;
         faustDsp->setVoiceParamValue("gate", voices[fingerId], 0);
         faustDsp->deleteVoice(voices[fingerId]);
@@ -597,7 +586,6 @@
         // allocating new voice to finger
         voices[fingerId] = faustDsp->newVoice();
         if(voices[fingerId] != -1){
-            //printf("Down: %i\n",keyId);
             faustDsp->setVoiceParamValue("gate", voices[fingerId], 1);
         }
         else{
@@ -685,18 +673,17 @@
         }
     }
     
-    // TODO: continuous x and y values are always sent: this should be optimized
-    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
-    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("key", voices[fingerId], keyId);
-    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("x", voices[fingerId], fmod(currentContinuousKey,1));
-    if(voices[fingerId] != -1) faustDsp->setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
+    if(voices[fingerId] != -1){
+        if([keyboardParameters[@"sendCurrentKeyboard"] intValue]) faustDsp->setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
+        if([keyboardParameters[@"sendCurrentKey"] intValue]) faustDsp->setVoiceParamValue("key", voices[fingerId], keyId);
+        if([keyboardParameters[@"sendX"] intValue]) faustDsp->setVoiceParamValue("x", voices[fingerId], fmod(currentContinuousKey,1));
+        if([keyboardParameters[@"sendY"] intValue]) faustDsp->setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
+    }
 }
 
 -(void)resetDspToDefault{
-    NSArray *keys = [defaultDspParams allKeys];
-    for(int i=0; i<[keys count]; i++){
-        NSString *currentKey = [keys objectAtIndex:i];
-        faustDsp->setParamValue([currentKey UTF8String], [[defaultDspParams objectForKey:currentKey] floatValue]);
+    for(int i=0; i<faustDsp->getParamsCount(); i++){
+        faustDsp->setParamValue(faustDsp->getParamAddress(i), faustDsp->getParamInit(i));
     }
 }
 

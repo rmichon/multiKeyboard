@@ -18,6 +18,7 @@
     NSMutableArray *dspDeleteButtons, *dspKeyFields, *dspKeyValueFields;
     UIScrollView *keybParamsColumn;
     UIScrollView *dspParamsColumn;
+    UITextView *dspParamsList;
     CGFloat borderSize, frameWidth, frameHeight,
     columnWidth, columnLabelHeight, columnHeight,
     keyFieldWidth, addButtonWidth, keyValueFieldWidth;
@@ -68,12 +69,17 @@
         [self buildKeyboardParamList];
         
         // DSP PARAMETERS
-        UILabel *dspParamsLabel = [[UILabel alloc] initWithFrame:CGRectMake(columnWidth+borderSize, borderSize, columnWidth-addButtonWidth, columnLabelHeight)];
+        UILabel *dspParamsLabel = [[UILabel alloc] initWithFrame:CGRectMake(columnWidth+borderSize, borderSize, columnWidth-addButtonWidth*2, columnLabelHeight)];
         [dspParamsLabel setText:@"DSP Parameters"];
         [dspParamsLabel setTextAlignment:NSTextAlignmentCenter];
         [dspParamsLabel setFont:[UIFont systemFontOfSize:22]];
         [dspParamsLabel setBackgroundColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1]];
         [self addSubview:dspParamsLabel];
+        
+        Button *showDspParametersButton = [[Button alloc] initWithFrame:CGRectMake(columnWidth+borderSize+(columnWidth-addButtonWidth*2), borderSize, addButtonWidth, columnLabelHeight)];
+        [showDspParametersButton setOffColor:[UIColor blueColor]];
+        [showDspParametersButton addTarget:self action:@selector(newEventOnShowParamsListButton:) forControlEvents:UIControlEventValueChanged];
+        [self addSubview:showDspParametersButton];
         
         Button *addDspFieldButton = [[Button alloc] initWithFrame:CGRectMake(columnWidth+borderSize+(columnWidth-addButtonWidth), borderSize, addButtonWidth, columnLabelHeight)];
         [addDspFieldButton addTarget:self action:@selector(newEventOnAddDspFieldButton:) forControlEvents:UIControlEventValueChanged];
@@ -265,6 +271,30 @@
         [dspParameters removeObjectForKey:[dspKeys objectAtIndex:sender->ID]];
         [self clearDspParamList];
         [self buildDspParamList];
+    }
+}
+
+- (IBAction)newEventOnShowParamsListButton:(Button*)sender{
+    if(sender->on){
+        if(sender->polarity){
+            // TODO: currently, the param list is built on the fly. Ideally, we'd want to have a pre-generated searchable html doc instead of this 
+            dspParamsList = [[UITextView alloc] initWithFrame:CGRectMake(borderSize, borderSize+columnLabelHeight, frameWidth, columnHeight)];
+            for(int i=0; i<dspFaust->getParamsCount(); i++){
+                dspParamsList.text = [dspParamsList.text stringByAppendingString:[NSString stringWithFormat:@"%s\n",dspFaust->getParamAddress(i)]];
+                dspParamsList.text = [dspParamsList.text stringByAppendingString:[NSString stringWithFormat:@"Description: %s\n",dspFaust->getParamTooltip(i)]];
+                dspParamsList.text = [dspParamsList.text stringByAppendingString:[NSString stringWithFormat:@"Min: %f\n",dspFaust->getParamMin(i)]];
+                dspParamsList.text = [dspParamsList.text stringByAppendingString:[NSString stringWithFormat:@"Max: %f\n",dspFaust->getParamMax(i)]];
+                dspParamsList.text = [dspParamsList.text stringByAppendingString:[NSString stringWithFormat:@"Default: %f\n",dspFaust->getParamInit(i)]];
+                dspParamsList.text = [dspParamsList.text stringByAppendingString:@"----------\n\n"];
+            }
+            [dspParamsList setFont:[UIFont systemFontOfSize:18]];
+            dspParamsList.editable = false;
+            [self addSubview:dspParamsList];
+        }
+        else{
+            [dspParamsList removeFromSuperview];
+            dspParamsList = nil;
+        }
     }
 }
 
