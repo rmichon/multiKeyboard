@@ -11,9 +11,10 @@
 
 @interface PresetMenu : UIControl{
     @public
-    int currentPreset;
+    NSInteger currentPreset;
+    NSInteger actionType; // 0 for run preset and 1 for update audio settings
 }
 
-- (id)initWithFrame:(CGRect)frame withCurrentPreset:(int)preset;
+- (id)initWithFrame:(CGRect)frame withCurrentPreset:(NSInteger)preset;
 
 @end

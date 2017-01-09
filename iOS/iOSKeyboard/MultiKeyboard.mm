@@ -91,6 +91,7 @@
                                                                      @"sendCurrentKeyboard":[NSNumber numberWithInt:1],
                                                                      @"sendX":[NSNumber numberWithInt:1],
                                                                      @"sendY":[NSNumber numberWithInt:1],
+                                                                     @"sendAccel":[NSNumber numberWithInt:1],
                                                                      @"roundingUpdateSpeed":[NSNumber numberWithFloat:0.06],
                                                                      @"roundingSmoothPole":[NSNumber numberWithFloat:0.9],
                                                                      @"roundingThreshold":[NSNumber numberWithFloat:3],
@@ -130,7 +131,6 @@
         
         touchDel = 2; // we just need a "2 samples delay" but we can add more if necessary
         [self buildInterface]; // screen interface is built based on the description contained in "parameters"
-        [self startMotion]; // starting to retrieve sensor data
         
         if([keyboardParameters[@"quantizationMode"] intValue] == 2){
             [NSThread detachNewThreadSelector:@selector(pitchRounding) toTarget:self withObject:nil];
@@ -149,6 +149,8 @@
 - (void)buildInterface{
     [self clean]; // dealocate previous instances first
     UIon = true;
+    
+    if([keyboardParameters[@"sendAccel"] intValue]) [self startMotion];
     
     // keyboard dependent parameters
     for(int i=0; i<[keyboardParameters[@"nKeyb"] intValue]; i++){
@@ -825,6 +827,8 @@
 }
 
 -(void)clean{
+    if([keyboardParameters[@"sendAccel"] intValue]) [self stopMotion];
+    
     // case where no pitch keyboard is on: we stop the main voice before cleaning
     if([keyboardParameters[@"maxKeybPoly"] intValue] == 0 && UIon){
         faustDsp->deleteVoice(voices[0]);
@@ -878,12 +882,18 @@
         delete[] voices;
         voices = NULL;
     }
+    if(zoneWidths){
+        delete[] zoneWidths;
+        zoneWidths = NULL;
+    }
+    if(fingersOnKeyboardsCount){
+        delete[] fingersOnKeyboardsCount;
+        fingersOnKeyboardsCount = NULL;
+    }
 }
 
-// TODO: for now, we assume that memory is deallocated here but we're not 100% sure about that: this has to be checked
 -(void)dealloc{
     [self clean];
-    [self stopMotion];
 }
 
 @end

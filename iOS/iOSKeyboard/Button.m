@@ -9,7 +9,7 @@
 #import "Button.h"
 
 @implementation Button{
-    UIView *layerOn;
+    UIView *layerOn; // view to display when button is on
 }
 
 - (id)initWithFrame:(CGRect)frame{
@@ -24,6 +24,10 @@
         [layerOn setBackgroundColor:[UIColor greenColor]];
         [layerOn setHidden:true];
         [self addSubview:layerOn];
+        
+        label = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height)];
+        [label setTextAlignment:NSTextAlignmentCenter];
+        [self addSubview:label];
     }
     return self;
 }
@@ -58,12 +62,36 @@
     [layerOn setBackgroundColor:onColor];
 }
 
-- (void)setID:(int)i{
-    ID = i;
+- (void)setOnImage:(UIImage*)fillImage{
+    UIGraphicsBeginImageContextWithOptions(self.frame.size,NO,2.0f);
+    [fillImage drawInRect:self.bounds];
+    UIImage *pic = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    layerOn.backgroundColor = [UIColor colorWithPatternImage:pic];
+}
+
+- (void)setOffImage:(UIImage*)fillImage{
+    UIGraphicsBeginImageContextWithOptions(self.frame.size,NO,2.0f);
+    [fillImage drawInRect:self.bounds];
+    UIImage *pic = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    self.backgroundColor = [UIColor colorWithPatternImage:pic];
 }
 
 - (Boolean)getPolarity{
     return polarity;
+}
+
+- (void)setText:(NSString*)t{
+    label.text = t;
+}
+
+- (void)setTextColor:(UIColor*)color{
+    [label setTextColor:color];
+}
+
+- (void)setTextFont:(UIFont*)font{
+    [label setFont:font];
 }
 
 @end

@@ -11,13 +11,17 @@
 @interface Button : UIControl{
     @public
     Boolean on;
-    int ID;
     Boolean polarity;
+    UILabel *label;
 }
 
 - (void)setOnColor:(UIColor*)onColor;
 - (void)setOffColor:(UIColor*)offColor;
-- (void)setID:(int)i;
+- (void)setOnImage:(UIImage*)fillImage;
+- (void)setOffImage:(UIImage*)fillImage;
 - (Boolean)getPolarity;
+- (void)setText:(NSString*)t;
+- (void)setTextColor:(UIColor*)color;
+- (void)setTextFont:(UIFont*)font;
 
 @end

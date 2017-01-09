@@ -11,7 +11,7 @@
 
 @interface NavBar : UIControl{
     @public
-    int touchedButton;
+    NSInteger touchedButton;
 }
 
 - (id)initWithFrame:(CGRect)frame withOrientation:(Boolean)orientation;

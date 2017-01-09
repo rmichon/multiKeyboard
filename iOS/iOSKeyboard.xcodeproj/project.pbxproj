@@ -18,6 +18,10 @@
 		7A391EA71D05C84E0078B226 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A391EA61D05C84E0078B226 /* AudioToolbox.framework */; };
 		7A391EAA1D05C8B30078B226 /* MultiKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A391EA91D05C8B30078B226 /* MultiKeyboard.mm */; };
 		7A391EAE1D05C8E70078B226 /* Zone.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A391EAD1D05C8E70078B226 /* Zone.mm */; };
+		7A4E1D8C1E21A7D8000DCB9C /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D8B1E21A7D8000DCB9C /* mainBackground.jpg */; };
+		7A4E1D8E1E2304BF000DCB9C /* navBarButtonsOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D8D1E2304BF000DCB9C /* navBarButtonsOff.png */; };
+		7A4E1D901E23F439000DCB9C /* navBarButtonsOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D8F1E23F439000DCB9C /* navBarButtonsOn.png */; };
+		7A4E1D921E240159000DCB9C /* configDisplayBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D911E240159000DCB9C /* configDisplayBackground.jpg */; };
 		7A53D8961E03CC58008A4895 /* InstrumentInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A53D8951E03CC58008A4895 /* InstrumentInterface.mm */; };
 		7A53D8991E03CFFE008A4895 /* NavBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A53D8981E03CFFE008A4895 /* NavBar.mm */; };
 		7A53D89C1E03D076008A4895 /* Button.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A53D89B1E03D076008A4895 /* Button.m */; };
@@ -61,6 +65,10 @@
 		7A391EA91D05C8B30078B226 /* MultiKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiKeyboard.mm; sourceTree = "<group>"; };
 		7A391EAC1D05C8E70078B226 /* Zone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Zone.h; sourceTree = "<group>"; };
 		7A391EAD1D05C8E70078B226 /* Zone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Zone.mm; sourceTree = "<group>"; };
+		7A4E1D8B1E21A7D8000DCB9C /* mainBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mainBackground.jpg; sourceTree = "<group>"; };
+		7A4E1D8D1E2304BF000DCB9C /* navBarButtonsOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navBarButtonsOff.png; sourceTree = "<group>"; };
+		7A4E1D8F1E23F439000DCB9C /* navBarButtonsOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navBarButtonsOn.png; sourceTree = "<group>"; };
+		7A4E1D911E240159000DCB9C /* configDisplayBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = configDisplayBackground.jpg; sourceTree = "<group>"; };
 		7A53D8941E03CC58008A4895 /* InstrumentInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentInterface.h; sourceTree = "<group>"; };
 		7A53D8951E03CC58008A4895 /* InstrumentInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InstrumentInterface.mm; sourceTree = "<group>"; };
 		7A53D8971E03CFFE008A4895 /* NavBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavBar.h; sourceTree = "<group>"; };
@@ -186,6 +194,10 @@
 		7A391EB11D05C97E0078B226 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				7A4E1D911E240159000DCB9C /* configDisplayBackground.jpg */,
+				7A4E1D8D1E2304BF000DCB9C /* navBarButtonsOff.png */,
+				7A4E1D8F1E23F439000DCB9C /* navBarButtonsOn.png */,
+				7A4E1D8B1E21A7D8000DCB9C /* mainBackground.jpg */,
 				7A74AEB01DFF7339009942C2 /* keyDownBright.png */,
 				7A74AEB11DFF7339009942C2 /* keyDownDark.png */,
 				7A74AEB21DFF7339009942C2 /* keyUpBright.png */,
@@ -286,10 +298,14 @@
 			files = (
 				7A74AEB51DFF7339009942C2 /* keyDownDark.png in Resources */,
 				7A391E8F1D05C8030078B226 /* LaunchScreen.storyboard in Resources */,
+				7A4E1D8E1E2304BF000DCB9C /* navBarButtonsOff.png in Resources */,
 				7A74AEB41DFF7339009942C2 /* keyDownBright.png in Resources */,
+				7A4E1D901E23F439000DCB9C /* navBarButtonsOn.png in Resources */,
+				7A4E1D921E240159000DCB9C /* configDisplayBackground.jpg in Resources */,
 				7A74AEB71DFF7339009942C2 /* keyUpDark.png in Resources */,
 				7A391E8C1D05C8030078B226 /* Assets.xcassets in Resources */,
 				7A74AEB61DFF7339009942C2 /* keyUpBright.png in Resources */,
+				7A4E1D8C1E21A7D8000DCB9C /* mainBackground.jpg in Resources */,
 				7A391E8A1D05C8030078B226 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

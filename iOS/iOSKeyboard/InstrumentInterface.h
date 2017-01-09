@@ -14,9 +14,9 @@
 
 @interface InstrumentInterface : UIControl{
     @public
-    int currentPreset;
+    NSInteger currentPreset;
 }
 
-- (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)faustDsp withPresetId:(int)presetId;
+- (id)initWithFrame:(CGRect)frame withFaustDSP:(DspFaust*)faustDsp withPresetId:(NSInteger)presetId;
 
 @end

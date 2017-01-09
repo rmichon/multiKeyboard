@@ -9,11 +9,6 @@
 //  It can be used as the dynamic background of a controller.
 //
 
-/*
- * TODO:
- *  - For now, only 2 status possible: on and off but move should be added. This will probably require the creation of a subclass where drawing is overriden since parts of the view would have to be redrawn.
- */
-
 #import "Zone.h"
 
 @implementation Zone{
@@ -30,7 +25,7 @@
         self.multipleTouchEnabled = YES; // that's fucked up!
         
         notes = @[@"C",@"C#",@"D",@"Eb",@"E",@"F",@"F#",@"G",@"G#",@"A",@"Bb",@"B"];
-        
+                
         // Default status is "off"
         status = 0;
         keyboardMode = true;
