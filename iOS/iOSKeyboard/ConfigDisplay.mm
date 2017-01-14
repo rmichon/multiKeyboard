@@ -264,6 +264,7 @@
         [[keyboardKeyValueFields objectAtIndex:i] setText:[NSString stringWithFormat:@"%@",[keyboardParameters objectForKey:[keyboardKeys objectAtIndex:i]]]];
         [[keyboardKeyValueFields objectAtIndex:i] setTag:i];
         [[keyboardKeyValueFields objectAtIndex:i] addTarget:self action:@selector(newEventOnKeyboardValue:) forControlEvents:UIControlEventEditingDidEnd];
+        [[keyboardKeyValueFields objectAtIndex:i] addTarget:self action:@selector(newEventOnKeyboardParamEditingBegin:) forControlEvents:UIControlEventEditingDidBegin];
         [keybParamsColumn addSubview:[keyboardKeyValueFields objectAtIndex:i]];
     }
     
@@ -322,6 +323,7 @@
         [[dspKeyValueFields objectAtIndex:i] setText:[NSString stringWithFormat:@"%@",[dspParameters objectForKey:[dspKeys objectAtIndex:i]]]];
         [[dspKeyValueFields objectAtIndex:i] setTag:i];
         [[dspKeyValueFields objectAtIndex:i] addTarget:self action:@selector(newEventOnDspValue:) forControlEvents:UIControlEventEditingDidEnd];
+        [[dspKeyValueFields objectAtIndex:i] addTarget:self action:@selector(newEventOnDspParamEditingBegin:) forControlEvents:UIControlEventEditingDidBegin];
         [dspParamsColumn addSubview:[dspKeyValueFields objectAtIndex:i]];
     }
     

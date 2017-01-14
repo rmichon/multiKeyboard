@@ -18,18 +18,26 @@
 		7A391EA71D05C84E0078B226 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A391EA61D05C84E0078B226 /* AudioToolbox.framework */; };
 		7A391EAA1D05C8B30078B226 /* MultiKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A391EA91D05C8B30078B226 /* MultiKeyboard.mm */; };
 		7A391EAE1D05C8E70078B226 /* Zone.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A391EAD1D05C8E70078B226 /* Zone.mm */; };
-		7A4E1D8C1E21A7D8000DCB9C /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D8B1E21A7D8000DCB9C /* mainBackground.jpg */; };
-		7A4E1D8E1E2304BF000DCB9C /* navBarButtonsOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D8D1E2304BF000DCB9C /* navBarButtonsOff.png */; };
-		7A4E1D901E23F439000DCB9C /* navBarButtonsOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D8F1E23F439000DCB9C /* navBarButtonsOn.png */; };
-		7A4E1D921E240159000DCB9C /* configDisplayBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D911E240159000DCB9C /* configDisplayBackground.jpg */; };
+		7A4E1D9A1E259842000DCB9C /* Square_dsp in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D941E259842000DCB9C /* Square_dsp */; };
+		7A4E1D9B1E259842000DCB9C /* Square_keyb in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D951E259842000DCB9C /* Square_keyb */; };
+		7A4E1D9C1E259842000DCB9C /* String_dsp in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D961E259842000DCB9C /* String_dsp */; };
+		7A4E1D9D1E259842000DCB9C /* String_keyb in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D971E259842000DCB9C /* String_keyb */; };
+		7A4E1D9E1E259842000DCB9C /* Triangle_dsp in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D981E259842000DCB9C /* Triangle_dsp */; };
+		7A4E1D9F1E259842000DCB9C /* Triangle_keyb in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1D991E259842000DCB9C /* Triangle_keyb */; };
+		7A4E1DA91E25AFE4000DCB9C /* configDisplayBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA11E25AFE4000DCB9C /* configDisplayBackground.jpg */; };
+		7A4E1DAA1E25AFE4000DCB9C /* keyDownBright.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA21E25AFE4000DCB9C /* keyDownBright.png */; };
+		7A4E1DAB1E25AFE4000DCB9C /* keyDownDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA31E25AFE4000DCB9C /* keyDownDark.png */; };
+		7A4E1DAC1E25AFE4000DCB9C /* keyUpBright.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA41E25AFE4000DCB9C /* keyUpBright.png */; };
+		7A4E1DAD1E25AFE4000DCB9C /* keyUpDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA51E25AFE4000DCB9C /* keyUpDark.png */; };
+		7A4E1DAE1E25AFE4000DCB9C /* mainBackground.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA61E25AFE4000DCB9C /* mainBackground.jpg */; };
+		7A4E1DAF1E25AFE4000DCB9C /* navBarButtonsOff.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA71E25AFE4000DCB9C /* navBarButtonsOff.png */; };
+		7A4E1DB01E25AFE4000DCB9C /* navBarButtonsOn.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DA81E25AFE4000DCB9C /* navBarButtonsOn.png */; };
+		7A4E1DB31E268D14000DCB9C /* Djembe_dsp in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DB11E268D14000DCB9C /* Djembe_dsp */; };
+		7A4E1DB41E268D14000DCB9C /* Djembe_keyb in Resources */ = {isa = PBXBuildFile; fileRef = 7A4E1DB21E268D14000DCB9C /* Djembe_keyb */; };
 		7A53D8961E03CC58008A4895 /* InstrumentInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A53D8951E03CC58008A4895 /* InstrumentInterface.mm */; };
 		7A53D8991E03CFFE008A4895 /* NavBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A53D8981E03CFFE008A4895 /* NavBar.mm */; };
 		7A53D89C1E03D076008A4895 /* Button.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A53D89B1E03D076008A4895 /* Button.m */; };
 		7A74AEAF1DFA3957009942C2 /* DspFaust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */; };
-		7A74AEB41DFF7339009942C2 /* keyDownBright.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB01DFF7339009942C2 /* keyDownBright.png */; };
-		7A74AEB51DFF7339009942C2 /* keyDownDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB11DFF7339009942C2 /* keyDownDark.png */; };
-		7A74AEB61DFF7339009942C2 /* keyUpBright.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB21DFF7339009942C2 /* keyUpBright.png */; };
-		7A74AEB71DFF7339009942C2 /* keyUpDark.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A74AEB31DFF7339009942C2 /* keyUpDark.png */; };
 		7A8D384E1E127228006C44C3 /* PresetMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A8D384D1E127228006C44C3 /* PresetMenu.mm */; };
 		7A91E7071DB2C4670071B829 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A91E7061DB2C4670071B829 /* CoreMIDI.framework */; };
 		7AC85B311E042F7E001A98AD /* ConfigDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC85B301E042F7E001A98AD /* ConfigDisplay.mm */; };
@@ -65,10 +73,22 @@
 		7A391EA91D05C8B30078B226 /* MultiKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiKeyboard.mm; sourceTree = "<group>"; };
 		7A391EAC1D05C8E70078B226 /* Zone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Zone.h; sourceTree = "<group>"; };
 		7A391EAD1D05C8E70078B226 /* Zone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Zone.mm; sourceTree = "<group>"; };
-		7A4E1D8B1E21A7D8000DCB9C /* mainBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mainBackground.jpg; sourceTree = "<group>"; };
-		7A4E1D8D1E2304BF000DCB9C /* navBarButtonsOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navBarButtonsOff.png; sourceTree = "<group>"; };
-		7A4E1D8F1E23F439000DCB9C /* navBarButtonsOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navBarButtonsOn.png; sourceTree = "<group>"; };
-		7A4E1D911E240159000DCB9C /* configDisplayBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = configDisplayBackground.jpg; sourceTree = "<group>"; };
+		7A4E1D941E259842000DCB9C /* Square_dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Square_dsp; path = iOSKeyboard/presets/Square_dsp; sourceTree = "<group>"; };
+		7A4E1D951E259842000DCB9C /* Square_keyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Square_keyb; path = iOSKeyboard/presets/Square_keyb; sourceTree = "<group>"; };
+		7A4E1D961E259842000DCB9C /* String_dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = String_dsp; path = iOSKeyboard/presets/String_dsp; sourceTree = "<group>"; };
+		7A4E1D971E259842000DCB9C /* String_keyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = String_keyb; path = iOSKeyboard/presets/String_keyb; sourceTree = "<group>"; };
+		7A4E1D981E259842000DCB9C /* Triangle_dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Triangle_dsp; path = iOSKeyboard/presets/Triangle_dsp; sourceTree = "<group>"; };
+		7A4E1D991E259842000DCB9C /* Triangle_keyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Triangle_keyb; path = iOSKeyboard/presets/Triangle_keyb; sourceTree = "<group>"; };
+		7A4E1DA11E25AFE4000DCB9C /* configDisplayBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = configDisplayBackground.jpg; path = img/configDisplayBackground.jpg; sourceTree = "<group>"; };
+		7A4E1DA21E25AFE4000DCB9C /* keyDownBright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = keyDownBright.png; path = img/keyDownBright.png; sourceTree = "<group>"; };
+		7A4E1DA31E25AFE4000DCB9C /* keyDownDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = keyDownDark.png; path = img/keyDownDark.png; sourceTree = "<group>"; };
+		7A4E1DA41E25AFE4000DCB9C /* keyUpBright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = keyUpBright.png; path = img/keyUpBright.png; sourceTree = "<group>"; };
+		7A4E1DA51E25AFE4000DCB9C /* keyUpDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = keyUpDark.png; path = img/keyUpDark.png; sourceTree = "<group>"; };
+		7A4E1DA61E25AFE4000DCB9C /* mainBackground.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = mainBackground.jpg; path = img/mainBackground.jpg; sourceTree = "<group>"; };
+		7A4E1DA71E25AFE4000DCB9C /* navBarButtonsOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = navBarButtonsOff.png; path = img/navBarButtonsOff.png; sourceTree = "<group>"; };
+		7A4E1DA81E25AFE4000DCB9C /* navBarButtonsOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = navBarButtonsOn.png; path = img/navBarButtonsOn.png; sourceTree = "<group>"; };
+		7A4E1DB11E268D14000DCB9C /* Djembe_dsp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Djembe_dsp; path = iOSKeyboard/presets/Djembe_dsp; sourceTree = "<group>"; };
+		7A4E1DB21E268D14000DCB9C /* Djembe_keyb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Djembe_keyb; path = iOSKeyboard/presets/Djembe_keyb; sourceTree = "<group>"; };
 		7A53D8941E03CC58008A4895 /* InstrumentInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentInterface.h; sourceTree = "<group>"; };
 		7A53D8951E03CC58008A4895 /* InstrumentInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InstrumentInterface.mm; sourceTree = "<group>"; };
 		7A53D8971E03CFFE008A4895 /* NavBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavBar.h; sourceTree = "<group>"; };
@@ -77,10 +97,6 @@
 		7A53D89B1E03D076008A4895 /* Button.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Button.m; sourceTree = "<group>"; };
 		7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DspFaust.cpp; sourceTree = "<group>"; };
 		7A74AEAE1DFA3957009942C2 /* DspFaust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DspFaust.h; sourceTree = "<group>"; };
-		7A74AEB01DFF7339009942C2 /* keyDownBright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyDownBright.png; sourceTree = "<group>"; };
-		7A74AEB11DFF7339009942C2 /* keyDownDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyDownDark.png; sourceTree = "<group>"; };
-		7A74AEB21DFF7339009942C2 /* keyUpBright.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyUpBright.png; sourceTree = "<group>"; };
-		7A74AEB31DFF7339009942C2 /* keyUpDark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyUpDark.png; sourceTree = "<group>"; };
 		7A8D384C1E127228006C44C3 /* PresetMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresetMenu.h; sourceTree = "<group>"; };
 		7A8D384D1E127228006C44C3 /* PresetMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresetMenu.mm; sourceTree = "<group>"; };
 		7A91E6CF1DAE84B60071B829 /* Smooth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Smooth.h; sourceTree = "<group>"; };
@@ -114,6 +130,7 @@
 		7A391E731D05C8020078B226 = {
 			isa = PBXGroup;
 			children = (
+				7A4E1D931E25980E000DCB9C /* Presets */,
 				7A391EA61D05C84E0078B226 /* AudioToolbox.framework */,
 				7A391EA41D05C8440078B226 /* CoreMotion.framework */,
 				7A391E7E1D05C8030078B226 /* iOSKeyboard */,
@@ -135,8 +152,6 @@
 		7A391E7E1D05C8030078B226 /* iOSKeyboard */ = {
 			isa = PBXGroup;
 			children = (
-				7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */,
-				7A74AEAE1DFA3957009942C2 /* DspFaust.h */,
 				7A391E821D05C8030078B226 /* AppDelegate.h */,
 				7A391E831D05C8030078B226 /* AppDelegate.mm */,
 				7A391E851D05C8030078B226 /* ViewController.h */,
@@ -145,7 +160,8 @@
 				7A391E8B1D05C8030078B226 /* Assets.xcassets */,
 				7A391E8D1D05C8030078B226 /* LaunchScreen.storyboard */,
 				7A391E901D05C8030078B226 /* Info.plist */,
-				7A391EAB1D05C8C40078B226 /* MobileFaust */,
+				7A4E1DA01E25AEDD000DCB9C /* DspFaust */,
+				7A391EAB1D05C8C40078B226 /* FaustAudio */,
 				7A391E7F1D05C8030078B226 /* Supporting Files */,
 			);
 			path = iOSKeyboard;
@@ -168,7 +184,7 @@
 			path = iOSKeyboardTests;
 			sourceTree = "<group>";
 		};
-		7A391EAB1D05C8C40078B226 /* MobileFaust */ = {
+		7A391EAB1D05C8C40078B226 /* FaustAudio */ = {
 			isa = PBXGroup;
 			children = (
 				7A391EB11D05C97E0078B226 /* img */,
@@ -188,22 +204,46 @@
 				7A53D89B1E03D076008A4895 /* Button.m */,
 				7A91E6CF1DAE84B60071B829 /* Smooth.h */,
 			);
-			name = MobileFaust;
+			name = FaustAudio;
 			sourceTree = "<group>";
 		};
 		7A391EB11D05C97E0078B226 /* img */ = {
 			isa = PBXGroup;
 			children = (
-				7A4E1D911E240159000DCB9C /* configDisplayBackground.jpg */,
-				7A4E1D8D1E2304BF000DCB9C /* navBarButtonsOff.png */,
-				7A4E1D8F1E23F439000DCB9C /* navBarButtonsOn.png */,
-				7A4E1D8B1E21A7D8000DCB9C /* mainBackground.jpg */,
-				7A74AEB01DFF7339009942C2 /* keyDownBright.png */,
-				7A74AEB11DFF7339009942C2 /* keyDownDark.png */,
-				7A74AEB21DFF7339009942C2 /* keyUpBright.png */,
-				7A74AEB31DFF7339009942C2 /* keyUpDark.png */,
+				7A4E1DA11E25AFE4000DCB9C /* configDisplayBackground.jpg */,
+				7A4E1DA21E25AFE4000DCB9C /* keyDownBright.png */,
+				7A4E1DA31E25AFE4000DCB9C /* keyDownDark.png */,
+				7A4E1DA41E25AFE4000DCB9C /* keyUpBright.png */,
+				7A4E1DA51E25AFE4000DCB9C /* keyUpDark.png */,
+				7A4E1DA61E25AFE4000DCB9C /* mainBackground.jpg */,
+				7A4E1DA71E25AFE4000DCB9C /* navBarButtonsOff.png */,
+				7A4E1DA81E25AFE4000DCB9C /* navBarButtonsOn.png */,
 			);
 			name = img;
+			sourceTree = "<group>";
+		};
+		7A4E1D931E25980E000DCB9C /* Presets */ = {
+			isa = PBXGroup;
+			children = (
+				7A4E1DB11E268D14000DCB9C /* Djembe_dsp */,
+				7A4E1DB21E268D14000DCB9C /* Djembe_keyb */,
+				7A4E1D941E259842000DCB9C /* Square_dsp */,
+				7A4E1D951E259842000DCB9C /* Square_keyb */,
+				7A4E1D961E259842000DCB9C /* String_dsp */,
+				7A4E1D971E259842000DCB9C /* String_keyb */,
+				7A4E1D981E259842000DCB9C /* Triangle_dsp */,
+				7A4E1D991E259842000DCB9C /* Triangle_keyb */,
+			);
+			name = Presets;
+			sourceTree = "<group>";
+		};
+		7A4E1DA01E25AEDD000DCB9C /* DspFaust */ = {
+			isa = PBXGroup;
+			children = (
+				7A74AEAD1DFA3957009942C2 /* DspFaust.cpp */,
+				7A74AEAE1DFA3957009942C2 /* DspFaust.h */,
+			);
+			name = DspFaust;
 			sourceTree = "<group>";
 		};
 		7A91E7051DB2C4670071B829 /* Frameworks */ = {
@@ -296,16 +336,24 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A74AEB51DFF7339009942C2 /* keyDownDark.png in Resources */,
+				7A4E1DAC1E25AFE4000DCB9C /* keyUpBright.png in Resources */,
+				7A4E1D9A1E259842000DCB9C /* Square_dsp in Resources */,
+				7A4E1DB01E25AFE4000DCB9C /* navBarButtonsOn.png in Resources */,
+				7A4E1DB31E268D14000DCB9C /* Djembe_dsp in Resources */,
+				7A4E1DAB1E25AFE4000DCB9C /* keyDownDark.png in Resources */,
+				7A4E1DAA1E25AFE4000DCB9C /* keyDownBright.png in Resources */,
+				7A4E1D9B1E259842000DCB9C /* Square_keyb in Resources */,
+				7A4E1DB41E268D14000DCB9C /* Djembe_keyb in Resources */,
+				7A4E1DA91E25AFE4000DCB9C /* configDisplayBackground.jpg in Resources */,
+				7A4E1D9C1E259842000DCB9C /* String_dsp in Resources */,
 				7A391E8F1D05C8030078B226 /* LaunchScreen.storyboard in Resources */,
-				7A4E1D8E1E2304BF000DCB9C /* navBarButtonsOff.png in Resources */,
-				7A74AEB41DFF7339009942C2 /* keyDownBright.png in Resources */,
-				7A4E1D901E23F439000DCB9C /* navBarButtonsOn.png in Resources */,
-				7A4E1D921E240159000DCB9C /* configDisplayBackground.jpg in Resources */,
-				7A74AEB71DFF7339009942C2 /* keyUpDark.png in Resources */,
+				7A4E1D9D1E259842000DCB9C /* String_keyb in Resources */,
+				7A4E1DAE1E25AFE4000DCB9C /* mainBackground.jpg in Resources */,
+				7A4E1D9F1E259842000DCB9C /* Triangle_keyb in Resources */,
+				7A4E1DAF1E25AFE4000DCB9C /* navBarButtonsOff.png in Resources */,
+				7A4E1DAD1E25AFE4000DCB9C /* keyUpDark.png in Resources */,
+				7A4E1D9E1E259842000DCB9C /* Triangle_dsp in Resources */,
 				7A391E8C1D05C8030078B226 /* Assets.xcassets in Resources */,
-				7A74AEB61DFF7339009942C2 /* keyUpBright.png in Resources */,
-				7A4E1D8C1E21A7D8000DCB9C /* mainBackground.jpg in Resources */,
 				7A391E8A1D05C8030078B226 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

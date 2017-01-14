@@ -28,8 +28,25 @@
     
     currentPreset = 0;
     
-    // initializing audio settings
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    
+    // if no presets in documents directory, then upload defaults if they exist    
+    NSArray *resourceFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[NSBundle mainBundle] resourcePath] error:nil];
+    NSMutableArray *presetFiles = [[NSMutableArray alloc] init];
+    for(int i=0; i<[resourceFiles count]; i++){
+        if([[resourceFiles objectAtIndex:i] rangeOfString:@"_keyb"].location != NSNotFound || [[resourceFiles objectAtIndex:i] rangeOfString:@"_dsp"].location != NSNotFound){
+            [presetFiles addObject:[resourceFiles objectAtIndex:i]];
+        }
+    }
+    
+    if([[[NSFileManager defaultManager] contentsOfDirectoryAtPath:documentsDirectory error:nil] count] == 0){
+        for(int i=0; i<[presetFiles count]; i++){
+            NSString *resourcePath = [[NSBundle mainBundle] pathForResource:[presetFiles objectAtIndex:i] ofType:nil];
+            [[NSFileManager defaultManager] copyItemAtPath:resourcePath toPath:[documentsDirectory stringByAppendingPathComponent:[presetFiles objectAtIndex:i]] error:nil];
+        }
+    }
+    
+    // initializing audio settings
     audioSettingsFile = [documentsDirectory stringByAppendingPathComponent:@"audioSettings"];
     audioSettings = [[NSDictionary alloc] initWithContentsOfFile:audioSettingsFile];
     
