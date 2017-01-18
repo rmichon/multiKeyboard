@@ -24,11 +24,15 @@
     if(self){
         self.multipleTouchEnabled = YES; // that's fucked up!
         
-        notes = @[@"C",@"C#",@"D",@"Eb",@"E",@"F",@"F#",@"G",@"G#",@"A",@"Bb",@"B"];
-                
-        // Default status is "off"
+		// setting defaults
+		notes = @[@"C",@"C#",@"D",@"Eb",@"E",@"F",@"F#",@"G",@"G#",@"A",@"Bb",@"B"];
         status = 0;
         keyboardMode = true;
+        darkImageOn = [UIImage imageNamed:@"keyDownDark.png"];
+        darkImageOff = [UIImage imageNamed:@"keyUpDark.png"];
+        brightImageOn = [UIImage imageNamed:@"keyDownBright.png"];
+        brightImageOff = [UIImage imageNamed:@"keyUpBright.png"];
+		[self setBackgroundColor:[UIColor blackColor]];
         
         // Status "on" layer
         layerOn = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height)];
@@ -43,14 +47,6 @@
         text.textAlignment = NSTextAlignmentCenter;
         text.font = [UIFont systemFontOfSize:32];
         [self addSubview:text];
-        
-        darkImageOn = [UIImage imageNamed:@"keyDownDark.png"];
-        darkImageOff = [UIImage imageNamed:@"keyUpDark.png"];
-        brightImageOn = [UIImage imageNamed:@"keyDownBright.png"];
-        brightImageOff = [UIImage imageNamed:@"keyUpBright.png"];
-        
-        // background is black by default
-        [self setBackgroundColor:[UIColor blackColor]];
     }
     return self;
 }

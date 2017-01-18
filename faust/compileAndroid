@@ -1,0 +1,9 @@
+#!/bin/bash
+
+faust2api -android -polyvoices 16 -poly2 -nodoc demoNAMM/guitarMajor.dsp
+
+unzip dsp-faust.zip
+cp dsp-faust/cpp/* ../android/Faust/app/src/main/cpp
+cp dsp-faust/java/* ../android/Faust/app/src/main/java/com/DspFaust
+rm -r dsp-faust
+rm dsp-faust.zip

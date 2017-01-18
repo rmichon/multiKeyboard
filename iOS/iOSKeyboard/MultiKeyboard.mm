@@ -56,6 +56,7 @@
     DspFaust *faustDsp;
     long *voices;
     
+	// OTHER
     NSString *documentsDirectory;
     NSString *currentPresetName;
 }
@@ -112,6 +113,7 @@
                 // updating default parameters with user defined parameters
                 if(error == nil){
                     for(int i=0; i<[userParameters count]; i++){
+						// TODO: currently only saves to int
                         keyboardParameters[[userParameters allKeys][i]] = [NSNumber numberWithInt:[[userParameters valueForKey:[userParameters allKeys][i]] intValue]];
                     }
                 }
@@ -152,13 +154,13 @@
     
     if([keyboardParameters[@"sendAccel"] intValue]) [self startMotion];
     
-    // keyboard dependent parameters
+    // keyboard dependent default parameters
     for(int i=0; i<[keyboardParameters[@"nKeyb"] intValue]; i++){
         if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_nKeys",i]] == nil){
             keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] = [NSNumber numberWithInt:7];
         }
         if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_lowestKey",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] = [NSNumber numberWithInt:(48 + i*12)];
+            keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] = [NSNumber numberWithInt:(48 + i*12)%127];
         }
         if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_scale",i]] == nil){
             keyboardParameters[[NSString stringWithFormat:@"keyb%d_scale",i]] = [NSNumber numberWithInt:0];
@@ -889,6 +891,10 @@
     if(fingersOnKeyboardsCount){
         delete[] fingersOnKeyboardsCount;
         fingersOnKeyboardsCount = NULL;
+    }
+	if(rounding){
+        delete[] rounding;
+        rounding = NULL;
     }
 }
 
