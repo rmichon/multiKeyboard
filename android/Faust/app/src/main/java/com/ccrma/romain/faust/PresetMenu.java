@@ -1,0 +1,596 @@
+package com.ccrma.romain.faust;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
+import android.support.v7.app.ActionBar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class PresetMenu extends ViewGroup {
+    private ArrayList<String> presetsList;
+    private Menu menu;
+    private PopupWindow popupWindow;
+    private int borderSize;
+    private String documentsDirectory;
+    private TextView presetsTitleLabel;
+    private ScrollView presetsView;
+
+    private String audioSettingsFile;
+    private Map<String,Object> audioSettings;
+
+    private int selectedButtonColor;
+    private int presetsListTitleColor;
+    private int presetsListTitleBackgroundColor;
+    private int oddPresetsNameFieldsBackgroundColor;
+    private int evenPresetsNameFieldsBackgroundColor;
+    private int selectedPresetsNameFieldsBackgroundColor;
+    private int menuButtonsTextColor;
+    private int menuButtonsBackgroundColor;
+    private int presetsNameColor;
+    private int oddSelectButtonsColor;
+    private int evenSelectButtonsColor;
+
+    private int fieldsHeight;
+
+    private float presetsListFontSize;
+    private float presetsListTitleFontSize;
+    private float menuButtonsFontSize;
+
+    private Context context;
+    public int currentPreset;
+
+    private OnPresetMenuChangedListener mPresetMenuChangedListener = null;
+
+    public interface OnPresetMenuChangedListener {
+        void OnAudioSettingsChanged();
+        void OnPresetLaunch(int preset);
+    }
+
+    public PresetMenu(Context c, int preset) {
+        super(c);
+
+        context = c;
+        currentPreset = preset;
+        documentsDirectory = context.getFilesDir().toString();
+
+        presetsList = new ArrayList<String>();
+
+        // Color maps
+        selectedButtonColor = Color.argb((int)(255*0.7), (int)(255*1), (int)(255*0.3), (int)(255*0.3));
+        presetsListTitleColor = Color.argb((int)(255*1), (int)(255*0.96), (int)(255*0.96), (int)(255*0.96));
+        presetsListTitleBackgroundColor = Color.argb((int)(255*0.7), (int)(255*0.2), (int)(255*0.2), (int)(255*0.2));
+        oddPresetsNameFieldsBackgroundColor = Color.argb((int)(255*0.7), (int)(255*0.9), (int)(255*0.9), (int)(255*0.9));
+        evenPresetsNameFieldsBackgroundColor = Color.argb((int)(255*0.7), (int)(255*0.8), (int)(255*0.8), (int)(255*0.8));
+        selectedPresetsNameFieldsBackgroundColor = Color.argb((int)(255*0.7), (int)(255*1), (int)(255*0.7), (int)(255*0.7));
+        menuButtonsTextColor = Color.argb((int)(255*1), (int)(255*0.85), (int)(255*0.85), (int)(255*0.85));
+        menuButtonsBackgroundColor = Color.argb((int)(255*0.7), (int)(255*0.2), (int)(255*0.2), (int)(255*0.2));
+        presetsNameColor = Color.argb((int)(255*1), (int)(255*0.2), (int)(255*0.2), (int)(255*0.2));
+        oddSelectButtonsColor = Color.argb((int)(255*0.7), (int)(255*0.4), (int)(255*0.4), (int)(255*0.4));
+        evenSelectButtonsColor = Color.argb((int)(255*0.7), (int)(255*0.3), (int)(255*0.3), (int)(255*0.3));
+
+        // other parameters
+        presetsListTitleFontSize = 24;
+        presetsListFontSize = 22;
+        menuButtonsFontSize = 20;
+
+        // positions
+        borderSize = 2;
+
+        // TODO missing update previous values in function of screen width here
+
+        // TODO ideqlly we want to be more specific here and apply what is said in https://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+        // TODO That would imply removing android:largeHeap="true" and android:hardwareAccelerated="false" from the manifest may be?
+        Bitmap backgroundImage = BitmapFactory.decodeResource(context.getResources(),R.drawable.main_background);
+        setBackground(new BitmapDrawable(context.getResources(),backgroundImage));
+
+        presetsTitleLabel = new TextView(context);
+        presetsTitleLabel.setBackgroundColor(presetsListTitleBackgroundColor);
+        presetsTitleLabel.setTextColor(presetsListTitleColor);
+        presetsTitleLabel.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        presetsTitleLabel.setTextSize(presetsListTitleFontSize);
+        presetsTitleLabel.setTypeface(null, Typeface.BOLD);
+        presetsTitleLabel.setText("Presets Name");
+        addView(presetsTitleLabel);
+
+        menu = new Menu(context);
+        addView(menu);
+
+        updatePresetsList();
+
+        // If no presets (first run), then create one
+        if(presetsList.size() == 0){
+            try {
+                createDefaultPresetFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            updatePresetsList();
+        }
+
+        buildPresetsTable();
+
+        audioSettingsFile = documentsDirectory.concat("/audioSettings");
+        try {
+            loadAudioSettings();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        popupWindow = new PopupWindow(context);
+        popupWindow.setVisibility(INVISIBLE);
+        addView(popupWindow);
+    }
+
+    public void setOnPresetMenuChangedListener(OnPresetMenuChangedListener listener) {
+        mPresetMenuChangedListener = listener;
+    }
+
+    private void loadAudioSettings() throws IOException, ClassNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream(audioSettingsFile);
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        audioSettings = (Map<String,Object>) objectInputStream.readObject();
+    }
+
+    private void updatePresetsList(){
+        File f = new File(documentsDirectory);
+        File file[] = f.listFiles();
+        presetsList.clear();
+        for(int i=0; i<file.length; i++){
+            if(file[i].toString().contains("_keyb")) {
+                presetsList.add(file[i].toString().replace(documentsDirectory.concat("/"),"").replace("_keyb",""));
+            }
+        }
+    }
+
+    private void buildPresetsTable(){
+        presetsView = new PresetsView(context);
+        addView(presetsView);
+    }
+
+    private void clearPresetsTable() {
+        if(presetsView != null){
+            removeView(presetsView);
+            presetsView = null;
+            System.gc(); // TODO not sure about that
+        }
+    }
+
+    class PresetsView extends ScrollView{
+        private PresetsTable presetsTable;
+
+        public PresetsView(Context context) {
+            super(context);
+
+            presetsTable = new PresetsTable(context);
+            addView(presetsTable);
+        }
+
+        class PresetsTable extends ViewGroup {
+            private ArrayList<Button> selectButtons;
+            private ArrayList<EditText> presetsNameFields;
+
+            public PresetsTable(Context context) {
+                super(context);
+
+                selectButtons = new ArrayList<Button>();
+                presetsNameFields = new ArrayList<EditText>();
+
+                // used to prevent edittext to gain focus
+                setFocusable(true);
+                setFocusableInTouchMode(true);
+
+                for (int i = 0; i < presetsList.size(); i++) {
+                    selectButtons.add(new Button(context));
+                    if (i == currentPreset) {
+                        selectButtons.get(i).setOffColor(selectedButtonColor);
+                        selectButtons.get(i).setOnColor(selectedButtonColor);
+                    } else {
+                        if (i % 2 == 1) {
+                            selectButtons.get(i).setOffColor(evenSelectButtonsColor);
+                            selectButtons.get(i).setOnColor(evenSelectButtonsColor);
+                        } else {
+                            selectButtons.get(i).setOffColor(oddSelectButtonsColor);
+                            selectButtons.get(i).setOnColor(oddSelectButtonsColor);
+                        }
+                    }
+                    selectButtons.get(i).tag = i;
+                    selectButtons.get(i).setOnButtonStatusChangedListener(new Button.OnButtonStatusChangedListener() {
+                        @Override
+                        public void OnButtonStatusChanged(Button source) {
+                            if (source.on) {
+                                if (source.tag != currentPreset) {
+                                    if (currentPreset % 2 == 1) {
+                                        selectButtons.get(currentPreset).setOffColor(evenSelectButtonsColor);
+                                        selectButtons.get(currentPreset).setOnColor(evenSelectButtonsColor);
+                                        presetsNameFields.get(currentPreset).setBackgroundColor(evenPresetsNameFieldsBackgroundColor);
+                                    } else {
+                                        selectButtons.get(currentPreset).setOffColor(oddSelectButtonsColor);
+                                        selectButtons.get(currentPreset).setOnColor(oddSelectButtonsColor);
+                                        presetsNameFields.get(currentPreset).setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
+                                    }
+
+                                    selectButtons.get(source.tag).setOffColor(selectedButtonColor);
+                                    selectButtons.get(source.tag).setOnColor(selectedButtonColor);
+                                    presetsNameFields.get(source.tag).setBackgroundColor(selectedPresetsNameFieldsBackgroundColor);
+                                    currentPreset = source.tag;
+                                }
+                            }
+                        }
+                    });
+
+                    addView(selectButtons.get(i));
+
+                    presetsNameFields.add(new EditText(context));
+                    if (i == currentPreset) {
+                        presetsNameFields.get(i).setBackgroundColor(selectedPresetsNameFieldsBackgroundColor);
+                    } else {
+                        if (i % 2 == 1) {
+                            presetsNameFields.get(i).setBackgroundColor(evenPresetsNameFieldsBackgroundColor);
+                        } else {
+                            presetsNameFields.get(i).setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
+                        }
+                    }
+                    presetsNameFields.get(i).setTextAlignment(TEXT_ALIGNMENT_CENTER); // TODO note sure why text doesn't center upon rebuild
+                    presetsNameFields.get(i).setTextSize(presetsListFontSize);
+                    presetsNameFields.get(i).setTextColor(presetsNameColor);
+                    presetsNameFields.get(i).setText(presetsList.get(i));
+                    presetsNameFields.get(i).setId(i); // TODO might have to be normalized with other elements
+                    presetsNameFields.get(i).setSingleLine(true);
+                    presetsNameFields.get(i).setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    presetsNameFields.get(i).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                // when a preset name changes, the name of the corresponding preset files are updated
+                                File currentKeybFile = new File(documentsDirectory.concat("/").concat(presetsList.get(textView.getId())).concat("_keyb"));
+                                File newKeybFile = new File(documentsDirectory.concat("/").concat(textView.getText().toString()).concat("_keyb"));
+                                File currentDspFile = new File(documentsDirectory.concat("/").concat(presetsList.get(textView.getId())).concat("_dsp"));
+                                File newDspFile = new File(documentsDirectory.concat("/").concat(textView.getText().toString()).concat("_dsp"));
+                                currentKeybFile.renameTo(newKeybFile);
+                                currentDspFile.renameTo(newDspFile);
+
+                                updatePresetsList();
+                                clearPresetsTable();
+                                buildPresetsTable();
+                                return false;
+                            }
+                            return false;
+                        }
+                    });
+                    addView(presetsNameFields.get(i));
+                }
+            }
+
+            @Override
+            protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+                System.out.println(right + " " + bottom);
+                for (int i = 0; i < presetsList.size(); i++) {
+                    int width = right - left;
+                    selectButtons.get(i).layout(0, fieldsHeight * i, fieldsHeight, fieldsHeight * (i + 1));
+                    presetsNameFields.get(i).layout(fieldsHeight, fieldsHeight * i, width, fieldsHeight * (i + 1));
+                }
+            }
+        }
+        @Override
+        protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+            int width = right-left;
+            presetsTable.layout(0,0,width,presetsList.size()*fieldsHeight);
+        }
+    }
+
+    class Menu extends ViewGroup{
+        private Button menuButtons[];
+
+        public Menu(Context context){
+            super(context);
+
+            String menuButtonsLabel[] = {"+ Add Preset", "- Delete Preset", "Audio Settings", "Run Preset :>"};
+            menuButtons = new Button[4];
+            for(int i=0; i<menuButtons.length; i++){
+                menuButtons[i] = new Button(context);
+                menuButtons[i].tag = i;
+                menuButtons[i].setOnColor(menuButtonsBackgroundColor); // TODO perhaps should be moved here
+                menuButtons[i].setOffColor(menuButtonsBackgroundColor); // TODO perhaps should be moved here
+                menuButtons[i].setTextColor(menuButtonsTextColor);
+                menuButtons[i].setTextSize(menuButtonsFontSize);
+                menuButtons[i].setText(menuButtonsLabel[i]);
+                menuButtons[i].setOnButtonStatusChangedListener(new Button.OnButtonStatusChangedListener() {
+                    @Override
+                    public void OnButtonStatusChanged(Button source) {
+                        if(source.on){
+                            // when adding a new preset, the current preset files are copied
+                            if(source.tag == 0){
+                                // copying current keyboard preset to new file
+                                String currentKeyboardPresetFile = documentsDirectory.concat("/").concat(presetsList.get(currentPreset).concat("_keyb"));
+                                String currentDspPresetFile = documentsDirectory.concat("/").concat(presetsList.get(currentPreset).concat("_dsp"));
+                                try {
+                                    copyFile(new File(currentKeyboardPresetFile),new File(documentsDirectory.concat("/*New Preset*_keyb")));
+                                    copyFile(new File(currentDspPresetFile),new File(documentsDirectory.concat("/*New Preset*_dsp")));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                updatePresetsList();
+                                clearPresetsTable();
+                                buildPresetsTable();
+                            }
+                            // when deleting a preset, the related files are deleted
+                            else if(source.tag == 1 && presetsList.size()>1){
+                                popupWindow.setVisibility(VISIBLE);
+                            }
+                            else if(source.tag == 2){
+                                if(source.polarity){
+                                    source.setBackgroundColor(selectedButtonColor);
+                                    // audioSettingsView.setVisibility(VISIBLE); TODO
+                                    presetsTitleLabel.setVisibility(INVISIBLE);
+                                    presetsView.setVisibility(INVISIBLE);
+                                }
+                                else{
+                                    source.setBackgroundColor(menuButtonsBackgroundColor);
+                                    // audioSettingsView.setVisibility(INVISIBLE); TODO
+                                    presetsTitleLabel.setVisibility(VISIBLE);
+                                    presetsView.setVisibility(VISIBLE);
+                                    if (mPresetMenuChangedListener != null) {
+                                        mPresetMenuChangedListener.OnAudioSettingsChanged();
+                                    }
+                                }
+                            }
+                            else if(source.tag == 3){
+                                if (mPresetMenuChangedListener != null) {
+                                    mPresetMenuChangedListener.OnPresetLaunch(currentPreset);
+                                }
+                            }
+                        }
+                    }
+                });
+                // TODO missing selector here
+                addView(menuButtons[i]);
+            }
+
+        }
+
+        @Override
+        protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+            int width = right-left;
+            int buttonsWidth = width/menuButtons.length;
+            for(int i=0; i<menuButtons.length; i++){
+                menuButtons[i].layout(borderSize+buttonsWidth*i,
+                        borderSize,
+                        buttonsWidth*(i+1)-borderSize*2,
+                        bottom-top-borderSize);
+            }
+        }
+    }
+
+    // TODO: perhaps, this should be in its own file?
+    class PopupWindow extends ViewGroup{
+        private TextView popupMessage;
+        private Button buttons[];
+
+        public PopupWindow(Context context) {
+            super(context);
+
+            setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
+
+            popupMessage = new TextView(context);
+            popupMessage.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+            popupMessage.setTextSize(presetsListFontSize);
+            // TODO missing line number set to 2 here
+            popupMessage.setText("Are you sure you want to delete this preset?");
+            addView(popupMessage);
+
+            String popupWindowButtonsLabels[] = {"No","Yes"};
+            buttons = new Button[2];
+            for(int i=0; i<2; i++){
+                buttons[i] = new Button(context);
+                buttons[i].setOnColor(menuButtonsBackgroundColor);
+                buttons[i].setOffColor(menuButtonsBackgroundColor);
+                buttons[i].setTextColor(menuButtonsTextColor);
+                buttons[i].setTextSize(presetsListFontSize);
+                buttons[i].setText(popupWindowButtonsLabels[i]);
+                buttons[i].tag = i;
+                buttons[i].setOnButtonStatusChangedListener(new Button.OnButtonStatusChangedListener() {
+                    @Override
+                    public void OnButtonStatusChanged(Button source) {
+                        if (source.on) {
+                            // when adding a new preset, the current preset files are copied
+                            if (source.tag == 1) { // yes
+                                String currentKeyboardPresetFilePath = documentsDirectory.concat("/").concat(presetsList.get(currentPreset).concat("_keyb"));
+                                String currentDspPresetFilePath = documentsDirectory.concat("/").concat(presetsList.get(currentPreset).concat("_dsp"));
+                                File currentKeyboardPresetFile = new File(currentKeyboardPresetFilePath);
+                                File currentDspPresetFile = new File(currentDspPresetFilePath);
+                                if(currentKeyboardPresetFile.delete() && currentDspPresetFile.delete()) {
+                                    currentPreset = 0;
+                                    updatePresetsList();
+                                    clearPresetsTable();
+                                    buildPresetsTable();
+                                }
+                            }
+                        }
+                        popupWindow.setVisibility(INVISIBLE);
+                    }
+                });
+                addView(buttons[i]);
+            }
+        }
+
+        @Override
+        protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+            int width = right-left;
+            int height = bottom-top;
+            int buttonsWidth = width/2-borderSize*2;
+            popupMessage.layout(0,0,width,height-fieldsHeight-borderSize*2);
+            for(int i=0; i<2; i++){
+                // TODO doesn't look perfectly right but same problem on iOS
+                buttons[i].layout(borderSize+(buttonsWidth+borderSize)*i,
+                        height-fieldsHeight-borderSize,
+                        (buttonsWidth+borderSize)*(i+1),
+                        height-borderSize);
+            }
+        }
+    }
+
+    class AudioSettings extends ViewGroup{
+        private String audioSettingsLabels[] = {"Sampling Rate", "Buffer Size"};
+
+        public AudioSettings(Context context) {
+            super(context);
+
+            for(int i=0; i<audioSettingsLabels.length; i++){
+                TextView currentLabel = new TextView(context);
+                currentLabel.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                currentLabel.setTextColor(menuButtonsTextColor);
+                currentLabel.setTextSize(presetsListFontSize);
+                currentLabel.setText(audioSettingsLabels[i]);
+                if(i%2 == 1){
+                    currentLabel.setBackgroundColor(evenSelectButtonsColor);
+                }
+                else{
+                    currentLabel.setBackgroundColor(oddSelectButtonsColor);
+                }
+                addView(currentLabel);
+
+                EditText currentValueField = new EditText(context);
+                if(i%2 == 1){
+                    currentValueField.setBackgroundColor(evenPresetsNameFieldsBackgroundColor);
+                }
+                else{
+                    currentValueField.setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
+                }
+                currentValueField.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                currentValueField.setTextSize(presetsListFontSize);
+                currentValueField.setTextColor(presetsNameColor);
+                /*
+                if(i == 0){
+                    currentValueField.setText:[NSString stringWithFormat:@"%d", [audioSettings[@"SR"] intValue]]];
+                }
+                else if (i == 1){
+                    currentValueField setText:[NSString stringWithFormat:@"%d", [audioSettings[@"bufferLength"] intValue]]];
+                }
+                [currentValueField setTag:i];
+                [currentValueField addTarget:self action:@selector(newEventOnAudioSettings:) forControlEvents:UIControlEventEditingDidEnd];
+                [audioSettingsView addSubview:currentValueField];
+                */
+            }
+        }
+
+        @Override
+        protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+            for(int i=0; i<audioSettingsLabels.length; i++) {
+                // TextView currentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, fieldsHeight*i, audioSettingsLabelsWidth, fieldsHeight)];
+                // currentValueField = [[UITextField alloc] initWithFrame:CGRectMake(audioSettingsLabelsWidth, fieldsHeight*i, (presetsListWidth-borderSize*2-presetsListXOffset*2)-audioSettingsLabelsWidth, fieldsHeight)];
+            }
+        }
+    }
+
+    // Creates a set of new default preset file
+    private void createDefaultPresetFile() throws IOException {
+        Map<String,Object> keyboardParameters;
+        keyboardParameters = new HashMap<String,Object>();
+        keyboardParameters.put("nKeyb", 4);
+        keyboardParameters.put("maxFingers", 10);
+        keyboardParameters.put("maxKeybPoly", 16);
+        keyboardParameters.put("monoMode", 1);
+        keyboardParameters.put("quantizationMode", 0);
+        keyboardParameters.put("interKeybSlideAllowed", 1);
+        keyboardParameters.put("sendCurrentKey", 1);
+        keyboardParameters.put("sendCurrentKeyboard", 1);
+        keyboardParameters.put("sendX", 1);
+        keyboardParameters.put("sendY", 1);
+        keyboardParameters.put("sendAccel", 1);
+        keyboardParameters.put("roundingUpdateSpeed", (float) 0.06);
+        keyboardParameters.put("roundingSmoothPole", (float) 0.9);
+        keyboardParameters.put("roundingThreshold", (float) 3.0);
+        keyboardParameters.put("roundingDeactCycles", 5);
+
+        FileOutputStream fileOutputStreamKeyb = new FileOutputStream(documentsDirectory.concat("/Preset 0_keyb"));
+        ObjectOutputStream objectOutputStreamKeyb = new ObjectOutputStream(fileOutputStreamKeyb);
+        objectOutputStreamKeyb.writeObject(keyboardParameters);
+        objectOutputStreamKeyb.close();
+
+        Map<String,Object> dspParameters;
+        dspParameters = new HashMap<String,Object>();
+
+        FileOutputStream fileOutputStreamDsp = new FileOutputStream(documentsDirectory.concat("/Preset 0_dsp"));
+        ObjectOutputStream objectOutputStreamDsp = new ObjectOutputStream(fileOutputStreamDsp);
+        objectOutputStreamDsp.writeObject(dspParameters);
+        objectOutputStreamDsp.close();
+    }
+
+    public void copyFile(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+    @Override
+    protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+        int width = right-left;
+        int height = bottom-top;
+        int presetsListWidth = width;
+        int presetsListXOffset = width/12;
+        int presetsListYOffset = width/8; // /6 on iOS
+        fieldsHeight = height/16; // TODO may be copy to the other
+        int presetsListHeight = (int)(height*0.92);
+        int popupWindowWidth = width/3;
+        int popupWindowHeight = height/4;
+
+        // TODO alignment of that one doesn't look right compared to Android
+        if(presetsTitleLabel != null) {
+            presetsTitleLabel.layout(borderSize + presetsListXOffset + fieldsHeight,
+                    borderSize + presetsListYOffset,
+                    (presetsListWidth - borderSize - presetsListXOffset),
+                    borderSize + presetsListYOffset + fieldsHeight);
+        }
+        if(presetsView != null) {
+            presetsView.layout(borderSize + presetsListXOffset,
+                    borderSize + presetsListYOffset + fieldsHeight,
+                    presetsListWidth - borderSize - presetsListXOffset,
+                    presetsListHeight + borderSize - presetsListXOffset);
+        }
+        if(menu != null) {
+            menu.layout(0, presetsListHeight, right, bottom - top);
+        }
+        if(popupWindow != null) {
+            popupWindow.layout(width/2-popupWindowWidth/2,
+                    height/2-popupWindowHeight/2,
+                    popupWindowWidth+width/2-popupWindowWidth/2,
+                    popupWindowHeight+height/2-popupWindowHeight/2);
+        }
+    }
+}

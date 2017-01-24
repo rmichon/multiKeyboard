@@ -19,7 +19,7 @@
     PresetMenu *presetMenu;
     InstrumentInterface *instrumentInterface;
     NSInteger currentPreset;
-    NSString *audioSettingsFile; // TODO: note sure if it needs to be global
+    NSString *audioSettingsFile;
     NSDictionary *audioSettings;
 }
 

@@ -6,6 +6,7 @@ import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.media.midi.MidiReceiver;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +17,24 @@ import android.widget.RelativeLayout;
 
 import com.DspFaust.DspFaust;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+public class MainActivity extends AppCompatActivity {
     private DspFaust dspFaust;
+    private PresetMenu presetMenu;
+    private InstrumentInterface instrumentInterface;
+    private int currentPreset;
+    private String audioSettingsFile;
+    private String documentsDirectory;
+    private Map<String,Object> audioSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +44,69 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        int SR = 48000;
-        int blockSize = 128;
-        dspFaust = new DspFaust(SR,blockSize);
-        dspFaust.start();
+        currentPreset = 0;
+        documentsDirectory = this.getFilesDir().toString();
+
+        // TODO: missing upload default presets
+
+        // initializing audio settings
+        audioSettingsFile = documentsDirectory.concat("/audioSettings");
+        try {
+            loadAudioSettings();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // if no saved settings then create defaults
+        if(audioSettings == null){
+            try {
+                createDefaultAudioSettings();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        startFaustDsp();
+
+        final RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
+        final PresetMenu presetMenu = new PresetMenu(this,currentPreset);
+        presetMenu.setOnPresetMenuChangedListener(new PresetMenu.OnPresetMenuChangedListener() {
+            @Override
+            public void OnAudioSettingsChanged() {
+                try {
+                    loadAudioSettings();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                stopFaustDsp();
+                startFaustDsp();
+            }
+
+            @Override
+            public void OnPresetLaunch(int preset) {
+                /*
+                currentPreset = preset;
+                instrumentInterface = new InstrumentInterface(this, dspFaust, currentPreset);
+                mainLayout.removeView(presetMenu);
+                presetMenu = null;
+                [instrumentInterface addTarget:self action:@selector(newEventOnInstrumentInterface:) forControlEvents:UIControlEventValueChanged];
+                [self.view addSubview:instrumentInterface];
+                */
+            }
+        });
+        mainLayout.addView(presetMenu);
+
+        // TODO: missing keyboard only
+        //MultiKeyboard multiKeyboard = new MultiKeyboard(this, dspFaust, null);
+        //mainLayout.addView(multiKeyboard);
 
         // MIDI Support
         final FaustMidiReceiver midiReceiver = new FaustMidiReceiver();
-        Context context = getApplicationContext();
-        final MidiManager m = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
+        final MidiManager m = (MidiManager)this.getSystemService(Context.MIDI_SERVICE);
         final MidiDeviceInfo[] infos = m.getDevices();
 
         // opening all the available ports and devices already connected
@@ -80,10 +150,49 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }, new Handler(Looper.getMainLooper()));
+    }
 
-        RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
-        MultiKeyboard zone = new MultiKeyboard(this, dspFaust, null);
-        mainLayout.addView(zone);
+    private void loadAudioSettings() throws IOException, ClassNotFoundException {
+        FileInputStream fileInputStream = new FileInputStream(audioSettingsFile);
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        audioSettings = (Map<String,Object>) objectInputStream.readObject();
+    }
+
+    private void createDefaultAudioSettings() throws IOException {
+        audioSettings = new HashMap<String,Object>();
+        audioSettings.put("SR", 48000);
+        audioSettings.put("bufferLength",128);
+
+        FileOutputStream fileOutputStream = new FileOutputStream(documentsDirectory.concat("/audioSettings"));
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(audioSettings);
+        objectOutputStream.close();
+    }
+
+    private void startFaustDsp(){
+        if(dspFaust == null){
+            dspFaust = new DspFaust((int)audioSettings.get("SR"), (int)audioSettings.get("bufferLength"));
+            dspFaust.start();
+        }
+    }
+
+    private void stopFaustDsp(){
+        if(dspFaust != null){
+            dspFaust.stop();
+            dspFaust = null;
+        }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        dspFaust.stop();
+    }
+
+    @Override
+    public void onResume(){
+        super.onPause();
+        dspFaust.start();
     }
 
     @Override

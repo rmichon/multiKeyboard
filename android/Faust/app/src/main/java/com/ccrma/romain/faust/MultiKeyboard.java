@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 
 import com.DspFaust.DspFaust;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +72,7 @@ public class MultiKeyboard extends ViewGroup {
         context = c;
         dspFaust = dsp;
         currentPresetName = presetName;
-        borderSize = 1;
+        borderSize = 2; // TODO this parameter should be updated in function of screen width as well as the fonts
         setBackgroundColor(Color.BLACK);
 
         // TODO: missing document directory here
@@ -664,6 +668,18 @@ public class MultiKeyboard extends ViewGroup {
             if((int)keyboardParameters.get("sendX") == 1) dspFaust.setVoiceParamValue("x", voices[fingerId], (float)currentContinuousKey%1f);
             if((int)keyboardParameters.get("sendY") == 1) dspFaust.setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
         }
+    }
+
+    public void savePreset() throws IOException {
+        FileOutputStream fileOutputStreamKeyb = new FileOutputStream(currentPresetName.concat("_keyb"));
+        ObjectOutputStream objectOutputStreamKeyb = new ObjectOutputStream(fileOutputStreamKeyb);
+        objectOutputStreamKeyb.writeObject(keyboardParameters);
+        objectOutputStreamKeyb.close();
+
+        FileOutputStream fileOutputStreamDsp = new FileOutputStream(currentPresetName.concat("_dsp"));
+        ObjectOutputStream objectOutputStreamDsp = new ObjectOutputStream(fileOutputStreamDsp);
+        objectOutputStreamDsp.writeObject(dspParameters);
+        objectOutputStreamDsp.close();
     }
 
     private float applyScale(float pitch, int keyboardId){

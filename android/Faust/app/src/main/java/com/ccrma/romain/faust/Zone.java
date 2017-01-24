@@ -117,18 +117,4 @@ public class Zone extends ViewGroup {
     public int getStatus(){
         return status;
     }
-
-    // TODO: remove
-    /*
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        layerOn.setVisibility(VISIBLE);
-        //mCurrentItemChangedListener.OnCurrentItemChanged(this);
-        return super.onTouchEvent(event);
-    }
-
-    public void setOnCurrentItemChangedListener(OnCurrentItemChangedListener listener) {
-        mCurrentItemChangedListener = listener;
-    }
-    */
 }
