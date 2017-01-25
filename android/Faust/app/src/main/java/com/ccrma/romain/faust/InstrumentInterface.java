@@ -124,11 +124,7 @@ public class InstrumentInterface extends ViewGroup {
             @Override
             public void OnNavBarButtonTouched(int buttonID) {
                 if(buttonID == 0){ // going back to home
-                    try {
-                        multiKeyboard.savePreset(); // saving the current preset
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                        // multiKeyboard.savePreset(); // TODO might have to be replaced here by something else
                     // TODO missing sender here
                     //[self sendActionsForControlEvents:UIControlEventValueChanged];
                 }
@@ -141,19 +137,12 @@ public class InstrumentInterface extends ViewGroup {
                         configDisplayOn = true;
                     }
                     else{ // closing config window
-                        /*
-                        try {
-                            multiKeyboard.savePreset(); // saving modifications to file
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        */
+                        // TODO need to call save parameters on config display!
                         removeView(configDisplay); // dealloc config display
                         configDisplay = null;
                         configDisplayOn = false;
                         multiKeyboard = new MultiKeyboard(context,dspFaust,currentPresetName);
                         addView(multiKeyboard);
-                        //multiKeyboard.buildInterface(); // rebuilding multikeyboard taking previous changes into account
                     }
                 }
                 else if(buttonID == 2){ // loading previous preset
@@ -185,9 +174,11 @@ public class InstrumentInterface extends ViewGroup {
         addView(navBar);
     }
 
+    // TODO should also check that guy... not sure we need this anymore with the future system
     public void cleanUI(){
         if(multiKeyboard != null){
-            multiKeyboard.cleanInterface(); // necessary because of acceleremoeters (wont get dealloc otherwise)
+            // TODO not so sure baout this: might be a source of memory leak
+            //multiKeyboard.cleanInterface(); // necessary because of acceleremoeters (wont get dealloc otherwise)
             removeView(multiKeyboard);
             multiKeyboard = null;
         }
@@ -195,7 +186,6 @@ public class InstrumentInterface extends ViewGroup {
             removeView(navBar);
             navBar = null;
         }
-        System.gc(); // TODO not sure about that one
     }
 
     @Override

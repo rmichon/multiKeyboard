@@ -155,7 +155,7 @@ public class MultiKeyboard extends ViewGroup {
     }
 
     public void buildInterface(){
-        cleanInterface();
+        //cleanInterface();
         UIon = true;
 
         if((int)keyboardParameters.get("sendAccel") == 1){
@@ -255,6 +255,7 @@ public class MultiKeyboard extends ViewGroup {
         // TODO: missing some stuff here too
     }
 
+    /*
     public void cleanInterface(){
         if((int)keyboardParameters.get("sendAccel") == 1) {
             mSensorManager.unregisterListener(mSensorListener);
@@ -286,6 +287,7 @@ public class MultiKeyboard extends ViewGroup {
         zoneCenterXOffset = null;
         System.gc(); // don't know if this is actually needed...
     }
+    */
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -689,6 +691,7 @@ public class MultiKeyboard extends ViewGroup {
         }
     }
 
+    /* TODO: move to config display
     public void savePreset() throws IOException {
         FileOutputStream fileOutputStreamKeyb = new FileOutputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_keyb"));
         ObjectOutputStream objectOutputStreamKeyb = new ObjectOutputStream(fileOutputStreamKeyb);
@@ -700,6 +703,7 @@ public class MultiKeyboard extends ViewGroup {
         objectOutputStreamDsp.writeObject(dspParameters);
         objectOutputStreamDsp.close();
     }
+    */
 
     private float applyScale(float pitch, int keyboardId){
         int refPitch = (int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId));
