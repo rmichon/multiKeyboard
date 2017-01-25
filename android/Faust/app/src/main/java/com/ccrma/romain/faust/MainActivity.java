@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private String audioSettingsFile;
     private String documentsDirectory;
     private Map<String,Object> audioSettings;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        context = getApplicationContext();
         currentPreset = 0;
         documentsDirectory = this.getFilesDir().toString();
 
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         startFaustDsp();
 
         final RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
-        final PresetMenu presetMenu = new PresetMenu(this,currentPreset);
+        presetMenu = new PresetMenu(context,currentPreset);
         presetMenu.setOnPresetMenuChangedListener(new PresetMenu.OnPresetMenuChangedListener() {
             @Override
             public void OnAudioSettingsChanged() {
@@ -88,14 +90,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void OnPresetLaunch(int preset) {
-                /*
                 currentPreset = preset;
-                instrumentInterface = new InstrumentInterface(this, dspFaust, currentPreset);
+                instrumentInterface = new InstrumentInterface(context, dspFaust, currentPreset);
                 mainLayout.removeView(presetMenu);
                 presetMenu = null;
-                [instrumentInterface addTarget:self action:@selector(newEventOnInstrumentInterface:) forControlEvents:UIControlEventValueChanged];
-                [self.view addSubview:instrumentInterface];
-                */
+                // TODO instrument interface missing selector
+                //[instrumentInterface addTarget:self action:@selector(newEventOnInstrumentInterface:) forControlEvents:UIControlEventValueChanged];
+                mainLayout.addView(instrumentInterface);
             }
         });
         mainLayout.addView(presetMenu);
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         // MIDI Support
         final FaustMidiReceiver midiReceiver = new FaustMidiReceiver();
-        final MidiManager m = (MidiManager)this.getSystemService(Context.MIDI_SERVICE);
+        final MidiManager m = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
         final MidiDeviceInfo[] infos = m.getDevices();
 
         // opening all the available ports and devices already connected

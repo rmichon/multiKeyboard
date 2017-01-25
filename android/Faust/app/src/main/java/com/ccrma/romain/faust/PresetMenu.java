@@ -28,6 +28,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +41,7 @@ public class PresetMenu extends ViewGroup {
     private String documentsDirectory;
     private TextView presetsTitleLabel;
     private ScrollView presetsView;
+    private AudioSettings audioSettingsView;
 
     private String audioSettingsFile;
     private Map<String,Object> audioSettings;
@@ -143,6 +146,9 @@ public class PresetMenu extends ViewGroup {
             e.printStackTrace();
         }
 
+        audioSettingsView = new AudioSettings(context);
+        audioSettingsView.setVisibility(INVISIBLE);
+        addView(audioSettingsView);
 
         popupWindow = new PopupWindow(context);
         popupWindow.setVisibility(INVISIBLE);
@@ -159,6 +165,13 @@ public class PresetMenu extends ViewGroup {
         audioSettings = (Map<String,Object>) objectInputStream.readObject();
     }
 
+    private void saveAudioSettings() throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream(audioSettingsFile);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(audioSettings);
+        objectOutputStream.close();
+    }
+
     private void updatePresetsList(){
         File f = new File(documentsDirectory);
         File file[] = f.listFiles();
@@ -168,6 +181,7 @@ public class PresetMenu extends ViewGroup {
                 presetsList.add(file[i].toString().replace(documentsDirectory.concat("/"),"").replace("_keyb",""));
             }
         }
+        Collections.sort(presetsList,String.CASE_INSENSITIVE_ORDER);
     }
 
     private void buildPresetsTable(){
@@ -291,7 +305,6 @@ public class PresetMenu extends ViewGroup {
 
             @Override
             protected void onLayout(boolean b, int left, int top, int right, int bottom) {
-                System.out.println(right + " " + bottom);
                 for (int i = 0; i < presetsList.size(); i++) {
                     int width = right - left;
                     selectButtons.get(i).layout(0, fieldsHeight * i, fieldsHeight, fieldsHeight * (i + 1));
@@ -299,6 +312,7 @@ public class PresetMenu extends ViewGroup {
                 }
             }
         }
+
         @Override
         protected void onLayout(boolean b, int left, int top, int right, int bottom) {
             int width = right-left;
@@ -343,18 +357,19 @@ public class PresetMenu extends ViewGroup {
                             }
                             // when deleting a preset, the related files are deleted
                             else if(source.tag == 1 && presetsList.size()>1){
+                                popupWindow.bringToFront();
                                 popupWindow.setVisibility(VISIBLE);
                             }
                             else if(source.tag == 2){
                                 if(source.polarity){
                                     source.setBackgroundColor(selectedButtonColor);
-                                    // audioSettingsView.setVisibility(VISIBLE); TODO
+                                    audioSettingsView.setVisibility(VISIBLE);
                                     presetsTitleLabel.setVisibility(INVISIBLE);
                                     presetsView.setVisibility(INVISIBLE);
                                 }
                                 else{
                                     source.setBackgroundColor(menuButtonsBackgroundColor);
-                                    // audioSettingsView.setVisibility(INVISIBLE); TODO
+                                    audioSettingsView.setVisibility(INVISIBLE);
                                     presetsTitleLabel.setVisibility(VISIBLE);
                                     presetsView.setVisibility(VISIBLE);
                                     if (mPresetMenuChangedListener != null) {
@@ -370,7 +385,6 @@ public class PresetMenu extends ViewGroup {
                         }
                     }
                 });
-                // TODO missing selector here
                 addView(menuButtons[i]);
             }
 
@@ -458,54 +472,91 @@ public class PresetMenu extends ViewGroup {
     }
 
     class AudioSettings extends ViewGroup{
+        private ArrayList<TextView> labels;
+        private ArrayList<EditText> valueFields;
         private String audioSettingsLabels[] = {"Sampling Rate", "Buffer Size"};
 
         public AudioSettings(Context context) {
             super(context);
 
-            for(int i=0; i<audioSettingsLabels.length; i++){
-                TextView currentLabel = new TextView(context);
-                currentLabel.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-                currentLabel.setTextColor(menuButtonsTextColor);
-                currentLabel.setTextSize(presetsListFontSize);
-                currentLabel.setText(audioSettingsLabels[i]);
-                if(i%2 == 1){
-                    currentLabel.setBackgroundColor(evenSelectButtonsColor);
-                }
-                else{
-                    currentLabel.setBackgroundColor(oddSelectButtonsColor);
-                }
-                addView(currentLabel);
+            // preventing automatic focus
+            setFocusable(true);
+            setFocusableInTouchMode(true);
 
-                EditText currentValueField = new EditText(context);
+            labels = new ArrayList<TextView>();
+            valueFields = new ArrayList<EditText>();
+
+            for(int i=0; i<audioSettingsLabels.length; i++){
+                labels.add(new TextView(context));
+                labels.get(i).setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                labels.get(i).setTextColor(menuButtonsTextColor);
+                labels.get(i).setTextSize(presetsListFontSize);
+                labels.get(i).setText(audioSettingsLabels[i]);
                 if(i%2 == 1){
-                    currentValueField.setBackgroundColor(evenPresetsNameFieldsBackgroundColor);
+                    labels.get(i).setBackgroundColor(evenSelectButtonsColor);
                 }
                 else{
-                    currentValueField.setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
+                    labels.get(i).setBackgroundColor(oddSelectButtonsColor);
                 }
-                currentValueField.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-                currentValueField.setTextSize(presetsListFontSize);
-                currentValueField.setTextColor(presetsNameColor);
-                /*
+                addView(labels.get(i));
+
+                valueFields.add(new EditText(context));
+                if(i%2 == 1){
+                    valueFields.get(i).setBackgroundColor(evenPresetsNameFieldsBackgroundColor);
+                }
+                else{
+                    valueFields.get(i).setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
+                }
+                valueFields.get(i).setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                valueFields.get(i).setTextSize(presetsListFontSize);
+                valueFields.get(i).setTextColor(presetsNameColor);
+                valueFields.get(i).setSingleLine(true);
+                valueFields.get(i).setImeOptions(EditorInfo.IME_ACTION_DONE);
                 if(i == 0){
-                    currentValueField.setText:[NSString stringWithFormat:@"%d", [audioSettings[@"SR"] intValue]]];
+                    valueFields.get(i).setText(audioSettings.get("SR").toString());
                 }
                 else if (i == 1){
-                    currentValueField setText:[NSString stringWithFormat:@"%d", [audioSettings[@"bufferLength"] intValue]]];
+                    valueFields.get(i).setText(audioSettings.get("bufferLength").toString());
                 }
-                [currentValueField setTag:i];
-                [currentValueField addTarget:self action:@selector(newEventOnAudioSettings:) forControlEvents:UIControlEventEditingDidEnd];
-                [audioSettingsView addSubview:currentValueField];
-                */
+                valueFields.get(i).setId(i); // TODO not sure, this light create issues...
+                valueFields.get(i).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView source, int actionId, KeyEvent keyEvent) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            String currentSetting;
+                            if(source.getId() == 0){
+                                currentSetting ="SR";
+                            }
+                            else{
+                                currentSetting = "bufferLength";
+                            }
+                            if(Integer.parseInt(source.getText().toString()) != 0){
+                                audioSettings.put(currentSetting,Integer.parseInt(source.getText().toString()));
+                                try {
+                                    saveAudioSettings();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else{
+                                source.setText(audioSettings.get(currentSetting).toString());
+                            }
+                            return false;
+                        }
+                        return false;
+                    }
+                });
+                addView(valueFields.get(i));
             }
         }
 
         @Override
         protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+            int width = right-left;
+            int labelsWidth = width/5;
             for(int i=0; i<audioSettingsLabels.length; i++) {
-                // TextView currentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, fieldsHeight*i, audioSettingsLabelsWidth, fieldsHeight)];
-                // currentValueField = [[UITextField alloc] initWithFrame:CGRectMake(audioSettingsLabelsWidth, fieldsHeight*i, (presetsListWidth-borderSize*2-presetsListXOffset*2)-audioSettingsLabelsWidth, fieldsHeight)];
+                labels.get(i).layout(0,fieldsHeight*i,labelsWidth,fieldsHeight*(i+1));
+                valueFields.get(i).layout(labelsWidth,fieldsHeight*i,width,fieldsHeight*(i+1));
             }
         }
     }
@@ -591,6 +642,12 @@ public class PresetMenu extends ViewGroup {
                     height/2-popupWindowHeight/2,
                     popupWindowWidth+width/2-popupWindowWidth/2,
                     popupWindowHeight+height/2-popupWindowHeight/2);
+        }
+        if(audioSettingsView != null){
+            audioSettingsView.layout(borderSize + presetsListXOffset,
+                    borderSize + presetsListYOffset,
+                    presetsListWidth - borderSize - presetsListXOffset,
+                    presetsListHeight + borderSize - presetsListXOffset);
         }
     }
 }

@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 
 import com.DspFaust.DspFaust;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ public class MultiKeyboard extends ViewGroup {
     // OTHER
     private Context context;
     private String currentPresetName;
+    private String documentsDirectory;
     private SensorManager mSensorManager;
 
     // Public variables
@@ -67,15 +70,13 @@ public class MultiKeyboard extends ViewGroup {
     public MultiKeyboard(Context c, DspFaust dsp, String presetName) {
         super(c);
 
-        // TODO: thing for multitouch on ios here
-
         context = c;
         dspFaust = dsp;
         currentPresetName = presetName;
         borderSize = 2; // TODO this parameter should be updated in function of screen width as well as the fonts
         setBackgroundColor(Color.BLACK);
 
-        // TODO: missing document directory here
+        documentsDirectory = context.getFilesDir().toString();
 
         keyboardParameters = new HashMap<String,Object>();
 
@@ -119,7 +120,13 @@ public class MultiKeyboard extends ViewGroup {
             dspParameters = new HashMap<String,Object>(); // empty dictionary in that case
         }
         else {
-            // TODO: implement preset system here
+            try {
+                loadPreset();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         // TODO: missing cancelOnce
@@ -133,6 +140,18 @@ public class MultiKeyboard extends ViewGroup {
             Thread t = new Thread(new PitchRounding());
             t.start();
         }
+    }
+
+    private void loadPreset() throws IOException, ClassNotFoundException {
+        // loading keyboard parameters
+        FileInputStream fileInputStreamKeyb = new FileInputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_keyb"));
+        ObjectInputStream objectInputStreamKeyb = new ObjectInputStream(fileInputStreamKeyb);
+        keyboardParameters = (Map<String,Object>) objectInputStreamKeyb.readObject();
+
+        // loading DSP parameters
+        FileInputStream fileInputStreamDsp = new FileInputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_dsp"));
+        ObjectInputStream objectInputStreamDsp = new ObjectInputStream(fileInputStreamDsp);
+        dspParameters = (Map<String,Object>) objectInputStreamDsp.readObject();
     }
 
     public void buildInterface(){
@@ -246,13 +265,13 @@ public class MultiKeyboard extends ViewGroup {
         }
         UIon = false;
         if((zones != null)){
+            removeAllViews();
             for(int i=0; i<zones.size(); i++){
-                for(int j=0;j<zones.get(i).size(); j++){
-                    removeView(zones.get(i).get(j));
-                    zones.get(i).remove(j);
-                }
+                zones.get(i).clear();
             }
+            zones.clear();
         }
+        zones = null;
         touchDiff = null;
         smooth = null;
         previousTouchedKeyboards = null;
@@ -671,12 +690,12 @@ public class MultiKeyboard extends ViewGroup {
     }
 
     public void savePreset() throws IOException {
-        FileOutputStream fileOutputStreamKeyb = new FileOutputStream(currentPresetName.concat("_keyb"));
+        FileOutputStream fileOutputStreamKeyb = new FileOutputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_keyb"));
         ObjectOutputStream objectOutputStreamKeyb = new ObjectOutputStream(fileOutputStreamKeyb);
         objectOutputStreamKeyb.writeObject(keyboardParameters);
         objectOutputStreamKeyb.close();
 
-        FileOutputStream fileOutputStreamDsp = new FileOutputStream(currentPresetName.concat("_dsp"));
+        FileOutputStream fileOutputStreamDsp = new FileOutputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_dsp"));
         ObjectOutputStream objectOutputStreamDsp = new ObjectOutputStream(fileOutputStreamDsp);
         objectOutputStreamDsp.writeObject(dspParameters);
         objectOutputStreamDsp.close();

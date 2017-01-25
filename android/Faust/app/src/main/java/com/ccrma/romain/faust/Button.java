@@ -2,6 +2,7 @@ package com.ccrma.romain.faust;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -107,6 +108,8 @@ public class Button extends ViewGroup {
     public void setTextSize(float size){
         label.setTextSize(size);
     }
+
+    public void setTextBold(){ label.setTypeface(null, Typeface.BOLD); }
 
 
     @Override
