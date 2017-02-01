@@ -6,7 +6,7 @@ import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.media.midi.MidiReceiver;
-import android.os.Environment;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -17,15 +17,19 @@ import android.widget.RelativeLayout;
 
 import com.DspFaust.DspFaust;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+/*
+TODOs
+- For new, bitmaps are handled in a very simple way and there's currently only one size available
+we might have to do some extra work on this and try with other devices than the nexus 9
+ */
 
 public class MainActivity extends AppCompatActivity {
     private DspFaust dspFaust;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private String documentsDirectory;
     private Map<String,Object> audioSettings;
     private Context context;
+    private RelativeLayout mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +77,67 @@ public class MainActivity extends AppCompatActivity {
 
         startFaustDsp();
 
-        final RelativeLayout mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
+        mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
+
+        if(getResources().getString(R.string.app_type).contains("Full")) {
+            buildPresetMenu();
+        }
+        else{
+            MultiKeyboard multiKeyboard = new MultiKeyboard(this, dspFaust, null);
+            mainLayout.addView(multiKeyboard);
+        }
+
+        if(Build.VERSION.SDK_INT >= 23) {
+            // MIDI Support
+            final FaustMidiReceiver midiReceiver = new FaustMidiReceiver();
+            final MidiManager m = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
+            final MidiDeviceInfo[] infos = m.getDevices();
+
+            // opening all the available ports and devices already connected
+            for (int i = 0; i < infos.length; i++) {
+                final int currentDevice = i;
+                m.openDevice(infos[i], new MidiManager.OnDeviceOpenedListener() {
+                    @Override
+                    public void onDeviceOpened(MidiDevice device) {
+                        if (device == null) {
+                            Log.e("", "could not open device");
+                        } else {
+                            for (int j = 0; j < infos[currentDevice].getOutputPortCount(); j++) {
+                                MidiOutputPort outputPort = device.openOutputPort(j);
+                                outputPort.connect(midiReceiver);
+                            }
+                        }
+                    }
+                }, new Handler(Looper.getMainLooper()));
+            }
+
+            // adding any newly connected device
+            m.registerDeviceCallback(new MidiManager.DeviceCallback() {
+                public void onDeviceAdded(final MidiDeviceInfo info) {
+                    m.openDevice(info, new MidiManager.OnDeviceOpenedListener() {
+                        @Override
+                        public void onDeviceOpened(MidiDevice device) {
+                            if (device == null) {
+                                Log.e("", "could not open device");
+                            } else {
+                                for (int j = 0; j < info.getOutputPortCount(); j++) {
+                                    MidiOutputPort outputPort = device.openOutputPort(j);
+                                    outputPort.connect(midiReceiver);
+                                }
+                            }
+                        }
+                    }, new Handler(Looper.getMainLooper()));
+                }
+
+                public void onDeviceRemoved(final MidiDeviceInfo info) {
+
+                }
+
+            }, new Handler(Looper.getMainLooper()));
+        }
+    }
+
+    private void buildPresetMenu(){
         presetMenu = new PresetMenu(context,currentPreset);
         presetMenu.setOnPresetMenuChangedListener(new PresetMenu.OnPresetMenuChangedListener() {
             @Override
@@ -91,66 +156,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void OnPresetLaunch(int preset) {
                 currentPreset = preset;
-                instrumentInterface = new InstrumentInterface(context, dspFaust, currentPreset);
                 mainLayout.removeView(presetMenu);
                 presetMenu = null;
-                // TODO instrument interface missing selector
-                //[instrumentInterface addTarget:self action:@selector(newEventOnInstrumentInterface:) forControlEvents:UIControlEventValueChanged];
-                mainLayout.addView(instrumentInterface);
+                buildInstrInterface();
             }
         });
         mainLayout.addView(presetMenu);
+    }
 
-        // TODO: missing keyboard only
-        //MultiKeyboard multiKeyboard = new MultiKeyboard(this, dspFaust, null);
-        //mainLayout.addView(multiKeyboard);
-
-        // MIDI Support
-        final FaustMidiReceiver midiReceiver = new FaustMidiReceiver();
-        final MidiManager m = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
-        final MidiDeviceInfo[] infos = m.getDevices();
-
-        // opening all the available ports and devices already connected
-        for(int i=0; i<infos.length; i++){
-            final int currentDevice = i;
-            m.openDevice(infos[i], new MidiManager.OnDeviceOpenedListener() {
-                @Override
-                public void onDeviceOpened(MidiDevice device) {
-                    if (device == null) {
-                        Log.e("", "could not open device");
-                    } else {
-                        for(int j=0; j<infos[currentDevice].getOutputPortCount(); j++) {
-                            MidiOutputPort outputPort = device.openOutputPort(j);
-                            outputPort.connect(midiReceiver);
-                        }
-                    }
-                }
-            }, new Handler(Looper.getMainLooper()));
-        }
-
-        // adding any newly connected device
-        m.registerDeviceCallback(new MidiManager.DeviceCallback() {
-            public void onDeviceAdded( final MidiDeviceInfo info ) {
-                m.openDevice(info, new MidiManager.OnDeviceOpenedListener() {
-                    @Override
-                    public void onDeviceOpened(MidiDevice device) {
-                        if (device == null) {
-                            Log.e("", "could not open device");
-                        } else {
-                            for (int j = 0; j < info.getOutputPortCount(); j++) {
-                                MidiOutputPort outputPort = device.openOutputPort(j);
-                                outputPort.connect(midiReceiver);
-                            }
-                        }
-                    }
-                }, new Handler(Looper.getMainLooper()));
+    private void buildInstrInterface(){
+        instrumentInterface = new InstrumentInterface(context, dspFaust, currentPreset);
+        instrumentInterface.setInstrInterfaceStatusChangedListener(new InstrumentInterface.OnInstrInterfaceStatusChangedListener() {
+            @Override
+            public void OnStatusChanged(int preset) {
+                currentPreset = preset;
+                mainLayout.removeView(instrumentInterface);
+                instrumentInterface = null;
+                buildPresetMenu();
             }
-
-            public void onDeviceRemoved( final MidiDeviceInfo info ) {
-
-            }
-
-        }, new Handler(Looper.getMainLooper()));
+        });
+        mainLayout.addView(instrumentInterface);
     }
 
     private void loadAudioSettings() throws IOException, ClassNotFoundException {

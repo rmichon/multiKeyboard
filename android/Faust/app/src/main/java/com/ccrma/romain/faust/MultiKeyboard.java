@@ -81,21 +81,21 @@ public class MultiKeyboard extends ViewGroup {
         keyboardParameters = new HashMap<String,Object>();
 
         if(currentPresetName == null) {
-            keyboardParameters.put("nKeyb", 4);
-            keyboardParameters.put("maxFingers", 10);
-            keyboardParameters.put("maxKeybPoly", 16);
-            keyboardParameters.put("monoMode", 1);
-            keyboardParameters.put("quantizationMode", 0);
-            keyboardParameters.put("interKeybSlideAllowed", 1);
-            keyboardParameters.put("sendCurrentKey", 1);
-            keyboardParameters.put("sendCurrentKeyboard", 1);
-            keyboardParameters.put("sendX", 1);
-            keyboardParameters.put("sendY", 1);
-            keyboardParameters.put("sendAccel", 1);
-            keyboardParameters.put("roundingUpdateSpeed", (float) 0.06);
-            keyboardParameters.put("roundingSmoothPole", (float) 0.9);
-            keyboardParameters.put("roundingThreshold", (float) 3.0);
-            keyboardParameters.put("roundingDeactCycles", 5);
+            keyboardParameters.put("Number of Keyboards", 4);
+            keyboardParameters.put("Max Fingers", 10);
+            keyboardParameters.put("Max Keyboard Polyphony", 16);
+            keyboardParameters.put("Mono Mode", 1);
+            keyboardParameters.put("Rounding Mode", 0);
+            keyboardParameters.put("Inter-Keyboard Slide", 1);
+            keyboardParameters.put("Send Current Key", 1);
+            keyboardParameters.put("Send Current Keyboard", 1);
+            keyboardParameters.put("Send X", 1);
+            keyboardParameters.put("Send Y", 1);
+            keyboardParameters.put("Send Sensors", 1);
+            keyboardParameters.put("Rounding Update Speed", (float) 0.06);
+            keyboardParameters.put("Rounding Smooth", (float) 0.9);
+            keyboardParameters.put("Rounding Threshold", (float) 3.0);
+            keyboardParameters.put("Rounding Cycles", 5);
 
 
             String JSONInterface = dspFaust.getJSONMeta();
@@ -136,7 +136,7 @@ public class MultiKeyboard extends ViewGroup {
 
         buildInterface();
 
-        if((int)keyboardParameters.get("quantizationMode") == 2){
+        if((int)keyboardParameters.get("Rounding Mode") == 2){
             Thread t = new Thread(new PitchRounding());
             t.start();
         }
@@ -158,88 +158,88 @@ public class MultiKeyboard extends ViewGroup {
         //cleanInterface();
         UIon = true;
 
-        if((int)keyboardParameters.get("sendAccel") == 1){
+        if((int)keyboardParameters.get("Send Sensors") == 1){
             mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(
                     Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
         }
 
         // keyboard dependent default parameters
-        for(int i=0; i<(int)keyboardParameters.get("nKeyb") ; i++){
-            if(keyboardParameters.get(String.format("keyb%d_nKeys",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_nKeys", i), 7);
+        for(int i=0; i<(int)keyboardParameters.get("Number of Keyboards") ; i++){
+            if(keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Number of Keys", i), 7);
             }
-            if(keyboardParameters.get(String.format("keyb%d_lowestKey",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_lowestKey", i), (48 + i * 12) % 127);
+            if(keyboardParameters.get(String.format("Keyboard %d - Lowest Key",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Lowest Key", i), (48 + i * 12) % 127);
             }
-            if(keyboardParameters.get(String.format("keyb%d_scale",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_scale", i), 0);
+            if(keyboardParameters.get(String.format("Keyboard %d - Scale",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Scale", i), 0);
             }
-            if(keyboardParameters.get(String.format("keyb%d_showNotesName",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_showNotesName", i), 1);
+            if(keyboardParameters.get(String.format("Keyboard %d - Show Notes",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Show Notes", i), 1);
             }
-            if(keyboardParameters.get(String.format("keyb%d_rootPos",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_rootPos", i), 0);
+            if(keyboardParameters.get(String.format("Keyboard %d - Root Position",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Root Position", i), 0);
             }
-            if(keyboardParameters.get(String.format("keyb%d_orientation",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_orientation", i), 0);
+            if(keyboardParameters.get(String.format("Keyboard %d - Orientation",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Orientation", i), 0);
             }
-            if(keyboardParameters.get(String.format("keyb%d_keybMode",i)) == null) {
-                keyboardParameters.put(String.format("keyb%d_keybMode", i), 1);
+            if(keyboardParameters.get(String.format("Keyboard %d - Mode",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Mode", i), 1);
             }
         }
 
-        touchDiff = new float[(int)keyboardParameters.get("maxFingers")];
-        moveCount = new int[(int)keyboardParameters.get("maxFingers")];
-        rounding = new boolean[(int)keyboardParameters.get("maxFingers")];
-        previousTouchedKeys = new int[(int)keyboardParameters.get("maxFingers")];
-        previousTouchedKeyboards = new int[(int)keyboardParameters.get("maxFingers")];
-        smooth = new Smooth[(int)keyboardParameters.get("maxFingers")];
-        voices = new long[(int)keyboardParameters.get("maxFingers")];
+        touchDiff = new float[(int)keyboardParameters.get("Max Fingers")];
+        moveCount = new int[(int)keyboardParameters.get("Max Fingers")];
+        rounding = new boolean[(int)keyboardParameters.get("Max Fingers")];
+        previousTouchedKeys = new int[(int)keyboardParameters.get("Max Fingers")];
+        previousTouchedKeyboards = new int[(int)keyboardParameters.get("Max Fingers")];
+        smooth = new Smooth[(int)keyboardParameters.get("Max Fingers")];
+        voices = new long[(int)keyboardParameters.get("Max Fingers")];
 
-        for(int i=0; i<(int)keyboardParameters.get("maxFingers"); i++){
+        for(int i=0; i<(int)keyboardParameters.get("Max Fingers"); i++){
             touchDiff[i] = 0;
             previousTouchedKeys[i] = -1;
             previousTouchedKeyboards[i] = -1;
             moveCount[i] = 0;
             smooth[i] = new Smooth();
-            smooth[i].setSmooth((float)keyboardParameters.get("roundingSmoothPole"));
+            smooth[i].setSmooth((float)keyboardParameters.get("Rounding Smooth"));
             rounding[i] = true;
             voices[i] = -1;
         }
 
         fingersOnScreenCount = 0;
-        roundingUpdateSpeed = (long)((float)keyboardParameters.get("roundingUpdateSpeed")*1000);
+        roundingUpdateSpeed = (long)((float)keyboardParameters.get("Rounding Update Speed")*1000);
 
-        zoneWidths = new int[(int)keyboardParameters.get("nKeyb")];
-        zoneCenterXOffset = new int[(int)keyboardParameters.get("nKeyb")];
-        fingersOnKeyboardsCount = new int[(int)keyboardParameters.get("nKeyb")];
-        monoMode_previousActiveFinger = new int[(int)keyboardParameters.get("nKeyb")];
+        zoneWidths = new int[(int)keyboardParameters.get("Number of Keyboards")];
+        zoneCenterXOffset = new int[(int)keyboardParameters.get("Number of Keyboards")];
+        fingersOnKeyboardsCount = new int[(int)keyboardParameters.get("Number of Keyboards")];
+        monoMode_previousActiveFinger = new int[(int)keyboardParameters.get("Number of Keyboards")];
 
         // TODO: skipping a big block here
 
         // initializing the different keyboards
         zones = new ArrayList<>();
-        for(int i=0; i<(int)keyboardParameters.get("nKeyb") ; i++) {
+        for(int i=0; i<(int)keyboardParameters.get("Number of Keyboards") ; i++) {
             // if no poly mode, then no keyboard mode is automatically activated
-            if((int)keyboardParameters.get("maxKeybPoly") <= 0) {
-                keyboardParameters.put(String.format("keyb%d_keybMode", i), 0);
+            if((int)keyboardParameters.get("Max Keyboard Polyphony") <= 0) {
+                keyboardParameters.put(String.format("Keyboard %d - Mode", i), 0);
             }
             zones.add(new ArrayList<Zone>());
             fingersOnKeyboardsCount[i] = 0;
             monoMode_previousActiveFinger[i] = 0;
-            for(int j=0; j<(int)keyboardParameters.get(String.format("keyb%d_nKeys",i)); j++) {
+            for(int j=0; j<(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i)); j++) {
                 zones.get(i).add(new Zone(context));
-                zones.get(i).get(j).setKeyboardMode((int)keyboardParameters.get(String.format("keyb%d_keybMode", i)) == 1);
-                if (((int)keyboardParameters.get(String.format("keyb%d_keybMode", i)) == 1) &&
-                        ((int) keyboardParameters.get(String.format("keyb%d_scale", i)) < 1) &&
-                        ((int) keyboardParameters.get(String.format("keyb%d_showNotesName", i)) > 0)) {
-                    if ((int)keyboardParameters.get(String.format("keyb%d_orientation", i)) == 1) {
+                zones.get(i).get(j).setKeyboardMode((int)keyboardParameters.get(String.format("Keyboard %d - Mode", i)) == 1);
+                if (((int)keyboardParameters.get(String.format("Keyboard %d - Mode", i)) == 1) &&
+                        ((int) keyboardParameters.get(String.format("Keyboard %d - Scale", i)) < 1) &&
+                        ((int) keyboardParameters.get(String.format("Keyboard %d - Show Notes", i)) > 0)) {
+                    if ((int)keyboardParameters.get(String.format("Keyboard %d - Orientation", i)) == 1) {
                         zones.get(i).get(j).setNote((int) applyScale((int) keyboardParameters
-                                .get(String.format("keyb%d_lowestKey", i)) + (int) keyboardParameters.get(String.format("keyb%d_nKeys", i)) - j - 1, i));
+                                .get(String.format("Keyboard %d - Lowest Key", i)) + (int) keyboardParameters.get(String.format("Keyboard %d - Number of Keys", i)) - j - 1, i));
                     } else {
                         zones.get(i).get(j).setNote((int) applyScale(j + (int)
                                 keyboardParameters.get
-                                (String.format("keyb%d_lowestKey", i)), i));
+                                (String.format("Keyboard %d - Lowest Key", i)), i));
                     }
                 }
                 zones.get(i).get(j).drawBackground();
@@ -248,46 +248,19 @@ public class MultiKeyboard extends ViewGroup {
 
         }
         // case where no pitch keyboard is on: we trigger the main voice on startup
-        if((int)keyboardParameters.get("maxKeybPoly") == 0){
+        if((int)keyboardParameters.get("Max Keyboard Polyphony") == 0){
             voices[0] = dspFaust.newVoice();
         }
 
-        // TODO: missing some stuff here too
+        ArrayList<String> dspKeys = new ArrayList<String>();
+        // retrieve the existing parameter keys and order alphabetically
+        for (String key : dspParameters.keySet()) {
+            dspKeys.add(key);
+        }
+        for(int i=0; i<dspKeys.size(); i++){
+            dspFaust.setParamValue(dspKeys.get(i).toString(),(float)dspParameters.get(dspKeys.get(i)));
+        }
     }
-
-    /*
-    public void cleanInterface(){
-        if((int)keyboardParameters.get("sendAccel") == 1) {
-            mSensorManager.unregisterListener(mSensorListener);
-        }
-        if((int)keyboardParameters.get("nKeyb") == 0 && UIon){
-            dspFaust.deleteVoice(voices[0]);
-            voices[0] = -1;
-        }
-        UIon = false;
-        if((zones != null)){
-            removeAllViews();
-            for(int i=0; i<zones.size(); i++){
-                zones.get(i).clear();
-            }
-            zones.clear();
-        }
-        zones = null;
-        touchDiff = null;
-        smooth = null;
-        previousTouchedKeyboards = null;
-        previousTouchedKeys = null;
-        zoneWidths = null;
-        monoMode_previousActiveFinger = null;
-        moveCount = null;
-        voices = null;
-        zoneWidths = null;
-        fingersOnKeyboardsCount = null;
-        rounding = null;
-        zoneCenterXOffset = null;
-        System.gc(); // don't know if this is actually needed...
-    }
-    */
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -345,11 +318,11 @@ public class MultiKeyboard extends ViewGroup {
 
     private void processTouchEvent(int eventType, PointF touchPoint, int fingerId, MotionEvent event){
         // we calculate the position of the touch on the keyboards matrix
-        int currentKeyboard = Math.min((int)(touchPoint.y/zoneHeight),((int)keyboardParameters.get("nKeyb")-1));
+        int currentKeyboard = Math.min((int)(touchPoint.y/zoneHeight),((int)keyboardParameters.get("Number of Keyboards")-1));
         // clipping the x/y positions to frme size, could potentially be improved
         currentContinuousKey = Math.min(Math.max(0f,touchPoint.x),(float)viewWidth)/(float)zoneWidths[currentKeyboard];
         currentKeyboardY = (Math.min(Math.max(0f,touchPoint.y),(float)viewHeight)/(float)zoneHeight)%1f;
-        int currentKeyIdInRow = Math.min((int)currentContinuousKey,((int)keyboardParameters.get(String.format("keyb%d_nKeys",currentKeyboard))-1));
+        int currentKeyIdInRow = Math.min((int)currentContinuousKey,((int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",currentKeyboard))-1));
         fingersOnScreenCount = event.getPointerCount();
 
         // we make sure that the touch happened inside the keyboards matrix area
@@ -368,19 +341,19 @@ public class MultiKeyboard extends ViewGroup {
             }
 
             // no poly mode
-            if((int)keyboardParameters.get("maxKeybPoly") <= 0){
+            if((int)keyboardParameters.get("Max Keyboard Polyphony") <= 0){
                 sendSynthControlAction(currentKeyboard, currentKeyIdInRow, fingerId);
             }
             // poly mode
             else{
                 // deffault mode if poly keyboards
-                if((int)keyboardParameters.get("monoMode") == 0 || (int)keyboardParameters.get("maxKeybPoly")>1){
+                if((int)keyboardParameters.get("Mono Mode") == 0 || (int)keyboardParameters.get("Max Keyboard Polyphony")>1){
                     // if touch up
                     if(eventType == 0){
                         sendKeyboardAction(0,currentKeyboard,currentKeyIdInRow,fingerId);
                     }
                     // if touch down
-                    else if(eventType == 1 && fingersOnKeyboardsCount[currentKeyboard] <= (int)keyboardParameters.get("maxKeybPoly")){
+                    else if(eventType == 1 && fingersOnKeyboardsCount[currentKeyboard] <= (int)keyboardParameters.get("Max Keyboard Polyphony")){
                         sendKeyboardAction(1,currentKeyboard,currentKeyIdInRow,fingerId);
                     }
                     // if move
@@ -390,8 +363,8 @@ public class MultiKeyboard extends ViewGroup {
                             // cancel key in previous keyboard
                             sendKeyboardAction(0, previousTouchedKeyboards[fingerId], previousTouchedKeys[fingerId], fingerId);
                             // initiate new event only if there are keys available
-                            if(fingersOnKeyboardsCount[currentKeyboard] <= (int)keyboardParameters.get("maxKeybPoly") &&
-                                    (int)keyboardParameters.get("interKeybSlideAllowed") == 1){
+                            if(fingersOnKeyboardsCount[currentKeyboard] <= (int)keyboardParameters.get("Max Keyboard Polyphony") &&
+                                    (int)keyboardParameters.get("Inter-Keyboard Slide") == 1){
                                 sendKeyboardAction(1, currentKeyboard, currentKeyIdInRow, fingerId);
                             }
                         }
@@ -410,9 +383,9 @@ public class MultiKeyboard extends ViewGroup {
                     }
                 }
 
-                else if((int)keyboardParameters.get("monoMode") == 1){
+                else if((int)keyboardParameters.get("Mono Mode") == 1){
                     int currentKeyDown = -1;
-                    for(int i=0; i<(int)keyboardParameters.get(String.format("keyb%d_nKeys",currentKeyboard)); i++){
+                    for(int i=0; i<(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",currentKeyboard)); i++){
                         if(zones.get(currentKeyboard).get(i).getStatus() == 1){
                             currentKeyDown = i;
                         }
@@ -434,7 +407,7 @@ public class MultiKeyboard extends ViewGroup {
                                         event.getY(i) != touchPoint.y &&
                                         i != monoMode_previousActiveFinger[currentKeyboard]){
                                     currentContinuousKey = event.getX(i)/zoneWidths[currentKeyboard];
-                                    currentKeyIdInRow = Math.min((int)currentContinuousKey,(int)keyboardParameters.get(String.format("keyb%d_nKeys",currentKeyboard))-1);
+                                    currentKeyIdInRow = Math.min((int)currentContinuousKey,(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",currentKeyboard))-1);
                                     currentKeyboardY = (Math.min(Math.max(0f,event.getY(i)),(float)viewHeight)/(float)zoneHeight)%1f; // TODO: added on android only
                                     sendKeyboardAction(1, currentKeyboard, currentKeyIdInRow, i);
                                     monoMode_previousActiveFinger[currentKeyboard] = i;
@@ -462,7 +435,7 @@ public class MultiKeyboard extends ViewGroup {
                             // cancel key in previous keyboard
                             sendKeyboardAction(0, previousTouchedKeyboards[fingerId], previousTouchedKeys[fingerId], fingerId);
 
-                            if((int)keyboardParameters.get("interKeybSlideAllowed") == 1){
+                            if((int)keyboardParameters.get("Inter-Keyboard Slide") == 1){
                                 // new note if remaining finger in previous keyboard
                                 if(previousTouchedKeyboards[fingerId] != -1 &&
                                         fingersOnKeyboardsCount[previousTouchedKeyboards[fingerId]]>0 &&
@@ -474,7 +447,7 @@ public class MultiKeyboard extends ViewGroup {
                                                 event.getY(i) != touchPoint.y &&
                                                 i != monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]]){
                                             currentContinuousKey = event.getX(i)/zoneWidths[previousTouchedKeyboards[fingerId]];
-                                            int localKeyIdInRow = Math.min((int)currentContinuousKey,(int)keyboardParameters.get(String.format("keyb%d_nKeys",previousTouchedKeyboards[fingerId]))-1);
+                                            int localKeyIdInRow = Math.min((int)currentContinuousKey,(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",previousTouchedKeyboards[fingerId]))-1);
                                             currentKeyboardY = (Math.min(Math.max(0f,event.getY(i)),(float)viewHeight)/(float)zoneHeight)%1f; // TODO: added on android only
                                             sendKeyboardAction(1, previousTouchedKeyboards[fingerId], localKeyIdInRow, i);
                                             monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]] = i;
@@ -533,8 +506,8 @@ public class MultiKeyboard extends ViewGroup {
             if(zones.get(keyboardId).get(keyId).getStatus() == 1){
                 // check if another finger is present in the zone
                 boolean otherFingerInKey = false;
-                if((int)keyboardParameters.get("monoMode") == 0 || (int)keyboardParameters.get("maxKeybPoly")>1){
-                    for(int i=0; i<(int)keyboardParameters.get("maxFingers"); i++){
+                if((int)keyboardParameters.get("Mono Mode") == 0 || (int)keyboardParameters.get("Max Keyboard Polyphony")>1){
+                    for(int i=0; i<(int)keyboardParameters.get("Max Fingers"); i++){
                         if(keyboardId == previousTouchedKeyboards[i] && keyId == previousTouchedKeys[i] && i != fingerId){
                             otherFingerInKey = true;
                             break;
@@ -563,17 +536,17 @@ public class MultiKeyboard extends ViewGroup {
     private void sendSynthControlAction(int keyboardId, int keyId, int fingerId){
         // TODO: continuous x and y values are always sent: this should be optimized
         // TODO: might need a mechanism to check if voice is on before message gets sent
-        if((int)keyboardParameters.get("sendCurrentKeyboard") == 1) dspFaust.setParamValue("keyboard", keyboardId);
-        if((int)keyboardParameters.get("sendCurrentKey") == 1) dspFaust.setParamValue("key", keyId);
-        if((int)keyboardParameters.get("sendX") == 1) dspFaust.setParamValue(String.format("x%d",fingerId+1), (currentContinuousKey%1f));
-        if((int)keyboardParameters.get("sendY") == 1) dspFaust.setParamValue(String.format("y%d",fingerId+1), currentKeyboardY);
+        if((int)keyboardParameters.get("Send Current Keyboard") == 1) dspFaust.setParamValue("keyboard", keyboardId);
+        if((int)keyboardParameters.get("Send Current Key") == 1) dspFaust.setParamValue("key", keyId);
+        if((int)keyboardParameters.get("Send X") == 1) dspFaust.setParamValue(String.format("x%d",fingerId+1), (currentContinuousKey%1f));
+        if((int)keyboardParameters.get("Send Y") == 1) dspFaust.setParamValue(String.format("y%d",fingerId+1), currentKeyboardY);
     }
 
     private void sendPolySynthControlAction(int eventType, int keyboardId, int keyId, int fingerId){
         float pitch = 0; // the MIDI pitch of the note
         // delete (note off)
         if((eventType == 0 || (eventType == 3 &&
-                (int)keyboardParameters.get("quantizationMode") == 0)) && voices[fingerId] != -1){
+                (int)keyboardParameters.get("Rounding Mode") == 0)) && voices[fingerId] != -1){
             pitch = -1;
             dspFaust.setVoiceParamValue("gate", voices[fingerId], 0);
             dspFaust.deleteVoice(voices[fingerId]);
@@ -582,7 +555,7 @@ public class MultiKeyboard extends ViewGroup {
         }
         // new (note on)
         else if (eventType == 1 ||
-                (eventType == 4 && (int)keyboardParameters.get("quantizationMode") == 0)){
+                (eventType == 4 && (int)keyboardParameters.get("Rounding Mode") == 0)){
             // allocating new voice to finger
             voices[fingerId] = dspFaust.newVoice();
             if(voices[fingerId] != -1){
@@ -593,40 +566,40 @@ public class MultiKeyboard extends ViewGroup {
             }
 
             // setting first pitch (always quantized)
-            if((int)keyboardParameters.get("quantizationMode") == 0 ||
-                    ((int)keyboardParameters.get("quantizationMode") == 2 &&
-                            (int)keyboardParameters.get(String.format("keyb%d_scale",keyboardId)) > 0)){
+            if((int)keyboardParameters.get("Rounding Mode") == 0 ||
+                    ((int)keyboardParameters.get("Rounding Mode") == 2 &&
+                            (int)keyboardParameters.get(String.format("Keyboard %d - Scale",keyboardId)) > 0)){
                 // inverted keyboard
-                if((int)keyboardParameters.get(String.format("keyb%d_orientation",keyboardId)) == 1){
-                    pitch = applyScale((int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))+
-                            (int)keyboardParameters.get(String.format("keyb%d_nKeys",keyboardId))-keyId-1, keyboardId);
+                if((int)keyboardParameters.get(String.format("Keyboard %d - Orientation",keyboardId)) == 1){
+                    pitch = applyScale((int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))+
+                            (int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",keyboardId))-keyId-1, keyboardId);
                 }
                 // regular keyboard
                 else{
-                    pitch = applyScale((int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))+keyId, keyboardId);
+                    pitch = applyScale((int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))+keyId, keyboardId);
                 }
             }
-            else if((int)keyboardParameters.get("quantizationMode") == 1 || (int)keyboardParameters.get("quantizationMode") == 2){
+            else if((int)keyboardParameters.get("Rounding Mode") == 1 || (int)keyboardParameters.get("Rounding Mode") == 2){
                 float pitchShiftCenter = 0;
                 // -0.5 is here to center the pitch at the middle of the key
-                if((int)keyboardParameters.get("quantizationMode") == 1){
+                if((int)keyboardParameters.get("Rounding Mode") == 1){
                     pitchShiftCenter = 0.5f;
                 }
                 // inverted keyboard
-                if((int)keyboardParameters.get(String.format("keyb%d_orientation",keyboardId)) == 1){
-                    pitch = applyScale((int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))+
-                            (int)keyboardParameters.get(String.format("keyb%d_nKeys",keyboardId))-
+                if((int)keyboardParameters.get(String.format("Keyboard %d - Orientation",keyboardId)) == 1){
+                    pitch = applyScale((int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))+
+                            (int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",keyboardId))-
                             currentContinuousKey-pitchShiftCenter, keyboardId);
                 }
                 // regular keyboard
                 else{
                     pitch = applyScale(currentContinuousKey +
-                            (int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))-
+                            (int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))-
                             pitchShiftCenter, keyboardId);
                 }
             }
             if(voices[fingerId] != -1){
-                if((int)keyboardParameters.get("quantizationMode") == 1){
+                if((int)keyboardParameters.get("Rounding Mode") == 1){
                     dspFaust.setVoiceParamValue("freq", voices[fingerId], mtof(pitch));
                 }
                 else{
@@ -635,44 +608,44 @@ public class MultiKeyboard extends ViewGroup {
             }
         }
         // update
-        else if(eventType == 2 && ((int)keyboardParameters.get("quantizationMode") == 1 || (int)keyboardParameters.get("quantizationMode") == 2)){
+        else if(eventType == 2 && ((int)keyboardParameters.get("Rounding Mode") == 1 || (int)keyboardParameters.get("Rounding Mode") == 2)){
 
             // Formating pitch
-            if((int)keyboardParameters.get(String.format("keyb%d_scale",keyboardId)) > 0 &&
-                    rounding[fingerId] && (int)keyboardParameters.get("quantizationMode") != 1){
+            if((int)keyboardParameters.get(String.format("Keyboard %d - Scale",keyboardId)) > 0 &&
+                    rounding[fingerId] && (int)keyboardParameters.get("Rounding Mode") != 1){
                 // inverted keyboard
-                if((int)keyboardParameters.get(String.format("keyb%d_orientation",keyboardId)) == 1){
-                    pitch = applyScale((int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))+
-                            (int)keyboardParameters.get(String.format("keyb%d_nKeys",keyboardId))-keyId-1, keyboardId);
+                if((int)keyboardParameters.get(String.format("Keyboard %d - Orientation",keyboardId)) == 1){
+                    pitch = applyScale((int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))+
+                            (int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",keyboardId))-keyId-1, keyboardId);
                 }
                 // regular keyboard
                 else{
-                    pitch = applyScale((int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))+keyId, keyboardId);
+                    pitch = applyScale((int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))+keyId, keyboardId);
                 }
             }
             else {
                 float pitchShiftCenter = 0;
                 // -0.5 is here to center the pitch at the middle of the key
-                if((int)keyboardParameters.get("quantizationMode") == 1){
+                if((int)keyboardParameters.get("Rounding Mode") == 1){
                     pitchShiftCenter = 0.5f;
                 }
                 // inverted keyboard
-                if((int)keyboardParameters.get(String.format("keyb%d_orientation",keyboardId)) == 1){
-                    pitch = applyScale((int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))+
-                            (int)keyboardParameters.get(String.format("keyb%d_nKeys",keyboardId))-currentContinuousKey-pitchShiftCenter, keyboardId);
+                if((int)keyboardParameters.get(String.format("Keyboard %d - Orientation",keyboardId)) == 1){
+                    pitch = applyScale((int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))+
+                            (int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",keyboardId))-currentContinuousKey-pitchShiftCenter, keyboardId);
                 }
                 // regular keyboard
                 else{
-                    pitch = applyScale(currentContinuousKey+(int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId))-pitchShiftCenter,keyboardId);
+                    pitch = applyScale(currentContinuousKey+(int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId))-pitchShiftCenter,keyboardId);
                 }
             }
 
             // sending pitch to faust
             if(voices[fingerId] != -1){
-                if((int)keyboardParameters.get("quantizationMode") == 1){
+                if((int)keyboardParameters.get("Rounding Mode") == 1){
                     dspFaust.setVoiceParamValue("freq", voices[fingerId], mtof(pitch));
                 }
-                else if((int)keyboardParameters.get("quantizationMode") == 2){
+                else if((int)keyboardParameters.get("Rounding Mode") == 2){
                     if(rounding[fingerId]){ // if rounding is activated, pitch is quantized to the nearest integer
                         dspFaust.setVoiceParamValue("freq", voices[fingerId], mtof((float)Math.floor(pitch)));
                     }
@@ -684,30 +657,16 @@ public class MultiKeyboard extends ViewGroup {
         }
 
         if(voices[fingerId] != -1){
-            if((int)keyboardParameters.get("sendCurrentKeyboard") == 1) dspFaust.setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
-            if((int)keyboardParameters.get("sendCurrentKey") == 1) dspFaust.setVoiceParamValue("key", voices[fingerId], keyId);
-            if((int)keyboardParameters.get("sendX") == 1) dspFaust.setVoiceParamValue("x", voices[fingerId], (float)currentContinuousKey%1f);
-            if((int)keyboardParameters.get("sendY") == 1) dspFaust.setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
+            if((int)keyboardParameters.get("Send Current Keyboard") == 1) dspFaust.setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
+            if((int)keyboardParameters.get("Send Current Key") == 1) dspFaust.setVoiceParamValue("key", voices[fingerId], keyId);
+            if((int)keyboardParameters.get("Send X") == 1) dspFaust.setVoiceParamValue("x", voices[fingerId], (float)currentContinuousKey%1f);
+            if((int)keyboardParameters.get("Send Y") == 1) dspFaust.setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
         }
     }
 
-    /* TODO: move to config display
-    public void savePreset() throws IOException {
-        FileOutputStream fileOutputStreamKeyb = new FileOutputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_keyb"));
-        ObjectOutputStream objectOutputStreamKeyb = new ObjectOutputStream(fileOutputStreamKeyb);
-        objectOutputStreamKeyb.writeObject(keyboardParameters);
-        objectOutputStreamKeyb.close();
-
-        FileOutputStream fileOutputStreamDsp = new FileOutputStream(documentsDirectory.concat("/").concat(currentPresetName).concat("_dsp"));
-        ObjectOutputStream objectOutputStreamDsp = new ObjectOutputStream(fileOutputStreamDsp);
-        objectOutputStreamDsp.writeObject(dspParameters);
-        objectOutputStreamDsp.close();
-    }
-    */
-
     private float applyScale(float pitch, int keyboardId){
-        int refPitch = (int)keyboardParameters.get(String.format("keyb%d_lowestKey",keyboardId));
-        int currentScale = (int)keyboardParameters.get(String.format("keyb%d_scale",keyboardId)) - 1;
+        int refPitch = (int)keyboardParameters.get(String.format("Keyboard %d - Lowest Key",keyboardId));
+        int currentScale = (int)keyboardParameters.get(String.format("Keyboard %d - Scale",keyboardId)) - 1;
         float keyboardPitch = (pitch-refPitch); // float pitch on keyboard (from 0)
         float scaledPitch = 0; // the final scaled pitch
 
@@ -753,13 +712,13 @@ public class MultiKeyboard extends ViewGroup {
 
     private void resetKeyboard(){
         dspFaust.allNotesOff();
-        for(int i=0; i<(int)keyboardParameters.get("nKeyb"); i++){
+        for(int i=0; i<(int)keyboardParameters.get("Number of Keyboards"); i++){
             fingersOnKeyboardsCount[i] = 0;
-            for(int j=0;j<(int)keyboardParameters.get(String.format("keyb%d_nKeys",i));j++){
+            for(int j=0;j<(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i));j++){
                 zones.get(i).get(j).setStatus(0);
             }
         }
-        for(int i=0; i<(int)keyboardParameters.get("maxFingers"); i++){
+        for(int i=0; i<(int)keyboardParameters.get("Max Fingers"); i++){
             voices[i] = -1;
             previousTouchedKeys[i] = -1;
             previousTouchedKeyboards[i] = -1;
@@ -772,10 +731,10 @@ public class MultiKeyboard extends ViewGroup {
         @Override
         public void run() {
             while(UIon){
-                for(int i=0; i<(int)keyboardParameters.get("maxFingers"); i++){
+                for(int i=0; i<(int)keyboardParameters.get("Max Fingers"); i++){
                     if(touchDiff[i] != -10000 && voices[i] != -1){
-                        if(smooth[i].tick(touchDiff[i])>(float)keyboardParameters.get("roundingThreshold") &&
-                                moveCount[i]<(int)keyboardParameters.get("roundingDeactCycles")){
+                        if(smooth[i].tick(touchDiff[i])>(float)keyboardParameters.get("Rounding Threshold") &&
+                                moveCount[i]<(int)keyboardParameters.get("Rounding Cycles")){
                             rounding[i] = false;
                         }
                         else{
@@ -821,12 +780,12 @@ public class MultiKeyboard extends ViewGroup {
     protected void onLayout(boolean b, int left, int top, int right, int bottom) {
         viewWidth = right-left;
         viewHeight = bottom-top;
-        zoneHeight = viewHeight/(int)keyboardParameters.get("nKeyb");
-        zoneCenterYOffset = (viewHeight-zoneHeight*(int)keyboardParameters.get("nKeyb"))/2;
-        for(int i=0; i<(int)keyboardParameters.get("nKeyb") ; i++) {
-            zoneWidths[i] = viewWidth/(int)keyboardParameters.get(String.format("keyb%d_nKeys",i));
-            zoneCenterXOffset[i] = (viewWidth-zoneWidths[i]*(int)keyboardParameters.get(String.format("keyb%d_nKeys",i)))/2;
-            for(int j=0; j<(int)keyboardParameters.get(String.format("keyb%d_nKeys",i)); j++) {
+        zoneHeight = viewHeight/(int)keyboardParameters.get("Number of Keyboards");
+        zoneCenterYOffset = (viewHeight-zoneHeight*(int)keyboardParameters.get("Number of Keyboards"))/2;
+        for(int i=0; i<(int)keyboardParameters.get("Number of Keyboards") ; i++) {
+            zoneWidths[i] = viewWidth/(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i));
+            zoneCenterXOffset[i] = (viewWidth-zoneWidths[i]*(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i)))/2;
+            for(int j=0; j<(int)keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i)); j++) {
                 int currentLeft = borderSize+zoneCenterXOffset[i]+zoneWidths[i]*j;
                 int currentTop = borderSize+zoneCenterYOffset+zoneHeight*i;
                 int currentRight = currentLeft+zoneWidths[i]-borderSize*2;

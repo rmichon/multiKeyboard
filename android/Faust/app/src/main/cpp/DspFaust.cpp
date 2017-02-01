@@ -3,7 +3,7 @@
 //----------------------------------------------------------
 // name: "synth_effect"
 //
-// Code generated with Faust 0.9.95 (http://faust.grame.fr)
+// Code generated with Faust 0.9.96 (http://faust.grame.fr)
 //----------------------------------------------------------
 
 /* link with  */
@@ -964,12 +964,12 @@ class effect : public dsp {
 			float fTemp29 = (1.0f - (0.5f * fTemp28));
 			fRec43[0] = (fSlow91 + (0.999f * fRec43[1]));
 			output0[i] = (FAUSTFLOAT)(0.5f * (fRec43[0] * ((fVec9[IOTA&8191] * fTemp28) + (fTemp29 * ((fTemp25 + fTemp27) + (fSlow85 * (fTemp27 - fTemp25)))))));
-			float fTemp30 = (fSlow84 * fRec44[1]);
-			float fTemp31 = (0.37f * (fRec1[0] - fRec2[0]));
-			fRec44[0] = (fTemp31 - (fTemp30 + (fSlow83 * fRec44[2])));
-			float fTemp32 = (fTemp30 + fRec44[2]);
+			float fTemp30 = (0.37f * (fRec1[0] - fRec2[0]));
+			float fTemp31 = (fSlow84 * fRec44[1]);
+			fRec44[0] = (fTemp30 - (fTemp31 + (fSlow83 * fRec44[2])));
+			float fTemp32 = (fTemp31 + fRec44[2]);
 			float fTemp33 = (fSlow83 * fRec44[0]);
-			float fTemp34 = (0.5f * ((fSlow80 * ((fTemp33 + fTemp32) - fTemp31)) + (fTemp33 + (fTemp31 + fTemp32))));
+			float fTemp34 = (0.5f * ((fTemp33 + (fTemp30 + fTemp32)) + (fSlow80 * ((fTemp33 + fTemp32) - fTemp30))));
 			float fTemp35 = (fSlow89 * fRec45[1]);
 			fRec45[0] = (fTemp34 - (fTemp35 + (fSlow88 * fRec45[2])));
 			float fTemp36 = ((fSlow88 * fRec45[0]) + (fTemp35 + fRec45[2]));
@@ -1023,7 +1023,7 @@ class effect : public dsp {
 //----------------------------------------------------------
 // name: "synth"
 //
-// Code generated with Faust 0.9.95 (http://faust.grame.fr)
+// Code generated with Faust 0.9.96 (http://faust.grame.fr)
 //----------------------------------------------------------
 
 /* link with  */
@@ -5890,7 +5890,7 @@ class mydsp_poly : public dsp, public midi {
         mydsp_poly(dsp* dsp,
                 int max_polyphony,
                 bool control = false,   
-                bool group = true):fGroups(&fPanic, panic, this)
+                bool group = true): fPanic(FAUSTFLOAT(0)), fGroups(&fPanic, panic, this)
         {
             init(dsp, max_polyphony, control, group);
         }
@@ -7518,7 +7518,7 @@ int DspFaust::deleteVoice(unsigned long voice){
 }
 
 void DspFaust::allNotesOff(){
-    return fPolyEngine->allNotesOff();
+    fPolyEngine->allNotesOff();
 }
 
 void DspFaust::propagateMidi(int count, double time, int type, int channel, int data1, int data2){

@@ -29,8 +29,13 @@ public class InstrumentInterface extends ViewGroup {
     private String currentPresetName;
     private float viewsRatio;
     private boolean configDisplayOn;
+    private int currentPreset;
 
-    public int currentPreset; // TODO might not have to be public depending on the listener
+    private OnInstrInterfaceStatusChangedListener mInstrInterfaceStatusChangedListener = null;
+
+    public interface OnInstrInterfaceStatusChangedListener {
+        void OnStatusChanged(int preset);
+    }
 
     public InstrumentInterface(Context c, DspFaust faustDsp, int presetId) {
         super(c);
@@ -66,6 +71,10 @@ public class InstrumentInterface extends ViewGroup {
         }
 
         buildUI();
+    }
+
+    public void setInstrInterfaceStatusChangedListener(OnInstrInterfaceStatusChangedListener listener) {
+        mInstrInterfaceStatusChangedListener = listener;
     }
 
     private void updatePresetsList(){
@@ -108,36 +117,40 @@ public class InstrumentInterface extends ViewGroup {
 
         // UI is built in function of the position of the navbar
         if((int)localSettings.get("navBarPos") == 0){ // navbar is at the bottom
-            navBar = new NavBar(context,true);
+            navBar = new NavBar(context,0);
         }
         else if((int)localSettings.get("navBarPos") == 1){ // navbar is at the left
-            navBar = new NavBar(context,false);
+            navBar = new NavBar(context,1);
         }
         else if((int)localSettings.get("navBarPos") == 2){ // navbar is at the top
-            navBar = new NavBar(context,true);
+            navBar = new NavBar(context,0);
         }
         else if((int)localSettings.get("navBarPos") == 3){ // navbar is at the right
-            navBar = new NavBar(context,false);
+            navBar = new NavBar(context,1);
         }
         multiKeyboard = new MultiKeyboard(context,dspFaust,currentPresetName);
         navBar.setOnNavBarStatusChangedListener(new NavBar.OnNavBarStatusChangedListener() {
             @Override
             public void OnNavBarButtonTouched(int buttonID) {
                 if(buttonID == 0){ // going back to home
-                        // multiKeyboard.savePreset(); // TODO might have to be replaced here by something else
-                    // TODO missing sender here
-                    //[self sendActionsForControlEvents:UIControlEventValueChanged];
+                    if (mInstrInterfaceStatusChangedListener != null) {
+                        mInstrInterfaceStatusChangedListener.OnStatusChanged(currentPreset);
+                    }
                 }
                 else if(buttonID == 1){
                     if(!configDisplayOn){ // opening config display
                         removeView(multiKeyboard);
                         multiKeyboard = null;
-                        configDisplay = new ConfigDisplay(context);
+                        configDisplay = new ConfigDisplay(context,dspFaust,currentPresetName);
                         addView(configDisplay);
                         configDisplayOn = true;
                     }
                     else{ // closing config window
-                        // TODO need to call save parameters on config display!
+                        try {
+                            configDisplay.savePreset();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         removeView(configDisplay); // dealloc config display
                         configDisplay = null;
                         configDisplayOn = false;

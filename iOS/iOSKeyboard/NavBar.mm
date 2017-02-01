@@ -34,7 +34,7 @@
         CGFloat referenceWidth = 1024;
         fontSize = fontSize*fmax(frame.size.width,frame.size.height)/referenceWidth;
         
-        // color map
+        // color map TODO textOffColor actually not defined anywhere
         textOnColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1];
         textOnColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
         

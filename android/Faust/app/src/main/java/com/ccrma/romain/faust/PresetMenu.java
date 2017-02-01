@@ -1,15 +1,18 @@
 package com.ccrma.romain.faust;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +23,6 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +30,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class PresetMenu extends ViewGroup {
     private PopupWindow popupWindow;
     private int borderSize;
     private String documentsDirectory;
-    private TextView presetsTitleLabel;
+    private FramedTextView presetsTitleLabel;
     private ScrollView presetsView;
     private AudioSettings audioSettingsView;
 
@@ -104,20 +105,14 @@ public class PresetMenu extends ViewGroup {
         // positions
         borderSize = 2;
 
-        // TODO missing update previous values in function of screen width here
+        setBackground(ContextCompat.getDrawable(context, R.drawable.main_background));
 
-        // TODO ideqlly we want to be more specific here and apply what is said in https://developer.android.com/training/displaying-bitmaps/load-bitmap.html
-        // TODO That would imply removing android:largeHeap="true" and android:hardwareAccelerated="false" from the manifest may be?
-        Bitmap backgroundImage = BitmapFactory.decodeResource(context.getResources(),R.drawable.main_background);
-        setBackground(new BitmapDrawable(context.getResources(),backgroundImage));
-
-        presetsTitleLabel = new TextView(context);
+        presetsTitleLabel = new FramedTextView(context);
         presetsTitleLabel.setBackgroundColor(presetsListTitleBackgroundColor);
-        presetsTitleLabel.setTextColor(presetsListTitleColor);
-        presetsTitleLabel.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-        presetsTitleLabel.setTextSize(presetsListTitleFontSize);
-        presetsTitleLabel.setTypeface(null, Typeface.BOLD);
-        presetsTitleLabel.setText("Presets Name");
+        presetsTitleLabel.text.setTextColor(presetsListTitleColor);
+        presetsTitleLabel.text.setTextSize(presetsListTitleFontSize);
+        presetsTitleLabel.text.setTypeface(null, Typeface.BOLD);
+        presetsTitleLabel.text.setText("Presets Name");
         addView(presetsTitleLabel);
 
         menu = new Menu(context);
@@ -193,7 +188,6 @@ public class PresetMenu extends ViewGroup {
         if(presetsView != null){
             removeView(presetsView);
             presetsView = null;
-            System.gc(); // TODO not sure about that
         }
     }
 
@@ -209,20 +203,20 @@ public class PresetMenu extends ViewGroup {
 
         class PresetsTable extends ViewGroup {
             private ArrayList<Button> selectButtons;
-            private ArrayList<EditText> presetsNameFields;
+            private ArrayList<FramedEditText> presetsNameFields;
 
             public PresetsTable(Context context) {
                 super(context);
 
-                selectButtons = new ArrayList<Button>();
-                presetsNameFields = new ArrayList<EditText>();
+                selectButtons = new ArrayList<>();
+                presetsNameFields = new ArrayList<>();
 
                 // used to prevent edittext to gain focus
                 setFocusable(true);
                 setFocusableInTouchMode(true);
 
                 for (int i = 0; i < presetsList.size(); i++) {
-                    selectButtons.add(new Button(context));
+                    selectButtons.add(new Button(context,0));
                     if (i == currentPreset) {
                         selectButtons.get(i).setOffColor(selectedButtonColor);
                         selectButtons.get(i).setOnColor(selectedButtonColor);
@@ -262,7 +256,7 @@ public class PresetMenu extends ViewGroup {
 
                     addView(selectButtons.get(i));
 
-                    presetsNameFields.add(new EditText(context));
+                    presetsNameFields.add(new FramedEditText(context));
                     if (i == currentPreset) {
                         presetsNameFields.get(i).setBackgroundColor(selectedPresetsNameFieldsBackgroundColor);
                     } else {
@@ -272,14 +266,11 @@ public class PresetMenu extends ViewGroup {
                             presetsNameFields.get(i).setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
                         }
                     }
-                    presetsNameFields.get(i).setTextAlignment(TEXT_ALIGNMENT_CENTER); // TODO note sure why text doesn't center upon rebuild
-                    presetsNameFields.get(i).setTextSize(presetsListFontSize);
-                    presetsNameFields.get(i).setTextColor(presetsNameColor);
-                    presetsNameFields.get(i).setText(presetsList.get(i));
-                    presetsNameFields.get(i).setId(i); // TODO might have to be normalized with other elements
-                    presetsNameFields.get(i).setSingleLine(true);
-                    presetsNameFields.get(i).setImeOptions(EditorInfo.IME_ACTION_DONE);
-                    presetsNameFields.get(i).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    presetsNameFields.get(i).text.setTextSize(presetsListFontSize);
+                    presetsNameFields.get(i).text.setTextColor(presetsNameColor);
+                    presetsNameFields.get(i).text.setText(presetsList.get(i));
+                    presetsNameFields.get(i).text.setId(i); // TODO might have to be normalized with other elements
+                    presetsNameFields.get(i).text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                         @Override
                         public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -329,7 +320,7 @@ public class PresetMenu extends ViewGroup {
             String menuButtonsLabel[] = {"+ Add Preset", "- Delete Preset", "Audio Settings", "Run Preset :>"};
             menuButtons = new Button[4];
             for(int i=0; i<menuButtons.length; i++){
-                menuButtons[i] = new Button(context);
+                menuButtons[i] = new Button(context,0);
                 menuButtons[i].tag = i;
                 menuButtons[i].setOnColor(menuButtonsBackgroundColor); // TODO perhaps should be moved here
                 menuButtons[i].setOffColor(menuButtonsBackgroundColor); // TODO perhaps should be moved here
@@ -403,7 +394,6 @@ public class PresetMenu extends ViewGroup {
         }
     }
 
-    // TODO: perhaps, this should be in its own file?
     class PopupWindow extends ViewGroup{
         private TextView popupMessage;
         private Button buttons[];
@@ -414,7 +404,7 @@ public class PresetMenu extends ViewGroup {
             setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
 
             popupMessage = new TextView(context);
-            popupMessage.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+            popupMessage.setGravity(Gravity.CENTER);
             popupMessage.setTextSize(presetsListFontSize);
             // TODO missing line number set to 2 here
             popupMessage.setText("Are you sure you want to delete this preset?");
@@ -423,7 +413,7 @@ public class PresetMenu extends ViewGroup {
             String popupWindowButtonsLabels[] = {"No","Yes"};
             buttons = new Button[2];
             for(int i=0; i<2; i++){
-                buttons[i] = new Button(context);
+                buttons[i] = new Button(context,0);
                 buttons[i].setOnColor(menuButtonsBackgroundColor);
                 buttons[i].setOffColor(menuButtonsBackgroundColor);
                 buttons[i].setTextColor(menuButtonsTextColor);
@@ -488,7 +478,7 @@ public class PresetMenu extends ViewGroup {
 
             for(int i=0; i<audioSettingsLabels.length; i++){
                 labels.add(new TextView(context));
-                labels.get(i).setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                labels.get(i).setGravity(Gravity.CENTER);
                 labels.get(i).setTextColor(menuButtonsTextColor);
                 labels.get(i).setTextSize(presetsListFontSize);
                 labels.get(i).setText(audioSettingsLabels[i]);
@@ -507,7 +497,7 @@ public class PresetMenu extends ViewGroup {
                 else{
                     valueFields.get(i).setBackgroundColor(oddPresetsNameFieldsBackgroundColor);
                 }
-                valueFields.get(i).setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                valueFields.get(i).setGravity(Gravity.CENTER);
                 valueFields.get(i).setTextSize(presetsListFontSize);
                 valueFields.get(i).setTextColor(presetsNameColor);
                 valueFields.get(i).setSingleLine(true);
@@ -565,21 +555,46 @@ public class PresetMenu extends ViewGroup {
     private void createDefaultPresetFile() throws IOException {
         Map<String,Object> keyboardParameters;
         keyboardParameters = new HashMap<String,Object>();
-        keyboardParameters.put("nKeyb", 4);
-        keyboardParameters.put("maxFingers", 10);
-        keyboardParameters.put("maxKeybPoly", 16);
-        keyboardParameters.put("monoMode", 1);
-        keyboardParameters.put("quantizationMode", 0);
-        keyboardParameters.put("interKeybSlideAllowed", 1);
-        keyboardParameters.put("sendCurrentKey", 1);
-        keyboardParameters.put("sendCurrentKeyboard", 1);
-        keyboardParameters.put("sendX", 1);
-        keyboardParameters.put("sendY", 1);
-        keyboardParameters.put("sendAccel", 1);
-        keyboardParameters.put("roundingUpdateSpeed", (float) 0.06);
-        keyboardParameters.put("roundingSmoothPole", (float) 0.9);
-        keyboardParameters.put("roundingThreshold", (float) 3.0);
-        keyboardParameters.put("roundingDeactCycles", 5);
+        keyboardParameters.put("Number of Keyboards", 4);
+        keyboardParameters.put("Max Fingers", 10);
+        keyboardParameters.put("Max Keyboard Polyphony", 16);
+        keyboardParameters.put("Mono Mode", 1);
+        keyboardParameters.put("Rounding Mode", 0);
+        keyboardParameters.put("Inter-Keyboard Slide", 1);
+        keyboardParameters.put("Send Current Key", 1);
+        keyboardParameters.put("Send Current Keyboard", 1);
+        keyboardParameters.put("Send X", 1);
+        keyboardParameters.put("Send Y", 1);
+        keyboardParameters.put("Send Sensors", 1);
+        keyboardParameters.put("Rounding Update Speed", (float) 0.06);
+        keyboardParameters.put("Rounding Smooth", (float) 0.9);
+        keyboardParameters.put("Rounding Threshold", (float) 3.0);
+        keyboardParameters.put("Rounding Cycles", 5);
+
+        // keyboard dependent default parameters TODO: this is missing on iOS
+        for(int i=0; i<(int)keyboardParameters.get("Number of Keyboards") ; i++){
+            if(keyboardParameters.get(String.format("Keyboard %d - Number of Keys",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Number of Keys", i), 7);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Lowest Key",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Lowest Key", i), (48 + i * 12) % 127);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Scale",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Scale", i), 0);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Show Notes",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Show Notes", i), 1);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Root Position",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Root Position", i), 0);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Orientation",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Orientation", i), 0);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Mode",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Mode", i), 1);
+            }
+        }
 
         FileOutputStream fileOutputStreamKeyb = new FileOutputStream(documentsDirectory.concat("/Preset 0_keyb"));
         ObjectOutputStream objectOutputStreamKeyb = new ObjectOutputStream(fileOutputStreamKeyb);

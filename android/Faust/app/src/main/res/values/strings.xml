@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Faust</string>
+    <string name="app_type">Full</string>
 </resources>

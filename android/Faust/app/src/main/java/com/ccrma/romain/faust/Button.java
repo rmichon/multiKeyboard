@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 public class Button extends ViewGroup {
     private View layerOn;
-    private TextView label;
+    private TextView hLabel;
+    private VerticalTextView vLabel;
+    private int orientation;
 
     public boolean on;
     public boolean polarity;
@@ -23,9 +25,10 @@ public class Button extends ViewGroup {
         void OnButtonStatusChanged(Button source);
     }
 
-    public Button(Context context) {
+    public Button(Context context, int orient) {
         super(context);
 
+        orientation = orient;
         on = false;
 
         layerOn = new TextView(context);
@@ -33,14 +36,19 @@ public class Button extends ViewGroup {
         layerOn.setVisibility(INVISIBLE);
         addView(layerOn);
 
-        label = new TextView(context);
-        label.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-        label.setTextColor(Color.BLACK);
-        addView(label);
-
+        if(orientation == 0) {
+            hLabel = new TextView(context);
+            hLabel.setTextColor(Color.BLACK);
+            addView(hLabel);
+        }
+        else if(orientation == 1) {
+            vLabel = new VerticalTextView(context);
+            vLabel.setTextColor(Color.BLACK);
+            addView(vLabel);
+        }
     }
 
-    @Override // TODO: this has to be checked
+    @Override
     public boolean onTouchEvent(MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -65,7 +73,6 @@ public class Button extends ViewGroup {
         if (mButtonStatusChangedListener != null) {
             mButtonStatusChangedListener.OnButtonStatusChanged(this);
         }
-        // TODO sender action goes here
     }
 
     public void setOff(){
@@ -74,7 +81,6 @@ public class Button extends ViewGroup {
         if (mButtonStatusChangedListener != null) {
             mButtonStatusChangedListener.OnButtonStatusChanged(this);
         }
-        // TODO sender action goes here
     }
 
     public void setOffColor(int offColor){
@@ -98,23 +104,64 @@ public class Button extends ViewGroup {
     }
 
     public void setText(String t){
-        label.setText(t);
+        if(orientation == 0) {
+            hLabel.setText(t);
+        }
+        else if(orientation == 1){
+            vLabel.setText(t);
+        }
     }
 
     public void setTextColor(int color){
-        label.setTextColor(color);
+        if(orientation == 0) {
+            hLabel.setTextColor(color);
+        }
+        else if(orientation == 1){
+            vLabel.setTextColor(color);
+        }
     }
 
     public void setTextSize(float size){
-        label.setTextSize(size);
+        if(orientation == 0) {
+            hLabel.setTextSize(size);
+        }
+        else if(orientation == 1){
+            vLabel.setTextSize(size);
+        }
     }
 
-    public void setTextBold(){ label.setTypeface(null, Typeface.BOLD); }
+    public void setTextBold(){
+        if(orientation == 0){
+            hLabel.setTypeface(null, Typeface.BOLD);
+        }
+        else if(orientation == 1){
+            vLabel.setTypeface(null, Typeface.BOLD);
+        }
+    }
 
 
     @Override
     protected void onLayout(boolean b, int i, int i1, int i2, int i3) {
-        layerOn.layout(0,0,i2-i,i3-i1);
-        label.layout(0,0,i2-i,i3-i1);
+        int width = i2-i;
+        int height = i3-i1;
+        layerOn.layout(0,0,width,height);
+        if(orientation == 0) {
+            hLabel.measure(0, 0);
+            int measuredTextHeight = hLabel.getMeasuredHeight();
+            int measuredTextWidth = hLabel.getMeasuredWidth();
+            hLabel.layout((width - measuredTextWidth) / 2,
+                    (height - measuredTextHeight) / 2,
+                    (width + measuredTextWidth) / 2,
+                    (height + measuredTextHeight) / 2);
+        }
+        else if(orientation == 1) {
+            vLabel.measure(0, 0);
+            int measuredTextHeight = vLabel.getMeasuredHeight();
+            int measuredTextWidth = vLabel.getMeasuredWidth();
+            vLabel.layout((width - measuredTextWidth) / 2,
+                    (height - measuredTextHeight) / 2,
+                    (width + measuredTextWidth) / 2,
+                    (height + measuredTextHeight) / 2);
+        }
     }
 }

@@ -5,14 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.ViewGroup;
 
 class NavBar extends ViewGroup{
     private Button buttons[];
-    private boolean orientation;
+    private int orientation;
     private Context context;
-    private BitmapDrawable buttonOnImage;
-    private BitmapDrawable buttonOffImage;
     private int textOnColor;
     private int textOffColor;
 
@@ -22,7 +21,7 @@ class NavBar extends ViewGroup{
         void OnNavBarButtonTouched(int buttonID);
     }
 
-    public NavBar(Context c, boolean orient) {
+    public NavBar(Context c, int orient) {
         super(c);
 
         context = c;
@@ -31,27 +30,20 @@ class NavBar extends ViewGroup{
         orientation = orient;
         buttons = new Button[5];
 
-        textOnColor = Color.argb((int)(255*1), (int)(255*0), (int)(255*0.0), (int)(255*0.0));
-        textOffColor = Color.argb((int)(255*1), (int)(255*9), (int)(255*0.9), (int)(255*0.9));
+        textOffColor = Color.argb((int)(255*1), (int)(255*0), (int)(255*0.0), (int)(255*0.0));
+        textOnColor = Color.argb((int)(255*1), (int)(255*0.9), (int)(255*0.9), (int)(255*0.9));
 
         float fontSize = 24;
-        // TODO should do scaling on font size here
-
-        buttonOnImage = new BitmapDrawable(context.getResources(),
-                BitmapFactory.decodeResource(context.getResources(),R.drawable.nav_bar_buttons_on));
-        buttonOffImage = new BitmapDrawable(context.getResources(),
-                BitmapFactory.decodeResource(context.getResources(),R.drawable.nav_bar_buttons_off));
 
         String buttonsLabel[] = {"Home", "Settings", "- Preset", "+ Preset", "Flip"};
 
         for(int i=0; i<buttons.length; i++) {
-            buttons[i] = new Button(context);
+            buttons[i] = new Button(context,orientation);
             buttons[i].tag = i;
-            buttons[i].setOnImage(buttonOnImage);
-            buttons[i].setOffImage(buttonOffImage);
+            buttons[i].setOnImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_on));
+            buttons[i].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_off));
             buttons[i].setTextColor(textOffColor);
             buttons[i].setTextSize(fontSize);
-            buttons[i].setTextBold();
             buttons[i].setText(buttonsLabel[i]);
             buttons[i].setOnButtonStatusChangedListener(new Button.OnButtonStatusChangedListener() {
                 @Override
@@ -59,17 +51,17 @@ class NavBar extends ViewGroup{
                     if (source.on) {
                         if(source.tag == 1){
                             if(source.polarity){
-                                source.setOffImage(buttonOnImage);
-                                buttons[2].setOffImage(buttonOnImage);
-                                buttons[3].setOffImage(buttonOnImage);
-                                buttons[4].setOffImage(buttonOnImage);
+                                source.setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_on));
+                                buttons[2].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_on));
+                                buttons[3].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_on));
+                                buttons[4].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_on));
                                 source.setTextColor(textOnColor);
                             }
                             else{
-                                source.setOffImage(buttonOffImage);
-                                buttons[2].setOffImage(buttonOffImage);
-                                buttons[3].setOffImage(buttonOffImage);
-                                buttons[4].setOffImage(buttonOffImage);
+                                source.setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_off));
+                                buttons[2].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_off));
+                                buttons[3].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_off));
+                                buttons[4].setOffImage(ContextCompat.getDrawable(context, R.drawable.nav_bar_buttons_off));
                                 source.setTextColor(textOffColor);
                             }
                         }
@@ -95,7 +87,7 @@ class NavBar extends ViewGroup{
         int buttonsWidth = width/buttons.length;
         int buttonsHeight = height/buttons.length;
         for(int i=0; i<buttons.length; i++){
-            if(orientation) {
+            if(orientation == 0) {
                 buttons[i].layout(borderSize+buttonsWidth*i,borderSize,buttonsWidth*(1+i)-borderSize*2,height-borderSize*2);
             }
             else{
