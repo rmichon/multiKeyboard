@@ -23,6 +23,7 @@ VOICES="12"
 POLY2="0"
 MIDI="0"
 EFFECT=""
+REUSE=0
 
 echoHelp ()
 {
@@ -64,7 +65,7 @@ do
 		EFFECT=$1
     elif [ "$p" = "-midi" ]; then
         MIDI="1"
-    elif [ $p = "-polyvoices" ]; then
+    elif [ $p = "-nvoices" ]; then
 		shift
 		VOICES=$1
     elif [ ${p:0:1} = "-" ]; then
@@ -89,25 +90,61 @@ APPNAME=$(basename "$FILE")
 APPNAME="${APPNAME%.dsp}"
 BUILDDIR="faustmulkeyb.$APPNAME"
 
+# making sure that platform is set and generate corresponding global vars
+if [ $ANDROID -eq 1 ]; then
+	APPFOLDER="$BUILDDIR/app/src/main"
+#elif [ $IOS -eq 1 ]; then
+    # TODO do something for iOS here may be
+else
+	echo "Please, specify a platform: -android or -ios"
+	echoHelp
+	exit 1
+fi
+
+# if reuse then don't rebuild project folder
+if [ $REUSE -eq 0 ]; then
+	if [ -d "$BUILDDIR" ]; then
+		echo "Delete existing Android project $BUILDDIR" > $LOG
+		rm -rf "$BUILDDIR"
+	fi
+fi
+
+# copying new template app if no reuse
 if [ ! -d "$BUILDDIR" ]; then
-  	echo "Creating new project $BUILDDIR"  > $LOG
 	mkdir -p "$BUILDDIR"
 	if [ $ANDROID -eq 1 ]; then
-		APPFOLDER="$BUILDDIR/app/src/main"
+		echo "Creating a new Android project in $BUILDDIR" > $LOG
 		cp -r $FAUSTLIB/multiKeyboard/android/* "$BUILDDIR"
+		# TODO missing app name change here
+	elif [ $IOS -eq 1 ]; then
+		echo "Creating a new iOS project in $BUILDDIR" > $LOG
+	fi
+fi
+
+# updating template app with current DSP
+if [ $ANDROID -eq 1 ]; then
+	APPFOLDER="$BUILDDIR/app/src/main"
+	cp -r $FAUSTLIB/multiKeyboard/android/* "$BUILDDIR"
 		if [ -z "$EFFECT" ]; then # no effect
 			echo "Building Android app with no effect" > $LOG
-			faust2api -android -polyvoices "$VOICES" -nodoc "$FILE"
+			faust2api -android -nvoices "$VOICES" -nodoc "$FILE" > $LOG
 		else
 			echo "Building Android app with effect" > $LOG
-			faust2api -android -polyvoices "$VOICES" -effect "$EFFECT" -nodoc "$FILE"
+			faust2api -android -nvoices "$VOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
 		fi
 		unzip "dsp-faust.zip"
 		mv "dsp-faust" "$BUILDDIR"
 		rm "dsp-faust.zip"
 		cp -r "$BUILDDIR/dsp-faust/cpp" "$APPFOLDER"
-		cp -r "$BUILDDIR/dsp-faust/java" "$APPFOLDER/java/com/DspFaust"
+		cp  $BUILDDIR/dsp-faust/java/* "$APPFOLDER/java/com/DspFaust"
 		rm -r "$BUILDDIR/dsp-faust"
+
+		# Run Gradle
+		cd $BUILDDIR
+		./gradlew assembleRelease
+		cd ..
+
+		cp -r $BUILDDIR/app/build/outputs/apk/app-release.apk $APPNAME.apk
 		
 	elif [ $IOS -eq 1 ]; then
 		echo "Your iOS app is being created" > $LOG
@@ -115,7 +152,6 @@ if [ ! -d "$BUILDDIR" ]; then
 		echoHelp
 		exit 1
 	fi
-fi
 
 ###################################
 # POST PROCESSING
