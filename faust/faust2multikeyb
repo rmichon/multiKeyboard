@@ -23,7 +23,9 @@ VOICES="12"
 POLY2="0"
 MIDI="0"
 EFFECT=""
+SOURCE=0
 REUSE=0
+INSTALL=0
 
 echoHelp ()
 {
@@ -59,6 +61,14 @@ do
 		ANDROID=1
     elif [ $p = "-ios" ]; then
 		IOS="1"
+	elif [ $p = "-reuse" ]; then
+		REUSE=1
+	elif [ $p = "-source" ]; then
+		SOURCE=1
+	elif [ $p = "-debug" ]; then
+		LOG="/dev/stdout"
+	elif [ $p = "-install" ]; then
+		INSTALL=1
     elif [ "$p" = "-effect" ]; then
         POLY2="1"
 		shift
@@ -132,6 +142,7 @@ if [ ! -d "$BUILDDIR" ]; then
 			sed -i 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $APPFOLDER/res/layout/activity_main.xml
 			sed -i 's,Faust,'$APPNAME',g' $APPFOLDER/res/values/strings.xml
 		fi
+		mv $APPFOLDER/java/com/ccrma/faust $APPFOLDER/java/com/ccrma/$APPNAME
 	elif [ $IOS -eq 1 ]; then
 		echo "Creating a new iOS project in $BUILDDIR" > $LOG
 	fi
@@ -139,8 +150,6 @@ fi
 
 # updating template app with current DSP
 if [ $ANDROID -eq 1 ]; then
-	APPFOLDER="$BUILDDIR/app/src/main"
-	cp -r $FAUSTLIB/multiKeyboard/android/* "$BUILDDIR"
 	if [ -z "$EFFECT" ]; then # no effect
 		echo "Building Android app with no effect" > $LOG
 		faust2api -android -nvoices "$VOICES" -nodoc "$FILE" > $LOG
@@ -148,7 +157,7 @@ if [ $ANDROID -eq 1 ]; then
 		echo "Building Android app with effect" > $LOG
 		faust2api -android -nvoices "$VOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
 	fi
-	unzip "dsp-faust.zip"
+	unzip "dsp-faust.zip" > $LOG
 	mv "dsp-faust" "$BUILDDIR"
 	rm "dsp-faust.zip"
 	cp -r "$BUILDDIR/dsp-faust/cpp" "$APPFOLDER"
@@ -157,17 +166,40 @@ if [ $ANDROID -eq 1 ]; then
 
 	# Run Gradle
 	cd $BUILDDIR
-	./gradlew assembleRelease
+	./gradlew assembleRelease > $LOG
 	cd ..
 		
-	cp -r $BUILDDIR/app/build/outputs/apk/app-release.apk $APPNAME.apk
-		
+	cp -r $BUILDDIR/app/build/outputs/apk/app-release.apk $APPNAME.apk > $LOG
+	echo "An Android app $APPNAME.apk was created in the current folder"
 elif [ $IOS -eq 1 ]; then
 	echo "Your iOS app is being created" > $LOG
 else
 	echoHelp
 	exit 1
 fi
+
+###################
+
+if [ $ANDROID -eq 1 ]; then
+	if [ $INSTALL -eq 1 ]; then
+		echo "Installing the app"
+		adb install -r $APPNAME.apk
+	fi
+fi
+
+if [ $SOURCE -eq 1 ]; then
+	rm -rf faustApp
+	mv $BUILDDIR faustApp
+	echo "A faustApp app project was created." > $LOG
+else
+	if [ $REUSE -eq 0 ]; then
+		echo "Delete app project $BUILDDIR" > $LOG
+		rm -rf $BUILDDIR
+	else
+		echo "The build folder $BUILDDIR was not deleted for future builds"
+	fi
+fi
+
 
 ###################################
 # POST PROCESSING

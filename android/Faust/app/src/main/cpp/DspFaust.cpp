@@ -1508,7 +1508,7 @@ class mydsp : public dsp {
   public:
 	virtual void metadata(Meta* m) { 
 		m->declare("name", "synth");
-		m->declare("interface", "SmartKeyboard{  'nKeyb':'5',  'maxKeybPoly':'1',  'interKeybSlideAllowed':'1',  'monoMode':'1',  'keyb0_nKeys':'13',  'keyb1_nKeys':'13',  'keyb2_nKeys':'13',  'keyb3_nKeys':'13',  'keyb4_nKeys':'13',  'keyb0_scale':'3',  'keyb0_lowestKey':'77',  'keyb1_lowestKey':'72',  'keyb2_lowestKey':'67',  'keyb3_lowestKey':'62',  'keyb4_lowestKey':'57',  'quantizationMode':'2' }");
+		m->declare("interface", "SmartKeyboard{  'Number of Keyboards':'5',  'Max Keyboard Polyphony':'1',  'Inter-Keyboard Slide':'1',  'Mono Mode':'1',  'Keyboard 0 - Number of Keys':'13',  'Keyboard 1 - Number of Keys':'13',  'Keyboard 2 - Number of Keys':'13',  'Keyboard 3 - Number of Keys':'13',  'Keyboard 4 - Number of Keys':'13',  'Keyboard 0 - Scale':'3',  'Keyboard 0 - Lowest Key':'77',  'Keyboard 1 - Lowest Key':'72',  'Keyboard 2 - Lowest Key':'67',  'Keyboard 3 - Lowest Key':'62',  'Keyboard 4 - Lowest Key':'57',  'Rounding Mode':'2' }");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
 		m->declare("filters.lib/name", "Faust Filter Library");
