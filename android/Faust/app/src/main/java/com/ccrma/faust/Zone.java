@@ -1,4 +1,4 @@
-package com.ccrma.romain.faust;
+package com.ccrma.faust;
 
 import android.content.Context;
 import android.graphics.Bitmap;

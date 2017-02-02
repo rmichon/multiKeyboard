@@ -115,7 +115,23 @@ if [ ! -d "$BUILDDIR" ]; then
 	if [ $ANDROID -eq 1 ]; then
 		echo "Creating a new Android project in $BUILDDIR" > $LOG
 		cp -r $FAUSTLIB/multiKeyboard/android/* "$BUILDDIR"
-		# TODO missing app name change here
+
+		# change 'faust' with real *APPNAME
+		PLATFORM=$(uname)
+
+		if [ $PLATFORM = "Darwin" ]; then
+			sed -i '' 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $BUILDDIR/app/build.gradle
+			sed -i '' 's,com.ccrma.faust,com.ccrma'$APPNAME',g' $APPFOLDER/java/com/ccrma/faust/*
+			sed -i '' 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $APPFOLDER/AndroidManifest.xml
+			sed -i '' 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $APPFOLDER/res/layout/activity_main.xml
+			sed -i '' 's,Faust,'$APPNAME',g' $APPFOLDER/res/values/strings.xml
+		else
+			sed -i 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $BUILDDIR/app/build.gradle
+			sed -i 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $APPFOLDER/java/com/ccrma/faust/*
+			sed -i 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $APPFOLDER/AndroidManifest.xml
+			sed -i 's,com.ccrma.faust,com.ccrma.'$APPNAME',g' $APPFOLDER/res/layout/activity_main.xml
+			sed -i 's,Faust,'$APPNAME',g' $APPFOLDER/res/values/strings.xml
+		fi
 	elif [ $IOS -eq 1 ]; then
 		echo "Creating a new iOS project in $BUILDDIR" > $LOG
 	fi
@@ -125,33 +141,33 @@ fi
 if [ $ANDROID -eq 1 ]; then
 	APPFOLDER="$BUILDDIR/app/src/main"
 	cp -r $FAUSTLIB/multiKeyboard/android/* "$BUILDDIR"
-		if [ -z "$EFFECT" ]; then # no effect
-			echo "Building Android app with no effect" > $LOG
-			faust2api -android -nvoices "$VOICES" -nodoc "$FILE" > $LOG
-		else
-			echo "Building Android app with effect" > $LOG
-			faust2api -android -nvoices "$VOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
-		fi
-		unzip "dsp-faust.zip"
-		mv "dsp-faust" "$BUILDDIR"
-		rm "dsp-faust.zip"
-		cp -r "$BUILDDIR/dsp-faust/cpp" "$APPFOLDER"
-		cp  $BUILDDIR/dsp-faust/java/* "$APPFOLDER/java/com/DspFaust"
-		rm -r "$BUILDDIR/dsp-faust"
-
-		# Run Gradle
-		cd $BUILDDIR
-		./gradlew assembleRelease
-		cd ..
-
-		cp -r $BUILDDIR/app/build/outputs/apk/app-release.apk $APPNAME.apk
-		
-	elif [ $IOS -eq 1 ]; then
-		echo "Your iOS app is being created" > $LOG
+	if [ -z "$EFFECT" ]; then # no effect
+		echo "Building Android app with no effect" > $LOG
+		faust2api -android -nvoices "$VOICES" -nodoc "$FILE" > $LOG
 	else
-		echoHelp
-		exit 1
+		echo "Building Android app with effect" > $LOG
+		faust2api -android -nvoices "$VOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
 	fi
+	unzip "dsp-faust.zip"
+	mv "dsp-faust" "$BUILDDIR"
+	rm "dsp-faust.zip"
+	cp -r "$BUILDDIR/dsp-faust/cpp" "$APPFOLDER"
+	cp  $BUILDDIR/dsp-faust/java/* "$APPFOLDER/java/com/DspFaust"
+	rm -r "$BUILDDIR/dsp-faust"
+
+	# Run Gradle
+	cd $BUILDDIR
+	./gradlew assembleRelease
+	cd ..
+		
+	cp -r $BUILDDIR/app/build/outputs/apk/app-release.apk $APPNAME.apk
+		
+elif [ $IOS -eq 1 ]; then
+	echo "Your iOS app is being created" > $LOG
+else
+	echoHelp
+	exit 1
+fi
 
 ###################################
 # POST PROCESSING

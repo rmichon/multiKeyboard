@@ -1,4 +1,4 @@
-package com.ccrma.romain.faust;
+package com.ccrma.faust;
 
 public class Smooth {
     private float delay = 0;
