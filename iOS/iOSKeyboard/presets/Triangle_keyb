@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>interKeybSlideAllowed</key>
+	<key>Inter-Keyboard Slide</key>
 	<integer>1</integer>
 	<key>keyb0_keybMode</key>
 	<integer>1</integer>
@@ -88,33 +88,33 @@
 	<integer>0</integer>
 	<key>keyb5_showNotesName</key>
 	<integer>1</integer>
-	<key>maxFingers</key>
+	<key>Max Fingers</key>
 	<integer>10</integer>
-	<key>maxKeybPoly</key>
+	<key>Max Keyboard Polyphony</key>
 	<integer>1</integer>
-	<key>monoMode</key>
+	<key>Mono Mode</key>
 	<integer>1</integer>
-	<key>nKeyb</key>
+	<key>Number of Keyboards</key>
 	<integer>6</integer>
-	<key>quantizationMode</key>
+	<key>Rounding Mode</key>
 	<integer>2</integer>
-	<key>roundingDeactCycles</key>
+	<key>Rounding Cycles</key>
 	<integer>5</integer>
-	<key>roundingSmoothPole</key>
+	<key>Rounding Pole</key>
 	<real>0.89999997615814209</real>
-	<key>roundingThreshold</key>
+	<key>Rounding Threshold</key>
 	<real>3</real>
-	<key>roundingUpdateSpeed</key>
+	<key>Rounding Update Speed</key>
 	<real>0.059999998658895493</real>
-	<key>sendAccel</key>
+	<key>Send Sensors</key>
 	<integer>1</integer>
-	<key>sendCurrentKey</key>
+	<key>Send Current Key</key>
 	<integer>1</integer>
-	<key>sendCurrentKeyboard</key>
+	<key>Send Current Keyboard</key>
 	<integer>1</integer>
-	<key>sendX</key>
+	<key>Send X</key>
 	<integer>1</integer>
-	<key>sendY</key>
+	<key>Send Y</key>
 	<integer>1</integer>
 </dict>
 </plist>

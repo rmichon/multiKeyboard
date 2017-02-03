@@ -6,7 +6,7 @@
 //  Copyright © 2016 CCRMA. All rights reserved.
 //
 
-#define MULTI_KEYBOARD_ONLY 0
+#define MULTI_KEYBOARD_ONLY 1
 
 #import "ViewController.h"
 

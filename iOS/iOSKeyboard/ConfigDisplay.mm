@@ -203,16 +203,16 @@
     // build the list
     for(int i=0; i<[keyboardKeys count]; i++){
         // delete button
-        if(![[keyboardKeys objectAtIndex:i] isEqual: @"nKeyb"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"maxFingers"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"maxKeybPoly"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"monoMode"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"quantizationMode"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"interKeybSlideAllowed"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"roundingUpdateSpeed"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"roundingSmoothPole"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"roundingThreshold"] &&
-           ![[keyboardKeys objectAtIndex:i] isEqual: @"roundingDeactCycles"]){
+        if(![[keyboardKeys objectAtIndex:i] isEqual: @"Number of Keyboards"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Max Fingers"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Max Keyboard Polyphony"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Mono Mode"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Rounding Mode"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Inter-Keyboard Slide"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Rounding Update Speed"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Rounding Pole"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Rounding Threshold"] &&
+           ![[keyboardKeys objectAtIndex:i] isEqual: @"Rounding Cycles"]){
             // deletable parameters
             [keyboardDeleteButtons insertObject:[[Button alloc] initWithFrame:CGRectMake(0, columnLabelHeight*i, addButtonWidth, columnLabelHeight)] atIndex:i];
             if(i%2 == 0){
@@ -446,13 +446,13 @@
 
 // save a keyboard parameter in the dictionary
 - (void)saveKeyboardParamValue:(NSString*)key withValue:(NSString*)value{
-    if([key isEqual: @"nKeyb"] ||
-       [key isEqual: @"maxFingers"] ||
-       [key isEqual: @"maxKeybPoly"] ||
-       [key isEqual: @"monoMode"] ||
-       [key isEqual: @"quantizationMode"] ||
-       [key isEqual: @"interKeybSlideAllowed"] ||
-       [key isEqual: @"roundingDeactCycles"] ||
+    if([key isEqual: @"Number of Keyboards"] ||
+       [key isEqual: @"Max Fingers"] ||
+       [key isEqual: @"Max Keyboard Polyphony"] ||
+       [key isEqual: @"Mono Mode"] ||
+       [key isEqual: @"Rounding Mode"] ||
+       [key isEqual: @"Inter-Keyboard Slide"] ||
+       [key isEqual: @"Rounding Cycles"] ||
        [key containsString:@"keyb"]){
         keyboardParameters[key] = [NSNumber numberWithInteger:[value integerValue]];
     }

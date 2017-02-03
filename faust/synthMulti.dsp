@@ -82,3 +82,12 @@ with{
 synths = (sawSynth,squareSynth,ks,djembe);
 	
 process = par(i,ba.count(synths),ba.take(i+1,synths) : control(synthSelect==i)) :> _ <: _,_;
+
+
+
+
+
+
+
+
+

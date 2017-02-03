@@ -9,10 +9,10 @@
 //  Build a "MultiKeyboard" interface around a mydsp_poly object.
 
 // TODOs
-// - If only one cell, should make sure that we use monoMode 0...
+// - If only one cell, should make sure that we use Mono Mode 0...
 // NOTEs
 // - The default mode in any case is that if current finger goes away the note is not transfered to another finger on the keyboard: this might have to be fixed
-// - For monoMode, slides between keyboards don't get priority over a finger already on the keyboard in any case
+// - For Mono Mode, slides between keyboards don't get priority over a finger already on the keyboard in any case
 // - Later, glissandi should be handled using pitch bend directly from poly-dsp, but we can take care of that later
 // - It would have been nice to have a system to automatically add new midi devices when they are connected but it seems to be more complicated than what we think...
 // - Arpegiator mode
@@ -82,21 +82,21 @@
         if(currentPresetName == nil){
             // Declaring default parameters
             keyboardParameters = [NSMutableDictionary dictionaryWithDictionary:@{
-                                                                     @"nKeyb":[NSNumber numberWithInt:4],
-                                                                     @"maxFingers":[NSNumber numberWithInt:10],
-                                                                     @"maxKeybPoly":[NSNumber numberWithInt:16],
-                                                                     @"monoMode":[NSNumber numberWithInt:1],
-                                                                     @"quantizationMode":[NSNumber numberWithInt:0],
-                                                                     @"interKeybSlideAllowed":[NSNumber numberWithInt:1],
-                                                                     @"sendCurrentKey":[NSNumber numberWithInt:1],
-                                                                     @"sendCurrentKeyboard":[NSNumber numberWithInt:1],
-                                                                     @"sendX":[NSNumber numberWithInt:1],
-                                                                     @"sendY":[NSNumber numberWithInt:1],
-                                                                     @"sendAccel":[NSNumber numberWithInt:1],
-                                                                     @"roundingUpdateSpeed":[NSNumber numberWithFloat:0.06],
-                                                                     @"roundingSmoothPole":[NSNumber numberWithFloat:0.9],
-                                                                     @"roundingThreshold":[NSNumber numberWithFloat:3],
-                                                                     @"roundingDeactCycles":[NSNumber numberWithInt:5]
+                                                                     @"Number of Keyboards":[NSNumber numberWithInt:4],
+                                                                     @"Max Fingers":[NSNumber numberWithInt:10],
+                                                                     @"Max Keyboard Polyphony":[NSNumber numberWithInt:16],
+                                                                     @"Mono Mode":[NSNumber numberWithInt:1],
+                                                                     @"Rounding Mode":[NSNumber numberWithInt:0],
+                                                                     @"Inter-Keyboard Slide":[NSNumber numberWithInt:1],
+                                                                     @"Send Current Key":[NSNumber numberWithInt:1],
+                                                                     @"Send Current Keyboard":[NSNumber numberWithInt:1],
+                                                                     @"Send X":[NSNumber numberWithInt:1],
+                                                                     @"Send Y":[NSNumber numberWithInt:1],
+                                                                     @"Send Sensors":[NSNumber numberWithInt:1],
+                                                                     @"Rounding Update Speed":[NSNumber numberWithFloat:0.06],
+                                                                     @"Rounding Pole":[NSNumber numberWithFloat:0.9],
+                                                                     @"Rounding Threshold":[NSNumber numberWithFloat:3],
+                                                                     @"Rounding Cycles":[NSNumber numberWithInt:5]
                                                                      }];
          
             NSString *JSONInterface = [NSString stringWithUTF8String:faustDsp->getJSONMeta()];
@@ -134,7 +134,7 @@
         touchDel = 2; // we just need a "2 samples delay" but we can add more if necessary
         [self buildInterface]; // screen interface is built based on the description contained in "parameters"
         
-        if([keyboardParameters[@"quantizationMode"] intValue] == 2){
+        if([keyboardParameters[@"Rounding Mode"] intValue] == 2){
             [NSThread detachNewThreadSelector:@selector(pitchRounding) toTarget:self withObject:nil];
         }
         cancelOnce = true;
@@ -152,46 +152,46 @@
     [self clean]; // dealocate previous instances first
     UIon = true;
     
-    if([keyboardParameters[@"sendAccel"] intValue]) [self startMotion];
+    if([keyboardParameters[@"Send Sensors"] intValue]) [self startMotion];
     
     // keyboard dependent default parameters
-    for(int i=0; i<[keyboardParameters[@"nKeyb"] intValue]; i++){
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_nKeys",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] = [NSNumber numberWithInt:7];
+    for(int i=0; i<[keyboardParameters[@"Number of Keyboards"] intValue]; i++){
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Number of Keys",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",i]] = [NSNumber numberWithInt:7];
         }
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_lowestKey",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] = [NSNumber numberWithInt:(48 + i*12)%127];
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Lowest Key",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",i]] = [NSNumber numberWithInt:(48 + i*12)%127];
         }
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_scale",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_scale",i]] = [NSNumber numberWithInt:0];
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Scale",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Scale",i]] = [NSNumber numberWithInt:0];
         }
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_showNotesName",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_showNotesName",i]] = [NSNumber numberWithInt:1];
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Show Notes",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Show Notes",i]] = [NSNumber numberWithInt:1];
         }
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_rootPos",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_rootPos",i]] = [NSNumber numberWithInt:0];
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Root Position",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Root Position",i]] = [NSNumber numberWithInt:0];
         }
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_orientation",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_orientation",i]] = [NSNumber numberWithInt:0];
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Orientation",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Orientation",i]] = [NSNumber numberWithInt:0];
         }
-        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"keyb%d_keybMode",i]] == nil){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] = [NSNumber numberWithInt:1];
+        if([keyboardParameters objectForKey:[NSString stringWithFormat:@"Keyboard %d - Mode",i]] == nil){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Mode",i]] = [NSNumber numberWithInt:1];
         }
     }
     
     // allocate memory and initialize the different elements
-    touchDiff = new float [[keyboardParameters[@"maxFingers"] intValue]];
+    touchDiff = new float [[keyboardParameters[@"Max Fingers"] intValue]];
     previousTouchPoints = new CGPoint*[touchDel];
     for(int i=0; i<touchDel; i++){
-        previousTouchPoints[i] = new CGPoint [[keyboardParameters[@"maxFingers"] intValue]];
+        previousTouchPoints[i] = new CGPoint [[keyboardParameters[@"Max Fingers"] intValue]];
     }
-    previousTouchedKeys = new int[[keyboardParameters[@"maxFingers"] intValue]];
-    previousTouchedKeyboards = new int[[keyboardParameters[@"maxFingers"] intValue]];
-    moveCount = new int[[keyboardParameters[@"maxFingers"] intValue]];
-    rounding = new Boolean[[keyboardParameters[@"maxFingers"] intValue]];
-    smooth = new Smooth[[keyboardParameters[@"maxFingers"] intValue]];
-    voices = new long[[keyboardParameters[@"maxFingers"] intValue]];
-    for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+    previousTouchedKeys = new int[[keyboardParameters[@"Max Fingers"] intValue]];
+    previousTouchedKeyboards = new int[[keyboardParameters[@"Max Fingers"] intValue]];
+    moveCount = new int[[keyboardParameters[@"Max Fingers"] intValue]];
+    rounding = new Boolean[[keyboardParameters[@"Max Fingers"] intValue]];
+    smooth = new Smooth[[keyboardParameters[@"Max Fingers"] intValue]];
+    voices = new long[[keyboardParameters[@"Max Fingers"] intValue]];
+    for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
         touchDiff[i] = 0;
         for(int j=0; j<touchDel; j++){
             previousTouchPoints[j][i].x = -1;
@@ -200,45 +200,45 @@
         previousTouchedKeys[i] = -1;
         previousTouchedKeyboards[i] = -1;
         moveCount[i] = 0;
-        smooth[i].setSmooth([keyboardParameters[@"roundingSmoothPole"] floatValue]);
+        smooth[i].setSmooth([keyboardParameters[@"Rounding Pole"] floatValue]);
         rounding[i] = true;
         voices[i] = -1;
     }
     
     fingersOnScreenCount = 0;
     
-    zoneWidths = new CGFloat [[keyboardParameters[@"nKeyb"] intValue]];
-    fingersOnKeyboardsCount = new int [[keyboardParameters[@"nKeyb"] intValue]];
-    monoMode_previousActiveFinger = new int [[keyboardParameters[@"nKeyb"] intValue]];
+    zoneWidths = new CGFloat [[keyboardParameters[@"Number of Keyboards"] intValue]];
+    fingersOnKeyboardsCount = new int [[keyboardParameters[@"Number of Keyboards"] intValue]];
+    monoMode_previousActiveFinger = new int [[keyboardParameters[@"Number of Keyboards"] intValue]];
     
     // dimension of the zones, zones cover the entire view
-    zoneHeight = (self.frame.size.height)/[keyboardParameters[@"nKeyb"] intValue];
+    zoneHeight = (self.frame.size.height)/[keyboardParameters[@"Number of Keyboards"] intValue];
     
     // initializing the different keyboards
     zones = [[NSMutableArray alloc] init];
-    for(int i=0; i<[keyboardParameters[@"nKeyb"] intValue]; i++){
+    for(int i=0; i<[keyboardParameters[@"Number of Keyboards"] intValue]; i++){
         // if no poly mode, then no keyboard mode is automatically activated
-        if([keyboardParameters[@"maxKeybPoly"] intValue] <= 0){
-            keyboardParameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] = [NSNumber numberWithInt:0];
+        if([keyboardParameters[@"Max Keyboard Polyphony"] intValue] <= 0){
+            keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Mode",i]] = [NSNumber numberWithInt:0];
         }
         // initializing the zones (keys) of the different keyboards
         [zones insertObject:[[NSMutableArray alloc] init] atIndex:i];
-        zoneWidths[i] = self.frame.size.width/[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue];
+        zoneWidths[i] = self.frame.size.width/[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",i]] intValue];
         fingersOnKeyboardsCount[i] = 0;
         monoMode_previousActiveFinger[i] = -1;
-        for(int j=0;j<[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue];j++){
+        for(int j=0;j<[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",i]] intValue];j++){
             // Zones have 1 pt on each side but touch detection happens on the entire screen. With this strategy we lose 1 pt on the 2 extermities of the interface but it makes things much easier
             [[zones objectAtIndex:i] insertObject:[[Zone alloc] initWithFrame:CGRectMake(zoneWidths[i]*j+1, zoneHeight*i+1, zoneWidths[i]-2, zoneHeight-2)] atIndex:j];
-            [[[zones objectAtIndex:i] objectAtIndex:j] setKeyboardMode:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] boolValue]];
+            [[[zones objectAtIndex:i] objectAtIndex:j] setKeyboardMode:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Mode",i]] boolValue]];
             // set/display note name in the key only in keyboard mode and when scale is chromatic
-            if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_keybMode",i]] boolValue] &&
-               [keyboardParameters[[NSString stringWithFormat:@"keyb%d_scale",i]] intValue]<1 &&
-               [keyboardParameters[[NSString stringWithFormat:@"keyb%d_showNotesName",i]] intValue]>0){
-                if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_orientation",i]] boolValue]){
-                    [[[zones objectAtIndex:i] objectAtIndex:j] setNote:[self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue]-j-1 withKeyboardId:i]];
+            if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Mode",i]] boolValue] &&
+               [keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Scale",i]] intValue]<1 &&
+               [keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Show Notes",i]] intValue]>0){
+                if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Orientation",i]] boolValue]){
+                    [[[zones objectAtIndex:i] objectAtIndex:j] setNote:[self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",i]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",i]] intValue]-j-1 withKeyboardId:i]];
                 }
                 else{
-                    [[[zones objectAtIndex:i] objectAtIndex:j] setNote:[self applyScale:j+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",i]] intValue] withKeyboardId:i]];
+                    [[[zones objectAtIndex:i] objectAtIndex:j] setNote:[self applyScale:j+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",i]] intValue] withKeyboardId:i]];
                 }
             }
             [[[zones objectAtIndex:i] objectAtIndex:j] drawBackground];
@@ -247,7 +247,7 @@
     }
     
     // case where no pitch keyboard is on: we trigger the main voice on startup
-    if([keyboardParameters[@"maxKeybPoly"] intValue] == 0){
+    if([keyboardParameters[@"Max Keyboard Polyphony"] intValue] == 0){
         voices[0] = faustDsp->newVoice();
     }
     
@@ -262,7 +262,7 @@
     cancelOnce = true;
     if ([touches count] > 0) {
         for (UITouch *touch in touches) {
-            for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+            for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
                 // we look for the first available "touch tracker"
                 if(previousTouchPoints[0][i].x == -1){
                     touchDiff[i] = 0;
@@ -281,7 +281,7 @@
         for (UITouch *touch in touches) {
             CGPoint touchPoint = [touch locationInView: self];
             CGPoint systemPreviousTouchPoint = [touch previousLocationInView: self];
-            for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+            for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
                 if(previousTouchPoints[0][i].x == systemPreviousTouchPoint.x && previousTouchPoints[0][i].y == systemPreviousTouchPoint.y){
                     touchDiff[i] = abs(touchPoint.x - previousTouchPoints[0][i].x);
                     [self processTouchEvent:2 withTouchPoint:[touch locationInView: self] withFingerId:i];
@@ -300,7 +300,7 @@
     if ([touches count] > 0) {
         for (UITouch *touch in touches) {
             CGPoint systemPreviousTouchPoint = [touch previousLocationInView: self];
-            for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+            for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
                 if((previousTouchPoints[0][i].x == systemPreviousTouchPoint.x && previousTouchPoints[0][i].y == systemPreviousTouchPoint.y) || (previousTouchPoints[1][i].x == systemPreviousTouchPoint.x && previousTouchPoints[1][i].y == systemPreviousTouchPoint.y)){
                     touchDiff[i] = -10000;
                     [self processTouchEvent:0 withTouchPoint:[touch locationInView: self] withFingerId:i];
@@ -330,11 +330,11 @@
 
 -(void)processTouchEvent:(int)eventType withTouchPoint:(CGPoint)touchPoint withFingerId:(int)fingerId{
     // we calculate the position of the touch on the keyboards matrix
-    int currentKeyboard = fmin(int(touchPoint.y/zoneHeight),([keyboardParameters[@"nKeyb"] intValue]-1));
+    int currentKeyboard = fmin(int(touchPoint.y/zoneHeight),([keyboardParameters[@"Number of Keyboards"] intValue]-1));
     // clipping the x/y positions to frme size, could potentially be improved
     currentContinuousKey = fmin(fmax(0,touchPoint.x),self.frame.size.width)/zoneWidths[currentKeyboard];
     currentKeyboardY = fmod(fmin(fmax(0,touchPoint.y),self.frame.size.height-1)/zoneHeight,1);
-    int currentKeyIdInRow = fmin(int(currentContinuousKey),([keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",currentKeyboard]] intValue]-1));
+    int currentKeyIdInRow = fmin(int(currentContinuousKey),([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",currentKeyboard]] intValue]-1));
     
     // we make sure that the touch happened inside the keyboards matrix area
     if(currentKeyboard >= 0){
@@ -360,13 +360,13 @@
         }
         
         // no poly mode
-        if([keyboardParameters[@"maxKeybPoly"] intValue] <= 0){
+        if([keyboardParameters[@"Max Keyboard Polyphony"] intValue] <= 0){
             [self sendSynthControlAction:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
         }
         // poly mode
         else{
             // deffault mode if poly keyboards
-            if([keyboardParameters[@"monoMode"] intValue] == 0 || [keyboardParameters[@"maxKeybPoly"] intValue]>1){
+            if([keyboardParameters[@"Mono Mode"] intValue] == 0 || [keyboardParameters[@"Max Keyboard Polyphony"] intValue]>1){
                 // if touch up
                 if(eventType == 0){
                     // cancel corresponding previous key (in case of fast move event)
@@ -379,7 +379,7 @@
                     currentKeyIdInRow = -1;
                 }
                 // if touch down
-                else if(eventType == 1 && fingersOnKeyboardsCount[currentKeyboard]<=[keyboardParameters[@"maxKeybPoly"] intValue]){
+                else if(eventType == 1 && fingersOnKeyboardsCount[currentKeyboard]<=[keyboardParameters[@"Max Keyboard Polyphony"] intValue]){
                     [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
                 }
                 // if move
@@ -389,7 +389,7 @@
                         // cancel key in previous keyboard
                         [self sendKeyboardAction:0 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
                         // initiate new event only if there are keys available
-                        if(fingersOnKeyboardsCount[currentKeyboard]<=[keyboardParameters[@"maxKeybPoly"] intValue] && [keyboardParameters[@"interKeybSlideAllowed"] boolValue]){
+                        if(fingersOnKeyboardsCount[currentKeyboard]<=[keyboardParameters[@"Max Keyboard Polyphony"] intValue] && [keyboardParameters[@"Inter-Keyboard Slide"] boolValue]){
                             [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
                         }
                     }
@@ -407,9 +407,9 @@
                 }
             }
             
-            else if([keyboardParameters[@"monoMode"] intValue] == 1){
+            else if([keyboardParameters[@"Mono Mode"] intValue] == 1){
                 int currentKeyDown = -1;
-                for(int i=0; i<[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",currentKeyboard]] intValue]; i++){
+                for(int i=0; i<[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",currentKeyboard]] intValue]; i++){
                     if([[[zones objectAtIndex:currentKeyboard] objectAtIndex:i] getStatus] == 1){
                         currentKeyDown = i;
                     }
@@ -425,10 +425,10 @@
                     [self sendKeyboardAction:0 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:fingerId];
                     if(fingersOnKeyboardsCount[currentKeyboard]>0 && monoMode_previousActiveFinger[currentKeyboard] == fingerId){
                         float kb = currentKeyboard*zoneHeight;
-                        for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+                        for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
                             if(previousTouchPoints[0][i].y >= kb && previousTouchPoints[0][i].y < zoneHeight+kb && previousTouchPoints[0][i].y != touchPoint.y && i != monoMode_previousActiveFinger[currentKeyboard]){
                                 currentContinuousKey = previousTouchPoints[0][i].x/zoneWidths[currentKeyboard];
-                                currentKeyIdInRow = fmin(int(currentContinuousKey),([keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",currentKeyboard]] intValue]-1));
+                                currentKeyIdInRow = fmin(int(currentContinuousKey),([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",currentKeyboard]] intValue]-1));
                                 [self sendKeyboardAction:1 withKeyboardId:currentKeyboard withKeyId:currentKeyIdInRow withFingerId:i];
                                 monoMode_previousActiveFinger[currentKeyboard] = i;
                                 break;
@@ -455,14 +455,14 @@
                         // cancel key in previous keyboard
                         [self sendKeyboardAction:0 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:previousTouchedKeys[fingerId] withFingerId:fingerId];
                         
-                        if([keyboardParameters[@"interKeybSlideAllowed"] boolValue]){
+                        if([keyboardParameters[@"Inter-Keyboard Slide"] boolValue]){
                             // new note if remaining finger in previous keyboard
                             if(fingersOnKeyboardsCount[previousTouchedKeyboards[fingerId]]>0 && previousTouchedKeys[fingerId] == previousTouchedKeys[monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]]]){
                                 float kb = previousTouchedKeyboards[fingerId]*zoneHeight;
-                                for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+                                for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
                                     if(previousTouchPoints[0][i].y >= kb && previousTouchPoints[0][i].y < zoneHeight+kb && previousTouchPoints[0][i].y != touchPoint.y && i != monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]]){
                                         currentContinuousKey = previousTouchPoints[0][i].x/zoneWidths[previousTouchedKeyboards[fingerId]];
-                                        int localKeyIdInRow = fmin(int(currentContinuousKey),([keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",previousTouchedKeyboards[fingerId]]] intValue]-1));
+                                        int localKeyIdInRow = fmin(int(currentContinuousKey),([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",previousTouchedKeyboards[fingerId]]] intValue]-1));
                                         [self sendKeyboardAction:1 withKeyboardId:previousTouchedKeyboards[fingerId] withKeyId:localKeyIdInRow withFingerId:i];
                                         monoMode_previousActiveFinger[previousTouchedKeyboards[fingerId]] = i;
                                         break;
@@ -523,8 +523,8 @@
         if([[[zones objectAtIndex:keyboardId] objectAtIndex:keyId] getStatus] == 1){
             // check if another finger is present in the zone
             bool otherFingerInKey = false;
-            if([keyboardParameters[@"monoMode"] intValue] == 0 || [keyboardParameters[@"maxKeybPoly"] intValue]>1){
-                for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+            if([keyboardParameters[@"Mono Mode"] intValue] == 0 || [keyboardParameters[@"Max Keyboard Polyphony"] intValue]>1){
+                for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
                     if(keyboardId == previousTouchedKeyboards[i] && keyId == previousTouchedKeys[i] && i != fingerId){
                         otherFingerInKey = true;
                         break;
@@ -562,10 +562,10 @@
     // TODO: continuous x and y values are always sent: this should be optimized
     // TODO: might need a mechanism to check if voice is on before message gets sent
     
-    if([keyboardParameters[@"sendCurrentKeyboard"] intValue]) faustDsp->setParamValue("keyboard", keyboardId);
-    if([keyboardParameters[@"sendCurrentKey"] intValue]) faustDsp->setParamValue("key", keyId);
-    if([keyboardParameters[@"sendX"] intValue]) faustDsp->setParamValue(("x" + std::to_string(fingerId)).c_str(), fmod(currentContinuousKey,1));
-    if([keyboardParameters[@"sendY"] intValue]) faustDsp->setParamValue(("y" + std::to_string(fingerId)).c_str(), currentKeyboardY);
+    if([keyboardParameters[@"Send Current Keyboard"] intValue]) faustDsp->setParamValue("keyboard", keyboardId);
+    if([keyboardParameters[@"Send Current Key"] intValue]) faustDsp->setParamValue("key", keyId);
+    if([keyboardParameters[@"Send X"] intValue]) faustDsp->setParamValue(("x" + std::to_string(fingerId)).c_str(), fmod(currentContinuousKey,1));
+    if([keyboardParameters[@"Send Y"] intValue]) faustDsp->setParamValue(("y" + std::to_string(fingerId)).c_str(), currentKeyboardY);
 }
 
 /***************************************************************************
@@ -578,7 +578,7 @@
 -(void)sendPolySynthControlAction:(int)eventType withKeyboardId:(int)keyboardId withKeyId:(int)keyId withFingerId:(int)fingerId{
     float pitch = 0; // the MIDI pitch of the note
     // delete (note off)
-    if((eventType == 0 || (eventType == 3 && [keyboardParameters[@"quantizationMode"] intValue] == 0)) && voices[fingerId] != -1){
+    if((eventType == 0 || (eventType == 3 && [keyboardParameters[@"Rounding Mode"] intValue] == 0)) && voices[fingerId] != -1){
         pitch = -1;
         faustDsp->setVoiceParamValue("gate", voices[fingerId], 0);
         faustDsp->deleteVoice(voices[fingerId]);
@@ -586,7 +586,7 @@
         smooth[fingerId].reset();
     }
     // new (note on)
-    else if (eventType == 1 || (eventType == 4 && [keyboardParameters[@"quantizationMode"] intValue] == 0)){
+    else if (eventType == 1 || (eventType == 4 && [keyboardParameters[@"Rounding Mode"] intValue] == 0)){
         // allocating new voice to finger
         voices[fingerId] = faustDsp->newVoice();
         if(voices[fingerId] != -1){
@@ -597,33 +597,33 @@
         }
         
         // setting first pitch (always quantized)
-        if([keyboardParameters[@"quantizationMode"] intValue] == 0 || ([keyboardParameters[@"quantizationMode"] intValue] == 2 && [keyboardParameters[[NSString stringWithFormat:@"keyb%d_scale",keyboardId]] intValue] > 0)){
+        if([keyboardParameters[@"Rounding Mode"] intValue] == 0 || ([keyboardParameters[@"Rounding Mode"] intValue] == 2 && [keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Scale",keyboardId]] intValue] > 0)){
             // inverted keyboard
-            if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_orientation",keyboardId]] boolValue]){
-                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",keyboardId]] intValue]-keyId-1 withKeyboardId:keyboardId];
+            if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Orientation",keyboardId]] boolValue]){
+                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",keyboardId]] intValue]-keyId-1 withKeyboardId:keyboardId];
             }
             // regular keyboard
             else{
-                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]+keyId withKeyboardId:keyboardId];
+                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]+keyId withKeyboardId:keyboardId];
             }
         }
-        else if([keyboardParameters[@"quantizationMode"] intValue] == 1 || [keyboardParameters[@"quantizationMode"] intValue] == 2){
+        else if([keyboardParameters[@"Rounding Mode"] intValue] == 1 || [keyboardParameters[@"Rounding Mode"] intValue] == 2){
             float pitchShiftCenter = 0;
             // -0.5 is here to center the pitch at the middle of the key
-            if([keyboardParameters[@"quantizationMode"] intValue] == 1){
+            if([keyboardParameters[@"Rounding Mode"] intValue] == 1){
                 pitchShiftCenter = 0.5;
             }
             // inverted keyboard
-            if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_orientation",keyboardId]] boolValue]){
-                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",keyboardId]] intValue]-currentContinuousKey-pitchShiftCenter withKeyboardId:keyboardId];
+            if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Orientation",keyboardId]] boolValue]){
+                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",keyboardId]] intValue]-currentContinuousKey-pitchShiftCenter withKeyboardId:keyboardId];
             }
             // regular keyboard
             else{
-                pitch = [self applyScale:currentContinuousKey+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]-pitchShiftCenter withKeyboardId:keyboardId];
+                pitch = [self applyScale:currentContinuousKey+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]-pitchShiftCenter withKeyboardId:keyboardId];
             }
         }
         if(voices[fingerId] != -1){
-            if([keyboardParameters[@"quantizationMode"] intValue] == 1){
+            if([keyboardParameters[@"Rounding Mode"] intValue] == 1){
                 faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:pitch]);
             }
             else{
@@ -632,41 +632,41 @@
         }
     }
     // update
-    else if(eventType == 2 && ([keyboardParameters[@"quantizationMode"] intValue] == 1 || [keyboardParameters[@"quantizationMode"] intValue] == 2)){
+    else if(eventType == 2 && ([keyboardParameters[@"Rounding Mode"] intValue] == 1 || [keyboardParameters[@"Rounding Mode"] intValue] == 2)){
         
         // Formating pitch
-        if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_scale",keyboardId]] intValue] > 0 && rounding[fingerId] && [keyboardParameters[@"quantizationMode"] intValue] != 1){
+        if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Scale",keyboardId]] intValue] > 0 && rounding[fingerId] && [keyboardParameters[@"Rounding Mode"] intValue] != 1){
             // inverted keyboard
-            if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_orientation",keyboardId]] boolValue]){
-                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",keyboardId]] intValue]-keyId-1 withKeyboardId:keyboardId];
+            if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Orientation",keyboardId]] boolValue]){
+                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",keyboardId]] intValue]-keyId-1 withKeyboardId:keyboardId];
             }
             // regular keyboard
             else{
-                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]+keyId withKeyboardId:keyboardId];
+                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]+keyId withKeyboardId:keyboardId];
             }
         }
         else {
             float pitchShiftCenter = 0;
             // -0.5 is here to center the pitch at the middle of the key
-            if([keyboardParameters[@"quantizationMode"] intValue] == 1){
+            if([keyboardParameters[@"Rounding Mode"] intValue] == 1){
                 pitchShiftCenter = 0.5;
             }
             // inverted keyboard
-            if([keyboardParameters[[NSString stringWithFormat:@"keyb%d_orientation",keyboardId]] boolValue]){
-                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",keyboardId]] intValue]-currentContinuousKey-pitchShiftCenter withKeyboardId:keyboardId];
+            if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Orientation",keyboardId]] boolValue]){
+                pitch = [self applyScale:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",keyboardId]] intValue]-currentContinuousKey-pitchShiftCenter withKeyboardId:keyboardId];
             }
             // regular keyboard
             else{
-                pitch = [self applyScale:currentContinuousKey+[keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue]-pitchShiftCenter withKeyboardId:keyboardId];
+                pitch = [self applyScale:currentContinuousKey+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue]-pitchShiftCenter withKeyboardId:keyboardId];
             }
         }
         
         // sending pitch to faust
         if(voices[fingerId] != -1){
-            if([keyboardParameters[@"quantizationMode"] intValue] == 1){
+            if([keyboardParameters[@"Rounding Mode"] intValue] == 1){
                 faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:pitch]);
             }
-            else if([keyboardParameters[@"quantizationMode"] intValue] == 2){
+            else if([keyboardParameters[@"Rounding Mode"] intValue] == 2){
                 if(rounding[fingerId]){ // if rounding is activated, pitch is quantized to the nearest integer
                     faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:floor(pitch)]);
                 }
@@ -678,10 +678,10 @@
     }
     
     if(voices[fingerId] != -1){
-        if([keyboardParameters[@"sendCurrentKeyboard"] intValue]) faustDsp->setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
-        if([keyboardParameters[@"sendCurrentKey"] intValue]) faustDsp->setVoiceParamValue("key", voices[fingerId], keyId);
-        if([keyboardParameters[@"sendX"] intValue]) faustDsp->setVoiceParamValue("x", voices[fingerId], fmod(currentContinuousKey,1));
-        if([keyboardParameters[@"sendY"] intValue]) faustDsp->setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
+        if([keyboardParameters[@"Send Current Keyboard"] intValue]) faustDsp->setVoiceParamValue("keyboard", voices[fingerId], keyboardId);
+        if([keyboardParameters[@"Send Current Key"] intValue]) faustDsp->setVoiceParamValue("key", voices[fingerId], keyId);
+        if([keyboardParameters[@"Send X"] intValue]) faustDsp->setVoiceParamValue("x", voices[fingerId], fmod(currentContinuousKey,1));
+        if([keyboardParameters[@"Send Y"] intValue]) faustDsp->setVoiceParamValue("y", voices[fingerId], currentKeyboardY);
     }
 }
 
@@ -699,8 +699,8 @@
 }
 
 -(float)applyScale:(float)pitch withKeyboardId:(int)keyboardId{
-    int refPitch = [keyboardParameters[[NSString stringWithFormat:@"keyb%d_lowestKey",keyboardId]] intValue];
-    int currentScale = [keyboardParameters[[NSString stringWithFormat:@"keyb%d_scale",keyboardId]] intValue] - 1;
+    int refPitch = [keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",keyboardId]] intValue];
+    int currentScale = [keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Scale",keyboardId]] intValue] - 1;
     float keyboardPitch = (pitch-refPitch); // float pitch on keyboard (from 0)
     float scaledPitch = 0; // the final scaled pitch
     
@@ -746,13 +746,13 @@
 
 -(void)resetKeyboard{
     faustDsp->allNotesOff();
-    for(int i=0; i<[keyboardParameters[@"nKeyb"] intValue]; i++){
+    for(int i=0; i<[keyboardParameters[@"Number of Keyboards"] intValue]; i++){
         fingersOnKeyboardsCount[i] = 0;
-        for(int j=0;j<[keyboardParameters[[NSString stringWithFormat:@"keyb%d_nKeys",i]] intValue];j++){
+        for(int j=0;j<[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Number of Keys",i]] intValue];j++){
             [[[zones objectAtIndex:i] objectAtIndex:j] setStatus:0];
         }
     }
-    for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+    for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
         voices[i] = -1;
         for(int j=0; j<touchDel; j++){
             previousTouchPoints[j][i].x = -1;
@@ -808,10 +808,10 @@
 
 - (void) pitchRounding{
     while(UIon){
-        for(int i=0; i<[keyboardParameters[@"maxFingers"] intValue]; i++){
+        for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
             if(touchDiff[i] != -10000 && voices[i] != -1){
                 //
-                if(smooth[i].tick(touchDiff[i])>[keyboardParameters[@"roundingThreshold"] floatValue] && moveCount[i]<[keyboardParameters[@"roundingDeactCycles"] intValue]){
+                if(smooth[i].tick(touchDiff[i])>[keyboardParameters[@"Rounding Threshold"] floatValue] && moveCount[i]<[keyboardParameters[@"Rounding Cycles"] intValue]){
                     rounding[i] = false;
                 }
                 else{
@@ -824,15 +824,15 @@
                 }
             }
         }
-        [NSThread sleepForTimeInterval:[keyboardParameters[@"roundingUpdateSpeed"] floatValue]];
+        [NSThread sleepForTimeInterval:[keyboardParameters[@"Rounding Update Speed"] floatValue]];
     }
 }
 
 -(void)clean{
-    if([keyboardParameters[@"sendAccel"] intValue]) [self stopMotion];
+    if([keyboardParameters[@"Send Sensors"] intValue]) [self stopMotion];
     
     // case where no pitch keyboard is on: we stop the main voice before cleaning
-    if([keyboardParameters[@"maxKeybPoly"] intValue] == 0 && UIon){
+    if([keyboardParameters[@"Max Keyboard Polyphony"] intValue] == 0 && UIon){
         faustDsp->deleteVoice(voices[0]);
         voices[0] = -1;
     }

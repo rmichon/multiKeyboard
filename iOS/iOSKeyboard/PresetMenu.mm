@@ -292,21 +292,21 @@
 - (void)createDefaultPresetFile{
     NSMutableDictionary *keyboardParameters = [NSMutableDictionary dictionaryWithDictionary:
         @{
-          @"nKeyb":[NSNumber numberWithInt:4],
-          @"maxFingers":[NSNumber numberWithInt:10],
-          @"maxKeybPoly":[NSNumber numberWithInt:16],
-          @"monoMode":[NSNumber numberWithInt:1],
-          @"quantizationMode":[NSNumber numberWithInt:0],
-          @"interKeybSlideAllowed":[NSNumber numberWithInt:1],
-          @"sendCurrentKey":[NSNumber numberWithInt:1],
-          @"sendCurrentKeyboard":[NSNumber numberWithInt:1],
-          @"sendX":[NSNumber numberWithInt:1],
-          @"sendY":[NSNumber numberWithInt:1],
-          @"sendAccel":[NSNumber numberWithInt:1],
-          @"roundingUpdateSpeed":[NSNumber numberWithFloat:0.06],
-          @"roundingSmoothPole":[NSNumber numberWithFloat:0.9],
-          @"roundingThreshold":[NSNumber numberWithFloat:3],
-          @"roundingDeactCycles":[NSNumber numberWithInt:5]
+          @"Number of Keyboards":[NSNumber numberWithInt:4],
+          @"Max Fingers":[NSNumber numberWithInt:10],
+          @"Max Keyboard Polyphony":[NSNumber numberWithInt:16],
+          @"Mono Mode":[NSNumber numberWithInt:1],
+          @"Rounding Mode":[NSNumber numberWithInt:0],
+          @"Inter-Keyboard Slide":[NSNumber numberWithInt:1],
+          @"Send Current Key":[NSNumber numberWithInt:1],
+          @"Send Current Keyboard":[NSNumber numberWithInt:1],
+          @"Send X":[NSNumber numberWithInt:1],
+          @"Send Y":[NSNumber numberWithInt:1],
+          @"Send Sensors":[NSNumber numberWithInt:1],
+          @"Rounding Update Speed":[NSNumber numberWithFloat:0.06],
+          @"Rounding Pole":[NSNumber numberWithFloat:0.9],
+          @"Rounding Threshold":[NSNumber numberWithFloat:3],
+          @"Rounding Cycles":[NSNumber numberWithInt:5]
           }];
     NSString *keyboardFilePath = [documentsDirectory stringByAppendingPathComponent:@"Preset 0_keyb"];
     [keyboardParameters writeToFile:keyboardFilePath atomically:YES];
