@@ -73,8 +73,6 @@ do
         POLY2="1"
 		shift
 		EFFECT=$1
-    elif [ "$p" = "-midi" ]; then
-        MIDI="1"
     elif [ $p = "-nvoices" ]; then
 		shift
 		NVOICES=$1
@@ -103,8 +101,8 @@ BUILDDIR="faustmulkeyb.$APPNAME"
 # making sure that platform is set and generate corresponding global vars
 if [ $ANDROID -eq 1 ]; then
 	APPFOLDER="$BUILDDIR/app/src/main"
-#elif [ $IOS -eq 1 ]; then
-    # TODO do something for iOS here may be
+elif [ $IOS -eq 1 ]; then
+	APPFOLDER="$BUILDDIR/Faust"
 else
 	echo "Please, specify a platform: -android or -ios"
 	echoHelp
@@ -114,7 +112,7 @@ fi
 # if reuse then don't rebuild project folder
 if [ $REUSE -eq 0 ]; then
 	if [ -d "$BUILDDIR" ]; then
-		echo "Delete existing Android project $BUILDDIR" > $LOG
+		echo "Delete existing app project $BUILDDIR" > $LOG
 		rm -rf "$BUILDDIR"
 	fi
 fi
@@ -145,6 +143,10 @@ if [ ! -d "$BUILDDIR" ]; then
 		mv $APPFOLDER/java/com/ccrma/faust $APPFOLDER/java/com/ccrma/$APPNAME
 	elif [ $IOS -eq 1 ]; then
 		echo "Creating a new iOS project in $BUILDDIR" > $LOG
+		cp -r $FAUSTLIB/multiKeyboard/ios/* "$BUILDDIR"
+		
+		sed -i '' 's,$(TARGET_NAME),'$APPNAME',g' $BUILDDIR/Faust.xcodeproj/project.pbxproj
+		sed -i '' 's,ccrma.Faust,ccrma.'$APPNAME',g' $BUILDDIR/Faust.xcodeproj/project.pbxproj
 	fi
 fi
 
@@ -161,7 +163,7 @@ if [ $ANDROID -eq 1 ]; then
 	mv "dsp-faust" "$BUILDDIR"
 	rm "dsp-faust.zip"
 	cp -r "$BUILDDIR/dsp-faust/cpp" "$APPFOLDER"
-	cp  $BUILDDIR/dsp-faust/java/* "$APPFOLDER/java/com/DspFaust"
+	cp $BUILDDIR/dsp-faust/java/* "$APPFOLDER/java/com/DspFaust"
 	rm -r "$BUILDDIR/dsp-faust"
 
 	# Run Gradle
@@ -170,9 +172,25 @@ if [ $ANDROID -eq 1 ]; then
 	cd ..
 		
 	cp -r $BUILDDIR/app/build/outputs/apk/app-release.apk $APPNAME.apk > $LOG
-	echo "An Android app $APPNAME.apk was created in the current folder"
+	echo "An Android app \"$APPNAME.apk\" was created in the current folder"
 elif [ $IOS -eq 1 ]; then
-	echo "Your iOS app is being created" > $LOG
+	if [ -z "$EFFECT" ]; then # no effect
+		echo "Building iOS app with no effect" > $LOG
+		faust2api -ios -midi -nvoices "$NVOICES" -nodoc "$FILE" > $LOG
+	else
+		echo "Building iOS app with effect" > $LOG
+		faust2api -ios -midi -nvoices "$NVOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
+	fi
+	unzip "dsp-faust.zip" > $LOG
+	mv "dsp-faust" "$BUILDDIR"
+	rm "dsp-faust.zip"
+	cp $BUILDDIR/dsp-faust/* "$APPFOLDER"
+	rm -r "$BUILDDIR/dsp-faust"
+	cp -r $BUILDDIR $APPNAME
+	zip -r $APPNAME.zip $APPNAME > $LOG
+	rm -r $APPNAME 
+	rm -r $BUILDDIR 
+	echo "An iOS app Xcode project \"$APPNAME.zip\" was created in the current folder"
 else
 	echoHelp
 	exit 1
@@ -185,28 +203,17 @@ if [ $ANDROID -eq 1 ]; then
 		echo "Installing the app"
 		adb install -r $APPNAME.apk
 	fi
-fi
-
-if [ $SOURCE -eq 1 ]; then
-	rm -rf faustApp
-	mv $BUILDDIR faustApp
-	echo "A faustApp app project was created." > $LOG
-else
-	if [ $REUSE -eq 0 ]; then
-		echo "Delete app project $BUILDDIR" > $LOG
-		rm -rf $BUILDDIR
+	if [ $SOURCE -eq 1 ]; then
+		rm -rf faustApp
+		mv $BUILDDIR faustApp
+		echo "A faustApp app project was created." > $LOG
 	else
-		echo "The build folder $BUILDDIR was not deleted for future builds"
+		if [ $REUSE -eq 0 ]; then
+			echo "Delete app project $BUILDDIR" > $LOG
+			rm -rf $BUILDDIR
+		else
+			echo "The build folder $BUILDDIR was not deleted for future builds"
+		fi
 	fi
 fi
 
-
-###################################
-# POST PROCESSING
-###################################
-
-#ZIPOUT="$APIFOLDER.zip"
-
-#rm $ZIPOUT 2> /dev/null || true
-#zip -r $ZIPOUT $APIFOLDER > /dev/null || exit
-#rm -r $APIFOLDER || exit
