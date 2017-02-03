@@ -6,8 +6,6 @@
 //  Copyright © 2016 CCRMA. All rights reserved.
 //
 
-#define MULTI_KEYBOARD_ONLY 1
-
 #import "ViewController.h"
 
 @interface ViewController ()
@@ -16,8 +14,10 @@
 
 @implementation ViewController{
     DspFaust* faustDsp;
+#if MULTI_KEYBOARD_ONLY == 0
     PresetMenu *presetMenu;
     InstrumentInterface *instrumentInterface;
+#endif
     NSInteger currentPreset;
     NSString *audioSettingsFile;
     NSDictionary *audioSettings;
@@ -57,15 +57,14 @@
     
     [self startFaustDsp];
     
-    if(MULTI_KEYBOARD_ONLY == 0){
-        presetMenu = [[PresetMenu alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height) withCurrentPreset:currentPreset];
-        [presetMenu addTarget:self action:@selector(newEventOnPresetMenu:) forControlEvents:UIControlEventValueChanged];
-        [self.view addSubview:presetMenu];
-    }
-    else{
-        MultiKeyboard *multiKeyboard = [[MultiKeyboard alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height) withFaustDSP:faustDsp withPreset:nil];
-        [self.view addSubview:multiKeyboard];
-    }
+#if MULTI_KEYBOARD_ONLY == 0
+    presetMenu = [[PresetMenu alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height) withCurrentPreset:currentPreset];
+    [presetMenu addTarget:self action:@selector(newEventOnPresetMenu:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:presetMenu];
+#else
+    MultiKeyboard *multiKeyboard = [[MultiKeyboard alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height) withFaustDSP:faustDsp withPreset:nil];
+    [self.view addSubview:multiKeyboard];
+#endif
 }
 
 // creates default audio settings
@@ -100,6 +99,7 @@
     [self stopFaustDsp];
 }
 
+#if MULTI_KEYBOARD_ONLY == 0
 - (IBAction)newEventOnPresetMenu:(PresetMenu*)sender{
     // lauching the keyboard interface with the selected preset
     if(sender->actionType == 0){
@@ -127,6 +127,7 @@
     [presetMenu addTarget:self action:@selector(newEventOnPresetMenu:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:presetMenu];
 }
+#endif
 
 - (BOOL)prefersStatusBarHidden
 {
