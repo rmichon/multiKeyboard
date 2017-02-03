@@ -19,7 +19,7 @@ set -e
 # global option variables
 ANDROID="0"
 IOS="0"
-VOICES="12"
+NVOICES="12"
 POLY2="0"
 MIDI="0"
 EFFECT=""
@@ -77,7 +77,7 @@ do
         MIDI="1"
     elif [ $p = "-nvoices" ]; then
 		shift
-		VOICES=$1
+		NVOICES=$1
     elif [ ${p:0:1} = "-" ]; then
         OPTIONS="$OPTIONS $p"
     else
@@ -152,10 +152,10 @@ fi
 if [ $ANDROID -eq 1 ]; then
 	if [ -z "$EFFECT" ]; then # no effect
 		echo "Building Android app with no effect" > $LOG
-		faust2api -android -nvoices "$VOICES" -nodoc "$FILE" > $LOG
+		faust2api -android -nvoices "$NVOICES" -nodoc "$FILE" > $LOG
 	else
 		echo "Building Android app with effect" > $LOG
-		faust2api -android -nvoices "$VOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
+		faust2api -android -nvoices "$NVOICES" -effect "$EFFECT" -nodoc "$FILE" > $LOG
 	fi
 	unzip "dsp-faust.zip" > $LOG
 	mv "dsp-faust" "$BUILDDIR"

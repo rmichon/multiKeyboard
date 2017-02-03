@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Inter-Keyboard Slide</key>
+	<integer>1</integer>
+	<key>keyb0_keybMode</key>
+	<integer>0</integer>
+	<key>keyb0_lowestKey</key>
+	<integer>77</integer>
+	<key>keyb0_nKeys</key>
+	<integer>2</integer>
+	<key>keyb0_orientation</key>
+	<integer>0</integer>
+	<key>keyb0_rootPos</key>
+	<integer>0</integer>
+	<key>keyb0_scale</key>
+	<integer>0</integer>
+	<key>keyb0_showNotesName</key>
+	<integer>1</integer>
+	<key>keyb1_keybMode</key>
+	<integer>0</integer>
+	<key>keyb1_lowestKey</key>
+	<integer>72</integer>
+	<key>keyb1_nKeys</key>
+	<integer>2</integer>
+	<key>keyb1_orientation</key>
+	<integer>0</integer>
+	<key>keyb1_rootPos</key>
+	<integer>0</integer>
+	<key>keyb1_scale</key>
+	<integer>0</integer>
+	<key>keyb1_showNotesName</key>
+	<integer>1</integer>
+	<key>Max Fingers</key>
+	<integer>10</integer>
+	<key>Max Keyboard Polyphony</key>
+	<integer>1</integer>
+	<key>Mono Mode</key>
+	<integer>1</integer>
+	<key>Number of Keyboards</key>
+	<integer>2</integer>
+	<key>Rounding Mode</key>
+	<integer>2</integer>
+	<key>Rounding Cycles</key>
+	<integer>5</integer>
+	<key>Rounding Pole</key>
+	<real>0.89999997615814209</real>
+	<key>Rounding Threshold</key>
+	<real>3</real>
+	<key>Rounding Update Speed</key>
+	<real>0.059999998658895493</real>
+	<key>Send Sensors</key>
+	<integer>1</integer>
+	<key>Send Current Key</key>
+	<integer>1</integer>
+	<key>Send Current Keyboard</key>
+	<integer>1</integer>
+	<key>Send X</key>
+	<integer>1</integer>
+	<key>Send Y</key>
+	<integer>1</integer>
+</dict>
+</plist>

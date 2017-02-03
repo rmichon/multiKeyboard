@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>/Sequencer/DSP1/Polyphonic/Voices/faustSynth/string/damping</key>
+	<real>0.89999997615814209</real>
+	<key>/Sequencer/DSP1/Polyphonic/Voices/synth/globalParams/synthSelect</key>
+	<real>2</real>
+	<key>/Sequencer/DSP2/Zita_Rev1/Output/Level</key>
+	<real>0.0</real>
+</dict>
+</plist>
