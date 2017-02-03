@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7AAA9DFE1E44F2FB0062DF73"
+               BlueprintIdentifier = "7AAA9EDD1E44F80B0062DF73"
                BuildableName = "Faust.app"
                BlueprintName = "Faust"
                ReferencedContainer = "container:Faust.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7AAA9DFE1E44F2FB0062DF73"
+            BlueprintIdentifier = "7AAA9EDD1E44F80B0062DF73"
             BuildableName = "Faust.app"
             BlueprintName = "Faust"
             ReferencedContainer = "container:Faust.xcodeproj">
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7AAA9DFE1E44F2FB0062DF73"
+            BlueprintIdentifier = "7AAA9EDD1E44F80B0062DF73"
             BuildableName = "Faust.app"
             BlueprintName = "Faust"
             ReferencedContainer = "container:Faust.xcodeproj">
@@ -74,7 +74,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7AAA9DFE1E44F2FB0062DF73"
+            BlueprintIdentifier = "7AAA9EDD1E44F80B0062DF73"
             BuildableName = "Faust.app"
             BlueprintName = "Faust"
             ReferencedContainer = "container:Faust.xcodeproj">
