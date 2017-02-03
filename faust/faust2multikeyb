@@ -143,7 +143,7 @@ if [ ! -d "$BUILDDIR" ]; then
 		mv $APPFOLDER/java/com/ccrma/faust $APPFOLDER/java/com/ccrma/$APPNAME
 	elif [ $IOS -eq 1 ]; then
 		echo "Creating a new iOS project in $BUILDDIR" > $LOG
-		cp -r $FAUSTLIB/multiKeyboard/ios/* "$BUILDDIR"
+		cp -r $FAUSTLIB/multiKeyboard/iOS/* "$BUILDDIR"
 		
 		sed -i '' 's,$(TARGET_NAME),'$APPNAME',g' $BUILDDIR/Faust.xcodeproj/project.pbxproj
 		sed -i '' 's,ccrma.Faust,ccrma.'$APPNAME',g' $BUILDDIR/Faust.xcodeproj/project.pbxproj

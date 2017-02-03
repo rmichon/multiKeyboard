@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Android source
+
+# iOS source
+cp -r iOS/Faust/light* ~/reps/faust/architecture/multiKeyboard/iOS
