@@ -28,9 +28,9 @@ INSTALL=0
 
 echoHelp ()
 {
-	echo "faust2multikeyb - Musical Mobile App Generator"
+	echo "faust2smartkeyb - Musical Mobile App Generator"
 	echo ""
-	echo "faust2multikeyb takes a Faust code as its main argument and convert it to a ready-to-use app for Android or iOS."
+	echo "faust2smartkeyb takes a Faust code as its main argument and convert it to a ready-to-use app for Android or iOS."
 }
 
 ###########################
@@ -91,7 +91,7 @@ fi
 
 APPNAME=$(basename "$FILE")
 APPNAME="${APPNAME%.dsp}"
-BUILDDIR="faustmulkeyb.$APPNAME"
+BUILDDIR="faustsmartkeyb.$APPNAME"
 
 # making sure that platform is set and generate corresponding global vars
 if [ $ANDROID -eq 1 ]; then
@@ -119,7 +119,7 @@ if [ $REUSE -eq 0 ] || [ ! -d "$BUILDDIR" ]; then
 		mkdir -p "$BUILDDIR"
 		if [ $ANDROID -eq 1 ]; then
 			echo "Creating a new Android project in $BUILDDIR" > $LOG
-			cp -r $FAUSTLIB/multiKeyboard/android/* "$BUILDDIR"
+			cp -r $FAUSTLIB/smartKeyboard/android/* "$BUILDDIR"
 			
 			# change 'faust' with real *APPNAME
 			PLATFORM=$(uname)
@@ -140,7 +140,7 @@ if [ $REUSE -eq 0 ] || [ ! -d "$BUILDDIR" ]; then
 			mv $APPFOLDER/java/com/ccrma/faust $APPFOLDER/java/com/ccrma/$APPNAME
 		elif [ $IOS -eq 1 ]; then
 			echo "Creating a new iOS project in $BUILDDIR" > $LOG
-			cp -r $FAUSTLIB/multiKeyboard/iOS/* "$BUILDDIR"
+			cp -r $FAUSTLIB/smartKeyboard/iOS/* "$BUILDDIR"
 			
 			sed -i '' 's,$(TARGET_NAME),'$APPNAME',g' $BUILDDIR/Faust.xcodeproj/project.pbxproj
 			sed -i '' 's,ccrma.Faust,ccrma.'$APPNAME',g' $BUILDDIR/Faust.xcodeproj/project.pbxproj

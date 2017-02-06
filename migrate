@@ -1,80 +1,83 @@
 #!/bin/bash
 
 # Compilation script
-cp faust/faust2multikeyb ~/reps/faust/tools/faust2appls
+cp faust/faust2smartkeyb ~/reps/faust/tools/faust2appls
+
+# Doc
+cp doc/README.md ~/reps/faust/architecture/smartKeyboard
 
 # Android source
-cp android/Faust/build.gradle ~/reps/faust/architecture/multiKeyboard/android
-cp android/Faust/gradle.properties ~/reps/faust/architecture/multiKeyboard/android
-cp android/Faust/gradlew ~/reps/faust/architecture/multiKeyboard/android
-cp android/Faust/gradlew.bat ~/reps/faust/architecture/multiKeyboard/android
-cp android/Faust/settings.gradle ~/reps/faust/architecture/multiKeyboard/android
-cp -r android/Faust/gradle ~/reps/faust/architecture/multiKeyboard/android
+cp android/Faust/build.gradle ~/reps/faust/architecture/smartKeyboard/android
+cp android/Faust/gradle.properties ~/reps/faust/architecture/smartKeyboard/android
+cp android/Faust/gradlew ~/reps/faust/architecture/smartKeyboard/android
+cp android/Faust/gradlew.bat ~/reps/faust/architecture/smartKeyboard/android
+cp android/Faust/settings.gradle ~/reps/faust/architecture/smartKeyboard/android
+cp -r android/Faust/gradle ~/reps/faust/architecture/smartKeyboard/android
 
-cp android/Faust/app/build.gradle ~/reps/faust/architecture/multiKeyboard/android/app
-cp android/Faust/app/CMakeLists.txt ~/reps/faust/architecture/multiKeyboard/android/app
-cp android/Faust/app/proguard-rules.pro ~/reps/faust/architecture/multiKeyboard/android/app
-cp -r android/Faust/app/tools ~/reps/faust/architecture/multiKeyboard/android/app
-cp android/Faust/app/src/main/AndroidManifest.xml ~/reps/faust/architecture/multiKeyboard/android/app/src/main
+cp android/Faust/app/build.gradle ~/reps/faust/architecture/smartKeyboard/android/app
+cp android/Faust/app/CMakeLists.txt ~/reps/faust/architecture/smartKeyboard/android/app
+cp android/Faust/app/proguard-rules.pro ~/reps/faust/architecture/smartKeyboard/android/app
+cp -r android/Faust/app/tools ~/reps/faust/architecture/smartKeyboard/android/app
+cp android/Faust/app/src/main/AndroidManifest.xml ~/reps/faust/architecture/smartKeyboard/android/app/src/main
 
-cp android/Faust/app/src/main/res/drawable-hdpi/key_down_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-hdpi
-cp android/Faust/app/src/main/res/drawable-hdpi/key_down_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-hdpi
-cp android/Faust/app/src/main/res/drawable-hdpi/key_up_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-hdpi
-cp android/Faust/app/src/main/res/drawable-hdpi/key_up_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-hdpi
+cp android/Faust/app/src/main/res/drawable-hdpi/key_down_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-hdpi
+cp android/Faust/app/src/main/res/drawable-hdpi/key_down_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-hdpi
+cp android/Faust/app/src/main/res/drawable-hdpi/key_up_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-hdpi
+cp android/Faust/app/src/main/res/drawable-hdpi/key_up_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-hdpi
 
-cp android/Faust/app/src/main/res/drawable-ldpi/key_down_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-ldpi
-cp android/Faust/app/src/main/res/drawable-ldpi/key_down_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-ldpi
-cp android/Faust/app/src/main/res/drawable-ldpi/key_up_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-ldpi
-cp android/Faust/app/src/main/res/drawable-ldpi/key_up_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-ldpi
+cp android/Faust/app/src/main/res/drawable-ldpi/key_down_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-ldpi
+cp android/Faust/app/src/main/res/drawable-ldpi/key_down_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-ldpi
+cp android/Faust/app/src/main/res/drawable-ldpi/key_up_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-ldpi
+cp android/Faust/app/src/main/res/drawable-ldpi/key_up_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-ldpi
 
-cp android/Faust/app/src/main/res/drawable-mdpi/key_down_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-mdpi
-cp android/Faust/app/src/main/res/drawable-mdpi/key_down_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-mdpi
-cp android/Faust/app/src/main/res/drawable-mdpi/key_up_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-mdpi
-cp android/Faust/app/src/main/res/drawable-mdpi/key_up_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-mdpi
+cp android/Faust/app/src/main/res/drawable-mdpi/key_down_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-mdpi
+cp android/Faust/app/src/main/res/drawable-mdpi/key_down_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-mdpi
+cp android/Faust/app/src/main/res/drawable-mdpi/key_up_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-mdpi
+cp android/Faust/app/src/main/res/drawable-mdpi/key_up_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-mdpi
 
-cp android/Faust/app/src/main/res/drawable-xhdpi/key_down_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xhdpi
-cp android/Faust/app/src/main/res/drawable-xhdpi/key_down_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xhdpi
-cp android/Faust/app/src/main/res/drawable-xhdpi/key_up_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xhdpi
-cp android/Faust/app/src/main/res/drawable-xhdpi/key_up_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xhdpi
+cp android/Faust/app/src/main/res/drawable-xhdpi/key_down_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xhdpi
+cp android/Faust/app/src/main/res/drawable-xhdpi/key_down_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xhdpi
+cp android/Faust/app/src/main/res/drawable-xhdpi/key_up_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xhdpi
+cp android/Faust/app/src/main/res/drawable-xhdpi/key_up_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xhdpi
 
-cp android/Faust/app/src/main/res/drawable-xxhdpi/key_down_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xxhdpi
-cp android/Faust/app/src/main/res/drawable-xxhdpi/key_down_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xxhdpi
-cp android/Faust/app/src/main/res/drawable-xxhdpi/key_up_bright.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xxhdpi
-cp android/Faust/app/src/main/res/drawable-xxhdpi/key_up_dark.png ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res/drawable-xxhdpi
+cp android/Faust/app/src/main/res/drawable-xxhdpi/key_down_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xxhdpi
+cp android/Faust/app/src/main/res/drawable-xxhdpi/key_down_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xxhdpi
+cp android/Faust/app/src/main/res/drawable-xxhdpi/key_up_bright.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xxhdpi
+cp android/Faust/app/src/main/res/drawable-xxhdpi/key_up_dark.png ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res/drawable-xxhdpi
 
-cp -r android/Faust/app/src/main/res/layout ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/mipmap-hdpi ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/mipmap-mdpi ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/mipmap-xhdpi ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/mipmap-xxhdpi ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/mipmap-xxxhdpi ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/values ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
-cp -r android/Faust/app/src/main/res/values-w820dp ~/reps/faust/architecture/multiKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/layout ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/mipmap-hdpi ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/mipmap-mdpi ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/mipmap-xhdpi ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/mipmap-xxhdpi ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/mipmap-xxxhdpi ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/values ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
+cp -r android/Faust/app/src/main/res/values-w820dp ~/reps/faust/architecture/smartKeyboard/android/app/src/main/res
 
-cp android/Faust/app/tools/MainActivity.java ~/reps/faust/architecture/multiKeyboard/android/app/src/main/java/com/ccrma/faust
-cp android/Faust/app/src/main/java/com/ccrma/faust/MultiKeyboard.java ~/reps/faust/architecture/multiKeyboard/android/app/src/main/java/com/ccrma/faust
-cp android/Faust/app/src/main/java/com/ccrma/faust/Smooth.java ~/reps/faust/architecture/multiKeyboard/android/app/src/main/java/com/ccrma/faust
-cp android/Faust/app/src/main/java/com/ccrma/faust/Zone.java ~/reps/faust/architecture/multiKeyboard/android/app/src/main/java/com/ccrma/faust
+cp android/Faust/app/tools/MainActivity.java ~/reps/faust/architecture/smartKeyboard/android/app/src/main/java/com/ccrma/faust
+cp android/Faust/app/src/main/java/com/ccrma/faust/MultiKeyboard.java ~/reps/faust/architecture/smartKeyboard/android/app/src/main/java/com/ccrma/faust
+cp android/Faust/app/src/main/java/com/ccrma/faust/Smooth.java ~/reps/faust/architecture/smartKeyboard/android/app/src/main/java/com/ccrma/faust
+cp android/Faust/app/src/main/java/com/ccrma/faust/Zone.java ~/reps/faust/architecture/smartKeyboard/android/app/src/main/java/com/ccrma/faust
 
 # iOS source
-cp -r iOS/Faust/light/Faust.xcodeproj ~/reps/faust/architecture/multiKeyboard/iOS
-cp -r iOS/Faust/Faust/Assets.xcassets ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp -r iOS/Faust/Faust/Base.lproj ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/img/keyDownBright.png ~/reps/faust/architecture/multiKeyboard/iOS/Faust/img
-cp iOS/Faust/Faust/img/keyDownDark.png ~/reps/faust/architecture/multiKeyboard/iOS/Faust/img
-cp iOS/Faust/Faust/img/keyUpBright.png ~/reps/faust/architecture/multiKeyboard/iOS/Faust/img
-cp iOS/Faust/Faust/img/keyUpDark.png ~/reps/faust/architecture/multiKeyboard/iOS/Faust/img
-cp iOS/Faust/Faust/AppDelegate.h ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/AppDelegate.m ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/Info.plist ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/main.m ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/MultiKeyboard.h ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/MultiKeyboard.mm ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/Smooth.h ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/ViewController.h ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/ViewController.mm ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/Zone.h ~/reps/faust/architecture/multiKeyboard/iOS/Faust
-cp iOS/Faust/Faust/Zone.mm ~/reps/faust/architecture/multiKeyboard/iOS/Faust
+cp -r iOS/Faust/light/Faust.xcodeproj ~/reps/faust/architecture/smartKeyboard/iOS
+cp -r iOS/Faust/Faust/Assets.xcassets ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp -r iOS/Faust/Faust/Base.lproj ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/img/keyDownBright.png ~/reps/faust/architecture/smartKeyboard/iOS/Faust/img
+cp iOS/Faust/Faust/img/keyDownDark.png ~/reps/faust/architecture/smartKeyboard/iOS/Faust/img
+cp iOS/Faust/Faust/img/keyUpBright.png ~/reps/faust/architecture/smartKeyboard/iOS/Faust/img
+cp iOS/Faust/Faust/img/keyUpDark.png ~/reps/faust/architecture/smartKeyboard/iOS/Faust/img
+cp iOS/Faust/Faust/AppDelegate.h ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/AppDelegate.m ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/Info.plist ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/main.m ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/MultiKeyboard.h ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/MultiKeyboard.mm ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/Smooth.h ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/ViewController.h ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/ViewController.mm ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/Zone.h ~/reps/faust/architecture/smartKeyboard/iOS/Faust
+cp iOS/Faust/Faust/Zone.mm ~/reps/faust/architecture/smartKeyboard/iOS/Faust
 
 
 
