@@ -564,8 +564,8 @@
     
     if([keyboardParameters[@"Send Current Keyboard"] intValue]) faustDsp->setParamValue("keyboard", keyboardId);
     if([keyboardParameters[@"Send Current Key"] intValue]) faustDsp->setParamValue("key", keyId);
-    if([keyboardParameters[@"Send X"] intValue]) faustDsp->setParamValue(("x" + std::to_string(fingerId)).c_str(), fmod(currentContinuousKey,1));
-    if([keyboardParameters[@"Send Y"] intValue]) faustDsp->setParamValue(("y" + std::to_string(fingerId)).c_str(), currentKeyboardY);
+    if([keyboardParameters[@"Send X"] intValue]) faustDsp->setParamValue(("x" + std::to_string(fingerId-1)).c_str(), fmod(currentContinuousKey,1));
+    if([keyboardParameters[@"Send Y"] intValue]) faustDsp->setParamValue(("y" + std::to_string(fingerId-1)).c_str(), currentKeyboardY);
 }
 
 /***************************************************************************

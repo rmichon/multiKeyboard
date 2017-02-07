@@ -563,8 +563,6 @@ public class PresetMenu extends ViewGroup {
         keyboardParameters.put("Inter-Keyboard Slide", 1);
         keyboardParameters.put("Send Current Key", 1);
         keyboardParameters.put("Send Current Keyboard", 1);
-        keyboardParameters.put("Send X", 1);
-        keyboardParameters.put("Send Y", 1);
         keyboardParameters.put("Send Sensors", 1);
         keyboardParameters.put("Rounding Update Speed", (float) 0.06);
         keyboardParameters.put("Rounding Smooth", (float) 0.9);
@@ -592,7 +590,13 @@ public class PresetMenu extends ViewGroup {
                 keyboardParameters.put(String.format("Keyboard %d - Orientation", i), 0);
             }
             if(keyboardParameters.get(String.format("Keyboard %d - Mode",i)) == null) {
-                keyboardParameters.put(String.format("Keyboard %d - Mode", i), 1);
+                keyboardParameters.put(String.format("Keyboard %d - Mode", i), 0);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Send X",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Send X", i), 1);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Send Y",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Send Y", i), 1);
             }
         }
 

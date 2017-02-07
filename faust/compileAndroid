@@ -1,6 +1,7 @@
 #!/bin/bash
 
-faust2api -android -nvoices 16 -effect synth_effect.dsp -nodoc synth.dsp
+#faust2api -android -nvoices 16 -effect synth_effect.dsp -nodoc synth.dsp
+faust2api -android -nvoices 16 -effect synth_effect.dsp -nodoc demo.dsp
 
 unzip dsp-faust.zip
 cp dsp-faust/cpp/* ../android/Faust/app/src/main/cpp

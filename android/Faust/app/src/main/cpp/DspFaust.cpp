@@ -1,4 +1,4 @@
-#define POLY_VOICES 16
+#define NVOICES 16
 #define POLY2 1
 //----------------------------------------------------------
 // name: "synth_effect"
@@ -543,8 +543,8 @@ class effect : public dsp {
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
-		m->declare("filters.lib/name", "Faust Filter Library");
-		m->declare("filters.lib/version", "2.0");
+		m->declare("filters.lib/name", "Faust Filters Library");
+		m->declare("filters.lib/version", "0.0");
 		m->declare("reverbs.lib/name", "Faust Reverb Library");
 		m->declare("reverbs.lib/version", "0.0");
 		m->declare("routes.lib/name", "Faust Signal Routing Library");
@@ -1021,7 +1021,7 @@ class effect : public dsp {
 
 
 //----------------------------------------------------------
-// name: "synth"
+// name: "demo"
 //
 // Code generated with Faust 0.9.96 (http://faust.grame.fr)
 //----------------------------------------------------------
@@ -1487,32 +1487,36 @@ class DecoratorUI : public UI
 
 class mydsp : public dsp {
   private:
-	FAUSTFLOAT 	fslider0;
+	FAUSTFLOAT 	fentry0;
+	FAUSTFLOAT 	fentry1;
+	float 	fRec1[2];
 	float 	fRec0[2];
 	float 	fConst0;
 	float 	fConst1;
 	FAUSTFLOAT 	fbutton0;
-	float 	fVec0[2];
-	FAUSTFLOAT 	fslider1;
-	float 	fRec5[2];
+	float 	fRec5[3];
+	FAUSTFLOAT 	fentry2;
+	float 	fRec4[2];
+	FAUSTFLOAT 	fentry3;
+	float 	fRec8[2];
 	float 	fConst2;
 	float 	fConst3;
-	float 	fRec3[2];
-	float 	fVec1[2];
-	float 	fRec2[2];
-	float 	fRec1[3];
-	FAUSTFLOAT 	fslider2;
 	float 	fRec6[2];
+	float 	fVec0[2];
+	float 	fRec3[2];
+	float 	fRec2[3];
 	int fSamplingFreq;
 
   public:
 	virtual void metadata(Meta* m) { 
-		m->declare("name", "synth");
-		m->declare("interface", "SmartKeyboard{  'Number of Keyboards':'5',  'Max Keyboard Polyphony':'1',  'Inter-Keyboard Slide':'1',  'Mono Mode':'1',  'Keyboard 0 - Number of Keys':'13',  'Keyboard 1 - Number of Keys':'13',  'Keyboard 2 - Number of Keys':'13',  'Keyboard 3 - Number of Keys':'13',  'Keyboard 4 - Number of Keys':'13',  'Keyboard 0 - Scale':'3',  'Keyboard 0 - Lowest Key':'77',  'Keyboard 1 - Lowest Key':'72',  'Keyboard 2 - Lowest Key':'67',  'Keyboard 3 - Lowest Key':'62',  'Keyboard 4 - Lowest Key':'57',  'Rounding Mode':'2' }");
+		m->declare("name", "demo");
+		m->declare("interface", "SmartKeyboard{  'Number of Keyboards':'2',  'Max Keyboard Polyphony':'10',  'Keyboard 0 - Number of Keys':'2',  'Keyboard 0 - Mode':'2',  'Keyboard 1 - Number of Keys':'13',  'Keyboard 1 - Send X':'0' }");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
-		m->declare("filters.lib/name", "Faust Filter Library");
-		m->declare("filters.lib/version", "2.0");
+		m->declare("basics.lib/name", "Faust Basic Element Library");
+		m->declare("basics.lib/version", "0.0");
+		m->declare("filters.lib/name", "Faust Filters Library");
+		m->declare("filters.lib/version", "0.0");
 		m->declare("maths.lib/name", "Faust Math Library");
 		m->declare("maths.lib/version", "2.0");
 		m->declare("maths.lib/author", "GRAME");
@@ -1534,20 +1538,22 @@ class mydsp : public dsp {
 		fConst3 = (1.0f / fConst2);
 	}
 	virtual void instanceResetUserInterface() {
-		fslider0 = 1.0f;
+		fentry0 = 0.0f;
+		fentry1 = 0.5f;
 		fbutton0 = 0.0;
-		fslider1 = 3e+02f;
-		fslider2 = 1.0f;
+		fentry2 = 1.0f;
+		fentry3 = 2e+02f;
 	}
 	virtual void instanceClear() {
+		for (int i=0; i<2; i++) fRec1[i] = 0;
 		for (int i=0; i<2; i++) fRec0[i] = 0;
-		for (int i=0; i<2; i++) fVec0[i] = 0;
-		for (int i=0; i<2; i++) fRec5[i] = 0;
-		for (int i=0; i<2; i++) fRec3[i] = 0;
-		for (int i=0; i<2; i++) fVec1[i] = 0;
-		for (int i=0; i<2; i++) fRec2[i] = 0;
-		for (int i=0; i<3; i++) fRec1[i] = 0;
+		for (int i=0; i<3; i++) fRec5[i] = 0;
+		for (int i=0; i<2; i++) fRec4[i] = 0;
+		for (int i=0; i<2; i++) fRec8[i] = 0;
 		for (int i=0; i<2; i++) fRec6[i] = 0;
+		for (int i=0; i<2; i++) fVec0[i] = 0;
+		for (int i=0; i<2; i++) fRec3[i] = 0;
+		for (int i=0; i<3; i++) fRec2[i] = 0;
 	}
 	virtual void init(int samplingFreq) {
 		classInit(samplingFreq);
@@ -1565,53 +1571,58 @@ class mydsp : public dsp {
 		return fSamplingFreq;
 	}
 	virtual void buildUserInterface(UI* ui_interface) {
-		ui_interface->openVerticalBox("SmartKeyboard");
-		ui_interface->addHorizontalSlider("freq", &fslider1, 3e+02f, 5e+01f, 2e+03f, 0.01f);
-		ui_interface->addHorizontalSlider("gain", &fslider2, 1.0f, 0.0f, 1.0f, 0.01f);
+		ui_interface->openVerticalBox("synth");
+		ui_interface->addNumEntry("freq", &fentry3, 2e+02f, 4e+01f, 2e+03f, 0.01f);
+		ui_interface->addNumEntry("gain", &fentry2, 1.0f, 0.0f, 1.0f, 0.01f);
 		ui_interface->addButton("gate", &fbutton0);
-		ui_interface->addHorizontalSlider("y", &fslider0, 1.0f, 0.0f, 1.0f, 0.001f);
+		ui_interface->addNumEntry("keyboard", &fentry0, 0.0f, 0.0f, 1.0f, 1.0f);
+		ui_interface->addNumEntry("x", &fentry1, 0.5f, 0.0f, 1.0f, 0.01f);
 		ui_interface->closeBox();
 	}
 	virtual void compute (int count, FAUSTFLOAT** input, FAUSTFLOAT** output) {
-		float 	fSlow0 = (0.001f * ((5000 * float(fslider0)) + 50));
-		float 	fSlow1 = float(fbutton0);
-		int 	iSlow2 = (fSlow1 == 0);
-		float 	fSlow3 = float(fslider1);
-		float 	fSlow4 = (0.001f * (fSlow1 * float(fslider2)));
+		int 	iSlow0 = (float(fentry0) != 0);
+		int 	iSlow1 = (1 - iSlow0);
+		float 	fSlow2 = (float(fentry1) * iSlow0);
+		float 	fSlow3 = (0.001f * float(fbutton0));
+		float 	fSlow4 = float(fentry2);
+		float 	fSlow5 = float(fentry3);
 		FAUSTFLOAT* output0 = output[0];
 		FAUSTFLOAT* output1 = output[1];
 		for (int i=0; i<count; i++) {
-			fRec0[0] = (fSlow0 + (0.999f * fRec0[1]));
-			float fTemp0 = tanf((fConst1 * fRec0[0]));
+			fRec1[0] = (fSlow2 + (iSlow1 * fRec1[1]));
+			fRec0[0] = ((0.999f * fRec0[1]) + (0.001f * fRec1[0]));
+			float fTemp0 = tanf((fConst1 * ((5000 * fRec0[0]) + 100)));
 			float fTemp1 = (1.0f / fTemp0);
 			float fTemp2 = (((fTemp1 + 1.0f) / fTemp0) + 1);
 			float fTemp3 = (fTemp1 + 1);
-			fVec0[0] = fSlow1;
-			int iTemp4 = ((fSlow1 == fVec0[1]) | iSlow2);
-			fRec5[0] = ((fSlow3 * (1.0f - (0.999f * iTemp4))) + (0.999f * (iTemp4 * fRec5[1])));
-			float fTemp5 = float(max(1e-07f, fabsf(fRec5[0])));
-			float fTemp6 = (fRec3[1] + (fConst3 * fTemp5));
-			float fTemp7 = (fTemp6 + -1);
-			int iTemp8 = int((fTemp7 < 0));
-			fRec3[0] = ((iTemp8)?fTemp6:fTemp7);
-			float 	fRec4 = ((iTemp8)?fTemp6:(fTemp6 + (fTemp7 * (1 - (fConst2 / fTemp5)))));
-			float fTemp9 = (2 * fRec4);
-			fVec1[0] = (fTemp9 + -1);
-			fRec2[0] = ((fRec2[1] * (0 - ((1 - fTemp1) / fTemp3))) + (((fTemp9 + fVec1[1]) + -1) / fTemp3));
-			fRec1[0] = (fRec2[0] - (((2 * (fRec1[1] * (1 - (1.0f / faustpower<2>(fTemp0))))) + (fRec1[2] * (((fTemp1 + -1.0f) / fTemp0) + 1))) / fTemp2));
-			fRec6[0] = (fSlow4 + (0.999f * fRec6[1]));
-			float fTemp10 = ((fRec6[0] * (fRec1[0] + (fRec1[2] + (2.0f * fRec1[1])))) / fTemp2);
-			output0[i] = (FAUSTFLOAT)fTemp10;
-			output1[i] = (FAUSTFLOAT)fTemp10;
+			fRec5[0] = (fSlow3 + (0.999f * fRec5[1]));
+			int iTemp4 = ((fRec5[0] == fRec5[2]) | (fRec5[0] == 0));
+			float fTemp5 = (1.0f - (0.999f * iTemp4));
+			fRec4[0] = ((fSlow4 * fTemp5) + (0.999f * (iTemp4 * fRec4[1])));
+			fRec8[0] = ((0.999f * (fRec8[1] * iTemp4)) + (fSlow5 * fTemp5));
+			float fTemp6 = float(max(1e-07f, fabsf(fRec8[0])));
+			float fTemp7 = (fRec6[1] + (fConst3 * fTemp6));
+			float fTemp8 = (fTemp7 + -1);
+			int iTemp9 = int((fTemp8 < 0));
+			fRec6[0] = ((iTemp9)?fTemp7:fTemp8);
+			float 	fRec7 = ((iTemp9)?fTemp7:(fTemp7 + (fTemp8 * (1 - (fConst2 / fTemp6)))));
+			float fTemp10 = ((fRec5[0] * ((2 * fRec7) + -1)) * fRec4[0]);
+			fVec0[0] = fTemp10;
+			fRec3[0] = ((fRec3[1] * (0 - ((1 - fTemp1) / fTemp3))) + ((fVec0[0] + fVec0[1]) / fTemp3));
+			fRec2[0] = (fRec3[0] - (((fRec2[2] * (((fTemp1 + -1.0f) / fTemp0) + 1)) + (2 * (fRec2[1] * (1 - (1.0f / faustpower<2>(fTemp0)))))) / fTemp2));
+			float fTemp11 = ((fRec2[0] + (fRec2[2] + (2.0f * fRec2[1]))) / fTemp2);
+			output0[i] = (FAUSTFLOAT)fTemp11;
+			output1[i] = (FAUSTFLOAT)fTemp11;
 			// post processing
-			fRec6[1] = fRec6[0];
-			fRec1[2] = fRec1[1]; fRec1[1] = fRec1[0];
-			fRec2[1] = fRec2[0];
-			fVec1[1] = fVec1[0];
+			fRec2[2] = fRec2[1]; fRec2[1] = fRec2[0];
 			fRec3[1] = fRec3[0];
-			fRec5[1] = fRec5[0];
 			fVec0[1] = fVec0[0];
+			fRec6[1] = fRec6[0];
+			fRec8[1] = fRec8[0];
+			fRec4[1] = fRec4[0];
+			fRec5[2] = fRec5[1]; fRec5[1] = fRec5[0];
 			fRec0[1] = fRec0[0];
+			fRec1[1] = fRec1[0];
 		}
 	}
 };
@@ -6441,11 +6452,48 @@ class dsp_parallelizer : public dsp {
 // Mono or polyphonic audio DSP engine
 //**************************************************************
 
-#ifndef POLY_VOICES
-#define POLY_VOICES 0 	// default is no polyphony (mono)
-#endif
-
 using namespace std;
+
+struct MyMeta : public Meta, public std::map<const char*, const char*>
+{
+    void declare(const char* key, const char* value)
+    {
+        (*this)[key] = value;
+    }
+    const char* get(const char* key, const char* def)
+    {
+        if (this->find(key) != this->end()) {
+            return (*this)[key];
+        } else {
+            return def;
+        }
+    }
+};
+
+static void analyseMeta(bool& midi_sync, int& nvoices)
+{
+    mydsp* tmp_dsp = new mydsp();
+    
+    JSONUI jsonui;
+    tmp_dsp->buildUserInterface(&jsonui);
+    std::string json = jsonui.JSON();
+    midi_sync = ((json.find("midi") != std::string::npos) &&
+                 ((json.find("start") != std::string::npos) ||
+                  (json.find("stop") != std::string::npos) ||
+                  (json.find("clock") != std::string::npos)));
+    
+#ifdef NVOICES
+    nvoices = NVOICES;
+#else
+    MyMeta meta;
+    tmp_dsp->metadata(&meta);
+    const char* numVoices = meta.get("nvoices", "0");
+    nvoices = atoi(numVoices);
+    if (nvoices < 0) nvoices = 0;
+#endif
+    
+    delete tmp_dsp;
+}
 
 class FaustPolyEngine {
         
@@ -6468,9 +6516,14 @@ class FaustPolyEngine {
 
         FaustPolyEngine(audio* driver = NULL):fMidiUI(&fMidiHandler)
         {
+            bool midi_sync = false;
+            int nvoices = 1;
+            
             fDriver = driver;
             fRunning = false;
             mydsp* mono_dsp = new mydsp();
+            
+            analyseMeta(midi_sync, nvoices);
          
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
@@ -6484,10 +6537,9 @@ class FaustPolyEngine {
 
             if (fJSONUI.find("keyboard") != std::string::npos
                 || fJSONUI.find("poly") != std::string::npos
-                || POLY_VOICES != 0) {
+                || nvoices > 1) {
                 
-                int poly_max = (POLY_VOICES != 0) ? POLY_VOICES : 10; // default number of poly voices
-                fPolyDSP = new mydsp_poly(mono_dsp, poly_max, true);
+                fPolyDSP = new mydsp_poly(mono_dsp, nvoices, true);
 
             #if POLY2
                 fFinalDSP = new dsp_sequencer(fPolyDSP, new effect());

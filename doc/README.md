@@ -43,6 +43,300 @@ That's it! You're now ready to forge Android apps with `faust2smartkeyb`!
 Say something about the first time you run it and gradle doing its shit
 -->
 
+## Quick Tour: From a Simple Faust Code to a Working App
+
+`faust2smartkeyb` uses `faust2api` internally. Thus, Faust codes provided to `faust2smartkeyb` must respect the same standards as for `faust2api` (check the [`faust2api` documentation](https://ccrma.stanford.edu/~rmichon/faust2api/) for more information about this).
+
+The following code is the same as one presented in the [`faust2api` documentation](https://ccrma.stanford.edu/~rmichon/faust2api/) in the [MIDI Enabled Polyphonic Object](https://ccrma.stanford.edu/~rmichon/faust2api/#midi-enabled-polyphonic-object) section:
+
+```
+import("stdfaust.lib");
+freq = nentry("freq",200,40,2000,0.01) : si.polySmooth(gate,0.999,2);
+gain = nentry("gain",1,0,1,0.01) : si.polySmooth(gate,0.999,2);
+gate = button("gate") : si.smoo; 
+cutoff = nentry("cutoff",5000,40,2000,0.01) : si.polySmooth(gate,0.999,2);
+process = vgroup("synth",os.sawtooth(freq)*gain*gate : fi.lowpass(3,cutoff) <: _,_);
+```
+
+It implements a simple synthesizer based on a filtered sawtooth wave and it is polyphony-compatible thanks to its `freq`, `gain`, and `gate` parameters.
+
+If this code is provided as such to `faust2smartkeyb`, its UI declaration will be ignored and replaced by the default SmartKeyboard interface. This interface can be configured at the beginning of the Faust code as such:
+
+```
+declare interface "SmartKeyboard{
+	// configuration keys
+}";
+```
+
+and by placing a set of key/value pairs between the two curly brackets. For example, 
+
+```
+declare interface "SmartKeyboard{
+	'Number of Keyboards':'2',
+	'Keyboard 0 - Number of Keys':'13',
+	'Keyboard 1 - Number of Keys':'13',
+	'Keyboard 0 - Lowest Key':'72',
+	'Keyboard 1 - Lowest Key':'60'
+}";
+```
+
+## SmartKeyboard Configuration Keys
+
+### `Number of Keyboards`
+
+Defines the number of keyboards in the interface. 
+
+Default value: 4
+
+---
+
+### `Keyboard N - Number of Keys`
+
+Defines the number of keys of a specific keyboard in the interface.
+
+Default value: 7
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Number of Keys` and the `Keyboard 1 - Number of Keys` keys.
+
+---
+
+### `Keyboard N - Lowest Key`
+
+Defines the MIDI note number of the lowest key on a specific keyboard.
+
+Default value: 48
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Lowest Key` and the `Keyboard 1 - Lowest Key` keys.
+
+---
+
+### `Keyboard N - Scale`
+
+Defines the scale of a specific keyboard.
+
+Default value: 0
+
+With:
+
+* `Keyboard N - Scale = 0`: Chromatic scale, note names are displayed
+* `Keyboard N - Scale = 1`: Chromatic scale, note names are not displayed
+* `Keyboard N - Scale = 2`: Major scale, note names are not displayed
+* `Keyboard N - Scale = 3`: Harmonic minor scale, note names are not displayed
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Scale` and the `Keyboard 1 - Lowest Scale` keys.
+
+---
+
+### `Keyboard N - Show Notes`
+
+When 1, shows note names on a specific keyboard.
+
+Default value: 1
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Show Notes` and the `Keyboard 1 - Show Notes` keys.
+
+---
+
+### `Keyboard N - Root Position`
+
+Position of the root (as a key number starting from 0) on a specific keyboard. This parameter is very useful when dealing with specific scales.
+
+Default value: 0
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Root Position` and the `Keyboard 1 - Root Position` keys.
+
+---
+
+### `Keyboard N - Orientation`
+
+Defines the orientation of a specific keyboard: left to right when 0 and right to left when 1.
+
+Default value: 0
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Orientation` and the `Keyboard 1 - Orientation` keys.
+
+---
+
+### `Keyboard N - Mode`
+
+Activates of deactivates the keyboard mode of a specific keyboard. When 0, note names are not displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys don't change color when they are pressed. This can be useful when using a keyboard as a control interface or a drum pad, etc.
+
+Default value: 1
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Mode` and the `Keyboard 1 - Mode` keys.
+
+---
+
+### `Max Fingers`
+
+Defines the maximum number of fingers allowed on the touch-screen. This parameter is independent from the number of polyphony voices of the DSP object. Default value: 10.
+
+---
+
+### `Max Keyboard Polyphony`
+
+Defines the number of polyphony voices of each keyboard. 
+
+Default value: 10
+
+This parameter has some special cases:
+
+* `Max Keyboard Polyphony = 1`: in that case, keyboards are monophonic. Monophonic mode can be configured using the `Mono Mode` key (see below).
+* `Max Keyboard Polyphony = 0`: the first voice of the DSP object is activated. This is very convenient to create an app generating a continuous sound. Additionally, the `x` and `y` standard parameters start to be numbered by finger (e.g., finger 0: `x0` and `y0`, finger 1: `x1` and `y1`, etc.).
+* `Max Keyboard Polyphony = -1`: similar to `Max Keyboard Polyphony=0` except that no voice is started by default. This mode is convenient to build continuous control interface working with a MIDI keyboard for example. In that case, notes are created and handled by the keyboard and the touch-screen can be used to control specific params of the synthesizer using the numbered `x` and `y` parameters.
+
+---
+
+### `Mono Mode`
+
+Configures the way monophonic keyboards work. 
+
+Default value: 1
+
+With:
+
+* `Mono Mode = 0`: the finger currently on the keyboard keeps priority: all other fingers are ignored
+* `Mono Mode = 1`: priority goes to any new finger on the keyboard. When the finger holding the note leaves the keyboard, the note is transferred to the closest finger on the same keyboard. This mode is probably the most natural one to implement a guitar interface, for example.
+* `Mono Mode = 2`: priority goes to any new finger on the keyboard. When the finger holding the note leaves the keyboard, the note is terminated.
+* `Mono Mode = 3`: same as `Mono Mode = 1`, but priority is given to new fingers only if they are at higher pitch than the current note.
+* `Mono Mode = 4`: same as `Mono Mode = 1`, but priority is given to new fingers only if they are at lower pitch than the current note.
+
+---
+
+### `Rounding Mode`
+
+Configures the way the `freq` parameter associated with the current finger is quantized.
+
+Default value: 0.
+
+With:
+
+* `Rounding Mode = 0`: keys are rounded to the nearest integer (no slide or vibrato possible).
+* `Rounding Mode = 1`: `freq` is continuous (new notes might sound out of tune).
+* `Rounding Mode = 2`: keys are rounded to the nearest integer when the finger is not moving or when a new note is started but become continuous when fast movement are happening. The behavior of thus system can be fine-tuned using the [Rounding Update Speed](#rounding-update-speed), [`Rounding Smooth`](#rounding-smooth), [`Rounding Threshold`](#rounding-threshold) and [`Rounding Cycles`](#rounding-cycles) parameters.
+
+---
+
+### `Inter-Keyboard Slide`
+
+When 1, fingers can slide between keyboards.
+
+Default value: 1
+
+---
+
+### `Send Current Key`
+
+When 1, send the number of the current key in the current keyboard (associated with the [`key`](#key) standard parameter).
+
+Default value: 1
+
+---
+
+### `Send Current Keyboard`
+
+When 1, send the number of the current keyboard (associated with the [`keyboard`](#keyboard) standard parameter).
+
+Default value: 1
+
+---
+
+### `Send X`
+
+When 1, send the normalized x position of the finger in the current key (associated with the [`x`](#x) standard parameter).
+
+Default value: 1
+
+---
+
+### `Send Y`
+
+When 1, send the normalized y position of the finger in the current key (associated with the [`y`](#y) standard parameter).
+
+Default value: 1
+
+---
+
+### `Send Sensors`
+
+When 1, send the raw sensor (accelerometer and gyroscope) values to the DSP object.
+
+Default value: 1
+
+---
+
+### `Rounding Update Speed`
+
+Speed in ms at which the rounding loop is updated.
+
+Default: 0.06
+
+---
+
+### `Rounding Smooth`
+
+The pole of the integrators used for smoothing movements during rounding detection. 
+
+Default: 0.9
+
+---
+
+### `Rounding Threshold`
+
+Rounding is deactivated when the output of the smoothers (see [`Rounding Threshold`](#rounding-threshold)) goes above this value.
+
+Default: 3
+
+---
+
+### `Rounding Cycles`
+
+The number of cycles before rounding is activated.
+
+Default: 5
+
+---
+
+## SmartKeyboard Standard Parameters
+
+### `freq`
+
+The frequency in Hz of the current event. The value of this parameter heavily relies [`Rounding Mode`](#rounding-mode).
+
+---
+
+### `gate`
+
+The trigger signal sent when a finger touches the screen (1) or when it stops touching it (0). If `Rounding Mode = 0`, then "0" and "1" are sent everytime a finger slides to a new key (a new voice is allocated everytime).
+
+---
+
+### `keyboard`
+
+The number of the current keyboard. The top keyboard is always 0 (even if the orientation of the keyboard is reverted). 
+
+---
+
+### `key`
+
+The key number in the current keyboard. The first key on the left is always 0.
+
+---
+
+### `x`
+
+The normalized (0-1) X position of the finger in the current key.
+
+---
+
+### `y`
+
+The normalized (0-1) Y position of the finger in the current key.
+
+---
+
+## Compilation Options
+
 ## Additional Resources
 
 * [What Is Faust?](https://ccrma.stanford.edu/~rmichon/faustTutorials/#what-is-faust)
