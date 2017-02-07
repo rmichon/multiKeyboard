@@ -544,8 +544,10 @@ public class MultiKeyboard extends ViewGroup {
         if((int)keyboardParameters.get("Send Current Keyboard") == 1) dspFaust.setParamValue("keyboard", keyboardId);
         if((int)keyboardParameters.get("Send Current Key") == 1) dspFaust.setParamValue("key", keyId);
         if((int)keyboardParameters.get(String.format("Keyboard %d - Mode", keyboardId)) == 2){
-            if((int)keyboardParameters.get(String.format("Keyboard %d - Send X", keyboardId)) == 1) dspFaust.setParamValue("x", (currentContinuousKey%1f));
-            if((int)keyboardParameters.get(String.format("Keyboard %d - Send Y", keyboardId)) == 1) dspFaust.setParamValue("y", currentKeyboardY);
+            if((int)keyboardParameters.get(String.format("Keyboard %d - Send X", keyboardId)) == 1)
+                dspFaust.setParamValue("x", (currentContinuousKey % 1f));
+            if((int)keyboardParameters.get(String.format("Keyboard %d - Send Y", keyboardId)) == 1)
+                dspFaust.setParamValue("y", currentKeyboardY);
         }
         else {
             if ((int) keyboardParameters.get(String.format("Keyboard %d - Send X", keyboardId)) == 1)
