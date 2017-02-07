@@ -539,8 +539,6 @@ public class MultiKeyboard extends ViewGroup {
     }
 
     private void sendSynthControlAction(int keyboardId, int keyId, int fingerId){
-        // TODO: continuous x and y values are always sent: this should be optimized
-        // TODO: might need a mechanism to check if voice is on before message gets sent
         if((int)keyboardParameters.get("Send Current Keyboard") == 1) dspFaust.setParamValue("keyboard", keyboardId);
         if((int)keyboardParameters.get("Send Current Key") == 1) dspFaust.setParamValue("key", keyId);
         if((int)keyboardParameters.get(String.format("Keyboard %d - Mode", keyboardId)) == 2){

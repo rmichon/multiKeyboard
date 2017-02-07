@@ -47,20 +47,20 @@ Say something about the first time you run it and gradle doing its shit
 
 `faust2smartkeyb` uses `faust2api` internally. Thus, Faust codes provided to `faust2smartkeyb` must respect the same standards as for `faust2api` (check the [`faust2api` documentation](https://ccrma.stanford.edu/~rmichon/faust2api/) for more information about this).
 
-The following code is the same as one presented in the [`faust2api` documentation](https://ccrma.stanford.edu/~rmichon/faust2api/) in the [MIDI Enabled Polyphonic Object](https://ccrma.stanford.edu/~rmichon/faust2api/#midi-enabled-polyphonic-object) section:
+The following code is similar to the one presented in the [`faust2api` documentation](https://ccrma.stanford.edu/~rmichon/faust2api/) in the [MIDI Enabled Polyphonic Object](https://ccrma.stanford.edu/~rmichon/faust2api/#midi-enabled-polyphonic-object) section:
 
 ```
 import("stdfaust.lib");
 freq = nentry("freq",200,40,2000,0.01) : si.polySmooth(gate,0.999,2);
 gain = nentry("gain",1,0,1,0.01) : si.polySmooth(gate,0.999,2);
 gate = button("gate") : si.smoo; 
-cutoff = nentry("cutoff",5000,40,2000,0.01) : si.polySmooth(gate,0.999,2);
-process = vgroup("synth",os.sawtooth(freq)*gain*gate : fi.lowpass(3,cutoff) <: _,_);
+cutoff = nentry("cutoff",1000,40,2000,0.01) : si.polySmooth(gate,0.999,2);
+process = os.sawtooth(freq)*gain*gate : fi.lowpass(3,cutoff) <: _,_;
 ```
 
 It implements a simple synthesizer based on a filtered sawtooth wave and it is polyphony-compatible thanks to its `freq`, `gain`, and `gate` parameters.
 
-If this code is provided as such to `faust2smartkeyb`, its UI declaration will be ignored and replaced by the default SmartKeyboard interface. This interface can be configured at the beginning of the Faust code as such:
+If this code is provided as such to `faust2smartkeyb`, its UI declaration will be ignored and replaced by the default SmartKeyboard interface. This interface can be configured at the beginning of the Faust code using the `SmartKeyboard` metadata:
 
 ```
 declare interface "SmartKeyboard{
@@ -68,7 +68,7 @@ declare interface "SmartKeyboard{
 }";
 ```
 
-and by placing a set of key/value pairs between the two curly brackets. For example, 
+and by placing a set of [key/value pairs](#smartkeyboard-configuration-keys) between the two curly brackets. For example, 
 
 ```
 declare interface "SmartKeyboard{
@@ -80,7 +80,26 @@ declare interface "SmartKeyboard{
 }";
 ```
 
+will create an interface with 2 keyboards of 13 keys each. The lowest note of the top most keyboard will MIDI note 72 (C4), and the lowest note of the other keyboard will be 60 (C3).
+
+A `SmartKeyboard` interface can stream a set of [standard Faust parameters](#smartkeyboard-standard-parameters) to control the given Faust DSP. For example, the cutoff frequency of the lowpass filter of the previous Faust code can be controlled with the Y position of the finger on the key simply by declaring the standard `y` parameter:
+
+```
+cutoff = nentry("cutoff",1000,40,2000,0.01) : si.polySmooth(gate,0.999,2);
+```
+
+becomes:
+
+```
+y = nentry("y",0.5,0,1,0.01) : si.polySmooth(gate,0.999,2);
+cutoff = y*1960+40
+```
+
+The two following sections give an overview of the different [configuration keys](#smartkeyboard-configuration-keys) and [standard parameters](#smartkeyboard-standard-parameters) that can be used with `SmartKeyboard` interfaces. Also, the [Additional Resources](#additional-resources) provides links to tutorials on how to design various kinds of instruments using this system. We recommend you to check these resources since complex mappings (that are not presented here) can be created by combining different interface configurations with specific uses of standard parameters. [Example codes](#TODO) can be found in the `/examples/smartKeyboard` folder of the Faust distribution. Finally, the [Compilation](#compilation) section demonstrates how to compile Faust codes such as the one presented above using `faust2smartkeyb`.
+
 ## SmartKeyboard Configuration Keys
+
+This section presents the different configurations keys of `SmartKeyboard` and their function. For practical use cases, check the [Additional Resources](#additional-resources) section. Additionally, [example codes](#TODO) can be found in the `/examples/smartKeyboard` folder of the Faust distribution.
 
 ### `Number of Keyboards`
 
@@ -161,9 +180,35 @@ This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`
 
 Activates of deactivates the keyboard mode of a specific keyboard. When 0, note names are not displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys don't change color when they are pressed. This can be useful when using a keyboard as a control interface or a drum pad, etc.
 
-Default value: 1
+Default value: 0
+
+With:
+
+* `Keyboard N - Mode = 0`: Notes names are displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys change color when they are pressed.
+* `Keyboard N - Mode = 1`: Notes names are not displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys don't change color when they are pressed.
+* `Keyboard N - Mode = 2`: Same as `Keyboard N - Mode = 1`, but new voices are not allocated when touched. This is convenient to create a control surface while having one or several keyboards in the same interface.
 
 This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Mode` and the `Keyboard 1 - Mode` keys.
+
+---
+
+### `Keyboard N - Send X`
+
+When 1, send the normalized x position of the finger in the current key (associated with the [`x`](#x) standard parameter).
+
+Default value: 1
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Send X` and the `Keyboard 1 - Send X` keys.
+
+---
+
+### `Keyboard N - Send Y`
+
+When 1, send the normalized y position of the finger in the current key (associated with the [`y`](#y) standard parameter).
+
+Default value: 1
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Send Y` and the `Keyboard 1 - Send Y` keys.
 
 ---
 
@@ -241,22 +286,6 @@ Default value: 1
 
 ---
 
-### `Send X`
-
-When 1, send the normalized x position of the finger in the current key (associated with the [`x`](#x) standard parameter).
-
-Default value: 1
-
----
-
-### `Send Y`
-
-When 1, send the normalized y position of the finger in the current key (associated with the [`y`](#y) standard parameter).
-
-Default value: 1
-
----
-
 ### `Send Sensors`
 
 When 1, send the raw sensor (accelerometer and gyroscope) values to the DSP object.
@@ -299,6 +328,8 @@ Default: 5
 
 ## SmartKeyboard Standard Parameters
 
+This section presents the different standard Faust parameters that can be used with `SmartKeyboard` interfaces.For practical use cases, check the [Additional Resources](#additional-resources) section. Additionally, [example codes](#TODO) can be found in the `/examples/smartKeyboard` folder of the Faust distribution.
+
 ### `freq`
 
 The frequency in Hz of the current event. The value of this parameter heavily relies [`Rounding Mode`](#rounding-mode).
@@ -335,9 +366,103 @@ The normalized (0-1) Y position of the finger in the current key.
 
 ---
 
-## Compilation Options
+## Compilation
+
+### Overview
+
+We assume that you followed the steps described in the [Setting-Up Your System](#setting-up-your-system) section before reading this. Only 2 arguments are required to use `faust2smartkeyb`: the target platform (iOS or Android) and a Faust code:
+
+```
+faust2smartkeyb -ios mySynth.dsp
+```
+
+will compile `mySynth.dsp` into an iOS app (`mySynth.app`) with a `SmartKeyboard` interface and
+
+```
+faust2smartkeyb -android mySynth.dsp
+```
+
+will do the same for Android (`mySynth.apk`).
+
+While this should be very smooth on Android if your followed the steps in [Setting-Up Your System](#setting-up-your-system), this will probably not work on iOS. Why? Because the bundle identifier associated with the template app used to compile a `SmartKeyboard` app for iOS is not yours. So unless you change it directly in the source code of the Faust distribution (`/architecture/smartKeyboard/iOS/Faust.xcodeproj`) and re-install Faust, it will not work (yes, we know, we know... :( ).
+
+However, in practice, you'll rarely want to compile directly your Faust code into an app package. Instead, you might prefer to create an Android Studio on an Xcode project associated to your Faust code and update it when necessary. This is a much better solution because compiling an app from scratch every time (especially on Android) takes a lot of time (>1 minute in most cases). To do this, you can use the [`-source`](#TODO) option in combination with [`-reuse`](#TODO):
+
+```
+faust2smartkeyb -android -source -reuse mySynth.dsp
+```
+
+In that case, `faust2smartkeyb` will not compile `mySynth.dsp` to an app but will create a folder called `faustsmartkeyb.mySynth` in the current folder containing an Android Studio project. Every time the previous command will be ran, the portion of the app source code corresponding to the `mySynth.dsp` will be updated (if we only used `-source` without `-reuse` then `faustsmartkeyb.mySynth` would be erased and re-created). The same steps can be followed when using `-ios`. 
+
+The app can be easily installed on your device from Xcode or Android Studio. On iOS, bundle identifier issues can be fixed directly in the Xcode project contained in `faustsmartkeyb.mySynth` which is more convenient than doing it in the Faust source code. 
+
+<!-- TODO might put a link to corresponding tutorial here -->
+
+The end of this section gives an overview of the different options that can be used with `faust2smartkeyb`.
+
+### `-android`
+
+Asks `faust2smartkeyb` to generate an Android application.
+
+---
+
+### `-debug`
+
+Debug mode: prints all the details.
+
+---
+
+### `-effect`
+
+Allows to specify an effect Faust file to be connect to the provided synth file. For example:
+
+```
+faust2smartkeyb -android -effect effect.dsp synth.dsp
+```
+
+Will compile an app where `synth.dsp` is the Faust code containing the source for the polyphonic synthesizer and `effect.dsp` the effect chain that will be connected to the output of the polyphonic synth. Indeed, in most cases, it is not necessary to have a different effect chain for each voice.
+
+---
+
+### `-help`
+
+Prints the documentation of `faust2smartkeyb`.
+
+---
+
+### `-install`
+
+Installs the generated app on any device connected to the computer. This option is only available on Android and requires `adb` to be installed on your system.
+
+---
+
+### `-ios`
+
+Asks `faust2smartkeyb` to generate an iOS application.
+
+---
+
+### `-nvoices`
+
+Allows to specify the maximum number of voices of polyphony of the generated synth. This option is only used as a safeguard since only active voices are allocated and computed.
+
+---
+
+### `-reuse`
+
+Asks `faust2smartkeyb` to reuse the same project and to only update its portion corresponding to the provided Faust code. This option will not prevent compilation from happening. Instead, use [`source`](#TODO) for that.
+
+---
+
+### `-source`
+
+Asks `faust2smartkeyb` to only generate the source of the app and to not compile it. The source of the app will be placed in a folder called `faustsmartkeyb.faustFileName`.
+
+---
 
 ## Additional Resources
 
 * [What Is Faust?](https://ccrma.stanford.edu/~rmichon/faustTutorials/#what-is-faust)
 * [Faust Hero in 2 Hours](https://ccrma.stanford.edu/~rmichon/faustTutorials/#faust-hero-in-2-hours)
+
+<!-- TODO: add missing links -->

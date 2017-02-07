@@ -1510,7 +1510,7 @@ class mydsp : public dsp {
   public:
 	virtual void metadata(Meta* m) { 
 		m->declare("name", "demo");
-		m->declare("interface", "SmartKeyboard{  'Number of Keyboards':'2',  'Max Keyboard Polyphony':'10',  'Keyboard 0 - Number of Keys':'2',  'Keyboard 0 - Mode':'2',  'Keyboard 1 - Number of Keys':'13',  'Keyboard 1 - Send X':'0' }");
+		m->declare("interface", "SmartKeyboard{  'Number of Keyboards':'2',  'Max Keyboard Polyphony':'10',  'Keyboard 0 - Number of Keys':'1',  'Keyboard 0 - Mode':'2',  'Keyboard 1 - Number of Keys':'13',  'Keyboard 1 - Send X':'0' }");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
 		m->declare("basics.lib/name", "Faust Basic Element Library");
