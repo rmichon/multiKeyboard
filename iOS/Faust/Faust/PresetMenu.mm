@@ -300,8 +300,6 @@
           @"Inter-Keyboard Slide":[NSNumber numberWithInt:1],
           @"Send Current Key":[NSNumber numberWithInt:1],
           @"Send Current Keyboard":[NSNumber numberWithInt:1],
-          @"Send X":[NSNumber numberWithInt:1],
-          @"Send Y":[NSNumber numberWithInt:1],
           @"Send Sensors":[NSNumber numberWithInt:1],
           @"Rounding Update Speed":[NSNumber numberWithFloat:0.06],
           @"Rounding Pole":[NSNumber numberWithFloat:0.9],
