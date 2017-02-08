@@ -1,6 +1,6 @@
 #!/bin/bash
 
-faust2api -ios -nvoices 16 -midi -effect synth_effect.dsp -nodoc demo.dsp
+faust2api -ios -nvoices 16 -midi -effect synth_effect.dsp -nodoc new/multiSynth.dsp
 #faust2api -ios -polyvoices 12 -midi -nodoc noPoly.dsp
 #faust2api -ios -polyvoices 12 -midi -nodoc midiOnly.dsp
 unzip dsp-faust.zip
