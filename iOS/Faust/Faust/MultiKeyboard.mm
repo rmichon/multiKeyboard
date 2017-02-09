@@ -51,7 +51,7 @@
     Boolean *rounding; // tell if the current pitch should be rounded
     Smooth *smooth; // integrators for rounding detection
     int *moveCount; // counts the number of movements outside the threshold for each touch
-    float *refFreq;
+    float *refPitch;
     
     // FAUST
     DspFaust *faustDsp;
@@ -196,7 +196,7 @@
     rounding = new Boolean[[keyboardParameters[@"Max Fingers"] intValue]];
     smooth = new Smooth[[keyboardParameters[@"Max Fingers"] intValue]];
     voices = new long[[keyboardParameters[@"Max Fingers"] intValue]];
-    refFreq = new float[[keyboardParameters[@"Max Fingers"] intValue]];
+    refPitch = new float[[keyboardParameters[@"Max Fingers"] intValue]];
     for(int i=0; i<[keyboardParameters[@"Max Fingers"] intValue]; i++){
         touchDiff[i] = 0;
         for(int j=0; j<touchDel; j++){
@@ -209,7 +209,7 @@
         smooth[i].setSmooth([keyboardParameters[@"Rounding Pole"] floatValue]);
         rounding[i] = true;
         voices[i] = -1;
-        refFreq[i] = 0;
+        refPitch[i] = 0;
     }
     
     fingersOnScreenCount = 0;
@@ -590,9 +590,9 @@
     // delete (note off)
     if((eventType == 0 || (eventType == 3 && [keyboardParameters[@"Rounding Mode"] intValue] == 0)) && voices[fingerId] != -1){
         pitch = -1;
-        refFreq[fingerId] = 0;
+        refPitch[fingerId] = -1;
         faustDsp->setVoiceParamValue("gate", voices[fingerId], 0);
-        faustDsp->setVoiceParamValue("bend", voices[fingerId], refFreq[fingerId]);
+        faustDsp->setVoiceParamValue("bend", voices[fingerId], 1);
         faustDsp->deleteVoice(voices[fingerId]);
         voices[fingerId] = -1;
         smooth[fingerId].reset();
@@ -636,13 +636,12 @@
         }
         if(voices[fingerId] != -1){
             if([keyboardParameters[@"Rounding Mode"] intValue] == 1){
-                refFreq[fingerId] = [self mtof:pitch];
-                faustDsp->setVoiceParamValue("freq", voices[fingerId], refFreq[fingerId]);
+                refPitch[fingerId] = pitch;
             }
             else{
-                refFreq[fingerId] = [self mtof:floor(pitch)];
-                faustDsp->setVoiceParamValue("freq", voices[fingerId], refFreq[fingerId]);
+                refPitch[fingerId] = floor(pitch);
             }
+            faustDsp->setVoiceParamValue("freq", voices[fingerId], [self mtof:refPitch[fingerId]]);
         }
     }
     // update
@@ -678,14 +677,14 @@
         // sending pitch to faust
         if(voices[fingerId] != -1){
             if([keyboardParameters[@"Rounding Mode"] intValue] == 1){
-                faustDsp->setVoiceParamValue("bend", voices[fingerId], -(refFreq[fingerId]-[self mtof:pitch]));
+                faustDsp->setVoiceParamValue("bend", voices[fingerId], powf(2, (pitch-refPitch[fingerId])/12));
             }
             else if([keyboardParameters[@"Rounding Mode"] intValue] == 2){
                 if(rounding[fingerId]){ // if rounding is activated, pitch is quantized to the nearest integer
-                    faustDsp->setVoiceParamValue("bend", voices[fingerId], -(refFreq[fingerId]-[self mtof:floor(pitch)]));
+                    faustDsp->setVoiceParamValue("bend", voices[fingerId], powf(2, (floor(pitch)-refPitch[fingerId])/12));
                 }
                 else{
-                    faustDsp->setVoiceParamValue("bend", voices[fingerId], -(refFreq[fingerId]-[self mtof:(pitch-0.5f)]));
+                    faustDsp->setVoiceParamValue("bend", voices[fingerId], powf(2, (pitch-0.5-refPitch[fingerId])/12));
                 }
             }
         }
@@ -910,9 +909,9 @@
         delete[] rounding;
         rounding = NULL;
     }
-    if(refFreq){
-        delete[] refFreq;
-        refFreq = NULL;
+    if(refPitch){
+        delete[] refPitch;
+        refPitch = NULL;
     }
 }
 
