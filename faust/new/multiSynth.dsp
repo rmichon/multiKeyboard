@@ -30,15 +30,17 @@ import("stdfaust.lib");
 // standard parameters
 f = hslider("freq",300,50,2000,0.01);
 // smoothAndH is necessary here since bend is set back to 0 when gate = 0
-bend = hslider("bend",0,-2000,2000,0.01) : si.smoothAndH(gate,0.999);
+bend = hslider("bend[midi:pitchwheel]",1,0,10,0.01) : si.smoothAndH(gate,0.999);
 gain = hslider("gain",1,0,1,0.01);
-gate = button("gate");
-y = hslider("y",1,0,1,0.001) : si.smoo;
+s = hslider("sustain[midi:ctrl 64]",0,0,1,1);
+t = button("gate");
+y = hslider("y[midi:ctrl 1]",1,0,1,0.001) : si.smoo;
 keyboard = hslider("keyboard",0,0,1,1) : int;
 key = hslider("key",0,0,1,1) : int;
 
 // fomating parameters
-freq = f+bend;
+gate = t+s : min(1);
+freq = f*bend;
 cutoff = y*4000+50;
 
 // oscillators

@@ -52,7 +52,7 @@ public class MultiKeyboard extends ViewGroup {
     private Smooth smooth[]; // integrators for rounding detection
     private int moveCount[]; // counts the number of movements outside the threshold for each touch
     private long roundingUpdateSpeed; // the speed at which the rounding thread is updated
-    private float refFreq[];
+    private float refPitch[];
 
     // FAUST
     private DspFaust dspFaust;
@@ -200,7 +200,7 @@ public class MultiKeyboard extends ViewGroup {
         previousTouchedKeyboards = new int[(int)keyboardParameters.get("Max Fingers")];
         smooth = new Smooth[(int)keyboardParameters.get("Max Fingers")];
         voices = new long[(int)keyboardParameters.get("Max Fingers")];
-        refFreq = new float[(int)keyboardParameters.get("Max Fingers")];
+        refPitch = new float[(int)keyboardParameters.get("Max Fingers")];
 
         for(int i=0; i<(int)keyboardParameters.get("Max Fingers"); i++){
             touchDiff[i] = 0;
@@ -211,7 +211,7 @@ public class MultiKeyboard extends ViewGroup {
             smooth[i].setSmooth((float)keyboardParameters.get("Rounding Smooth"));
             rounding[i] = true;
             voices[i] = -1;
-            refFreq[i] = 0;
+            refPitch[i] = 0;
         }
 
         fingersOnScreenCount = 0;
@@ -564,9 +564,9 @@ public class MultiKeyboard extends ViewGroup {
         if((eventType == 0 || (eventType == 3 &&
                 (int)keyboardParameters.get("Rounding Mode") == 0)) && voices[fingerId] != -1){
             pitch = -1;
-            refFreq[fingerId] = 0;
+            refPitch[fingerId] = -1;
             dspFaust.setVoiceParamValue("gate", voices[fingerId], 0);
-            dspFaust.setVoiceParamValue("bend", voices[fingerId], refFreq[fingerId]);
+            dspFaust.setVoiceParamValue("bend", voices[fingerId], 1);
             dspFaust.deleteVoice(voices[fingerId]);
             voices[fingerId] = -1;
             smooth[fingerId].reset();
@@ -618,13 +618,12 @@ public class MultiKeyboard extends ViewGroup {
             }
             if(voices[fingerId] != -1){
                 if((int)keyboardParameters.get("Rounding Mode") == 1){
-                    refFreq[fingerId] = mtof(pitch);
-                    dspFaust.setVoiceParamValue("freq", voices[fingerId], refFreq[fingerId]);
+                    refPitch[fingerId] = pitch;
                 }
                 else{
-                    refFreq[fingerId] = mtof((float)Math.floor(pitch));
-                     dspFaust.setVoiceParamValue("freq", voices[fingerId], refFreq[fingerId]);
+                    refPitch[fingerId] = (float)Math.floor(pitch);
                 }
+                dspFaust.setVoiceParamValue("freq", voices[fingerId], mtof(refPitch[fingerId]));
             }
         }
         // update
@@ -663,14 +662,15 @@ public class MultiKeyboard extends ViewGroup {
             // sending pitch to faust
             if(voices[fingerId] != -1){
                 if((int)keyboardParameters.get("Rounding Mode") == 1){
-                    dspFaust.setVoiceParamValue("bend", voices[fingerId], -(refFreq[fingerId]-mtof(pitch)));
+
+                    dspFaust.setVoiceParamValue("bend", voices[fingerId], (float)Math.pow(2,(pitch-refPitch[fingerId])/12));
                 }
                 else if((int)keyboardParameters.get("Rounding Mode") == 2){
                     if(rounding[fingerId]){ // if rounding is activated, pitch is quantized to the nearest integer
-                        dspFaust.setVoiceParamValue("bend", voices[fingerId], -(refFreq[fingerId]-mtof((float)Math.floor(pitch))));
+                        dspFaust.setVoiceParamValue("bend", voices[fingerId], (float)Math.pow(2,(Math.floor(pitch)-refPitch[fingerId])/12));
                     }
                     else{
-                        dspFaust.setVoiceParamValue("bend", voices[fingerId], -(refFreq[fingerId]-mtof(pitch-0.5f)));
+                        dspFaust.setVoiceParamValue("bend", voices[fingerId], (float)Math.pow(2,(pitch-0.5-refPitch[fingerId])/12));
                     }
                 }
             }
