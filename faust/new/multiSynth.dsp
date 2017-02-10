@@ -1,7 +1,7 @@
 /*
  * multiSynth.dsp
  * 
- * An instrument with 4 keyboards all implementing different
+ * An instrument with 4 keyboards implementing different
  * synthesizers. This code demonstrates how a keyboard can be
  * assigned to a specific synth.
  * 
@@ -11,7 +11,7 @@
  * 
  */
 
-// Interface with 4 keyboards of 13 keys with the same config
+// Interface with 4 polyphnic keyboards of 13 keys with the same config
 declare interface "SmartKeyboard{
 	'Number of Keyboards':'4',
 	'Rounding Mode':'2',
@@ -32,7 +32,7 @@ f = hslider("freq",300,50,2000,0.01);
 // smoothAndH is necessary here since bend is set back to 0 when gate = 0
 bend = hslider("bend[midi:pitchwheel]",1,0,10,0.01) : si.smoothAndH(gate,0.999);
 gain = hslider("gain",1,0,1,0.01);
-s = hslider("sustain[midi:ctrl 64]",0,0,1,1);
+s = hslider("sustain[midi:ctrl 64]",0,0,1,1); // for sustain pedal
 t = button("gate");
 y = hslider("y[midi:ctrl 1]",1,0,1,0.001) : si.smoo;
 keyboard = hslider("keyboard",0,0,1,1) : int;
