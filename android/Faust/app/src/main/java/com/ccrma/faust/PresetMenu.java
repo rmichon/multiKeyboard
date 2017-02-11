@@ -580,8 +580,14 @@ public class PresetMenu extends ViewGroup {
             if(keyboardParameters.get(String.format("Keyboard %d - Scale",i)) == null) {
                 keyboardParameters.put(String.format("Keyboard %d - Scale", i), 0);
             }
-            if(keyboardParameters.get(String.format("Keyboard %d - Show Notes",i)) == null) {
-                keyboardParameters.put(String.format("Keyboard %d - Show Notes", i), 1);
+            if(keyboardParameters.get(String.format("Keyboard %d - Show Labels",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Show Labels", i), 1);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Static Mode",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Static Mode", i), 0);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Piano Keyboard",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Piano Keyboard", i), 1);
             }
             if(keyboardParameters.get(String.format("Keyboard %d - Root Position",i)) == null) {
                 keyboardParameters.put(String.format("Keyboard %d - Root Position", i), 0);
@@ -589,14 +595,17 @@ public class PresetMenu extends ViewGroup {
             if(keyboardParameters.get(String.format("Keyboard %d - Orientation",i)) == null) {
                 keyboardParameters.put(String.format("Keyboard %d - Orientation", i), 0);
             }
-            if(keyboardParameters.get(String.format("Keyboard %d - Mode",i)) == null) {
-                keyboardParameters.put(String.format("Keyboard %d - Mode", i), 0);
-            }
             if(keyboardParameters.get(String.format("Keyboard %d - Send X",i)) == null) {
                 keyboardParameters.put(String.format("Keyboard %d - Send X", i), 1);
             }
             if(keyboardParameters.get(String.format("Keyboard %d - Send Y",i)) == null) {
                 keyboardParameters.put(String.format("Keyboard %d - Send Y", i), 1);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Send Freq",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Send Freq", i), 1);
+            }
+            if(keyboardParameters.get(String.format("Keyboard %d - Count Fingers",i)) == null) {
+                keyboardParameters.put(String.format("Keyboard %d - Count Fingers", i), 0);
             }
         }
 

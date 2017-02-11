@@ -15,7 +15,10 @@
 declare interface "SmartKeyboard{
 	'Number of Keyboards':'1',
 	'Max Keyboard Polyphony':'0',
-	'Keyboard 0 - Number of Keys':'1'
+	'Keyboard 0 - Number of Keys':'1',
+	'Keyboard 0 - Send Freq':'0',
+	'Keyboard 0 - Piano Keyboard':'0',
+	'Keyboard 0 - Count Fingers':'1'
 }";
 
 import("stdfaust.lib");

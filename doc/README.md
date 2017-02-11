@@ -102,11 +102,39 @@ The two following sections give an overview of the different [configuration keys
 
 This section presents the different configurations keys of `SmartKeyboard` and their function. For practical use cases, check the [Additional Resources](#additional-resources) section. Additionally, [example codes](#TODO) can be found in the `/examples/smartKeyboard` folder of the Faust distribution.
 
-### `Number of Keyboards`
+### `Inter-Keyboard Slide`
 
-Defines the number of keyboards in the interface. 
+When 1, fingers can slide between keyboards.
 
-Default value: 4
+Default value: 1
+
+---
+
+### `Keyboard N - Count Fingers`
+
+When 0, the [`x`](#x) and [`y`](y) parameters are numbered from 0 to N by fingers in order of touches (finger 0: `x0` and `y0`, etc.).
+
+Default value: 0
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Count Fingers` and the `Keyboard 1 - Count Fingers` keys.
+
+---
+
+### `Keyboard N - Key M - Label`
+
+Allows to set the text inside a key on a specific keyboard. The corresponding value is a string.
+
+Default value: null
+
+This is a keyboard and key specific parameter.
+
+### `Keyboard N - Lowest Key`
+
+Defines the MIDI note number of the lowest key on a specific keyboard.
+
+Default value: 48
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Lowest Key` and the `Keyboard 1 - Lowest Key` keys.
 
 ---
 
@@ -120,13 +148,23 @@ This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`
 
 ---
 
-### `Keyboard N - Lowest Key`
+### `Keyboard N - Orientation`
 
-Defines the MIDI note number of the lowest key on a specific keyboard.
+Defines the orientation of a specific keyboard: left to right when 0 and right to left when 1.
 
-Default value: 48
+Default value: 0
 
-This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Lowest Key` and the `Keyboard 1 - Lowest Key` keys.
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Orientation` and the `Keyboard 1 - Orientation` keys.
+
+---
+
+### `Keyboard N - Root Position`
+
+Position of the root (as a key number starting from 0) on a specific keyboard. This parameter is very useful when dealing with specific scales.
+
+Default value: 0
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Root Position` and the `Keyboard 1 - Root Position` keys.
 
 ---
 
@@ -147,51 +185,13 @@ This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`
 
 ---
 
-### `Keyboard N - Show Notes`
+### `Keyboard N - Send Freq`
 
-When 1, shows note names on a specific keyboard.
+When 1, the [`freq`](#freq) and [`bend`](#bend) parameters are computed and send the Faust DSP object. Indeed, even when [`Max Keyboard Polyphony`](#max-keyboard-poly) is set to 0, these 2 parameters keep being sent and they might not be necessary in some cases.
 
 Default value: 1
 
-This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Show Notes` and the `Keyboard 1 - Show Notes` keys.
-
----
-
-### `Keyboard N - Root Position`
-
-Position of the root (as a key number starting from 0) on a specific keyboard. This parameter is very useful when dealing with specific scales.
-
-Default value: 0
-
-This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Root Position` and the `Keyboard 1 - Root Position` keys.
-
----
-
-### `Keyboard N - Orientation`
-
-Defines the orientation of a specific keyboard: left to right when 0 and right to left when 1.
-
-Default value: 0
-
-This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Orientation` and the `Keyboard 1 - Orientation` keys.
-
----
-
-### `Keyboard N - Mode`
-
-Activates of deactivates the keyboard mode of a specific keyboard. When 0, note names are not displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys don't change color when they are pressed. This can be useful when using a keyboard as a control interface or a drum pad, etc.
-
-Default value: 0
-
-With:
-
-* `Keyboard N - Mode = 0`: Notes names are displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys change color when they are pressed.
-* `Keyboard N - Mode = 1`: Notes names are not displayed (overrides [`Keyboard N - Show Notes`](#keyboard-n-show-notes)) and keys don't change color when they are pressed.
-* `Keyboard N - Mode = 2`: Same as `Keyboard N - Mode = 1`, but new voices are not allocated when touched. This is convenient to create a control surface while having one or several keyboards in the same interface.
-
-This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Mode` and the `Keyboard 1 - Mode` keys.
-
----
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Send Freq` and the `Keyboard 1 - Send Freq` keys.
 
 ### `Keyboard N - Send X`
 
@@ -213,6 +213,32 @@ This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`
 
 ---
 
+### `Keyboard N - Show Labels`
+
+When 1, shows note names on a specific keyboard. This parameter is overridden if [`Keyboard N - Piano Keyboard`](#keyboard-n---piano-keyboard) is defined.
+
+Default value: 1
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Show Labels` and the `Keyboard 1 - Show Labels` keys.
+
+---
+
+### `Keyboard N - Static Mode`
+
+When 1, keys don't change color when touched.
+
+Default value: 0
+
+This is a keyboard-specific parameter. For example, if `Number of Keyboards = 2`, then there are 2 keyboards in the interface and that can be configured independently with the `Keyboard 0 - Show Labels` and the `Keyboard 1 - Show Labels` keys.
+
+### `Number of Keyboards`
+
+Defines the number of keyboards in the interface. 
+
+Default value: 4
+
+---
+
 ### `Max Fingers`
 
 Defines the maximum number of fingers allowed on the touch-screen. This parameter is independent from the number of polyphony voices of the DSP object. Default value: 10.
@@ -221,15 +247,14 @@ Defines the maximum number of fingers allowed on the touch-screen. This paramete
 
 ### `Max Keyboard Polyphony`
 
-Defines the number of polyphony voices of each keyboard. 
+Defines the number of polyphony voices of each keyboard (and more, see below). 
 
 Default value: 10
 
 This parameter has some special cases:
 
-* `Max Keyboard Polyphony = 1`: in that case, keyboards are monophonic. Monophonic mode can be configured using the `Mono Mode` key (see below).
-* `Max Keyboard Polyphony = 0`: the first voice of the DSP object is activated. This is very convenient to create an app generating a continuous sound. Additionally, the `x` and `y` standard parameters start to be numbered by finger (e.g., finger 0: `x0` and `y0`, finger 1: `x1` and `y1`, etc.).
-* `Max Keyboard Polyphony = -1`: similar to `Max Keyboard Polyphony=0` except that no voice is started by default. This mode is convenient to build continuous control interface working with a MIDI keyboard for example. In that case, notes are created and handled by the keyboard and the touch-screen can be used to control specific params of the synthesizer using the numbered `x` and `y` parameters.
+* `Max Keyboard Polyphony = 1`: in that case, keyboards are monophonic. Monophonic mode can be configured using the [`Mono Mode`](#mono-mode) key.
+* `Max Keyboard Polyphony = 0`: the first voice of the DSP object is activated. This is very convenient to create an app generating a continuous sound. The voice allocation system is deactivated in that case. Interesting behavior can be created use the [`x`](#x) and [`y`](#y) or their numbered version (see [`Keyboard N - Count Fingers`](#keyboard-n---count-fingers)).
 
 ---
 
@@ -249,6 +274,14 @@ With:
 
 ---
 
+### `Rounding Cycles`
+
+The number of cycles before rounding is activated.
+
+Default: 5
+
+---
+
 ### `Rounding Mode`
 
 Configures the way the [`bend`](#bend) parameter associated with the current finger is quantized.
@@ -263,11 +296,27 @@ With:
 
 ---
 
-### `Inter-Keyboard Slide`
+### `Rounding Smooth`
 
-When 1, fingers can slide between keyboards.
+The pole of the integrators used for smoothing movements during rounding detection. 
 
-Default value: 1
+Default: 0.9
+
+---
+
+### `Rounding Threshold`
+
+Rounding is deactivated when the output of the smoothers (see [`Rounding Threshold`](#rounding-threshold)) goes above this value.
+
+Default: 3
+
+---
+
+### `Rounding Update Speed`
+
+Speed in ms at which the rounding loop is updated.
+
+Default: 0.06
 
 ---
 
@@ -292,38 +341,6 @@ Default value: 1
 When 1, send the raw sensor (accelerometer and gyroscope) values to the DSP object.
 
 Default value: 1
-
----
-
-### `Rounding Update Speed`
-
-Speed in ms at which the rounding loop is updated.
-
-Default: 0.06
-
----
-
-### `Rounding Smooth`
-
-The pole of the integrators used for smoothing movements during rounding detection. 
-
-Default: 0.9
-
----
-
-### `Rounding Threshold`
-
-Rounding is deactivated when the output of the smoothers (see [`Rounding Threshold`](#rounding-threshold)) goes above this value.
-
-Default: 3
-
----
-
-### `Rounding Cycles`
-
-The number of cycles before rounding is activated.
-
-Default: 5
 
 ---
 

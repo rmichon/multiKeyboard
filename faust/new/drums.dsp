@@ -1,31 +1,49 @@
-/*
- * drums.dsp
- * 
- * Faust instrument specifically designed for faust2smartkeyb where
- * 3 drums can controlled using pads.
- * The SmartKeyboard interface is configured to only have 3 keys,
- * each of them implementing a drum pad. Every time one of the pads
- * is touched, a new note is instanciated. The base frequency of each
- * drum is computed in function of the key ID in the interface. X
- * and Y finger positions are used to compute the strike position
- * on the virtual membrane. Drum sounds are computed with a simple
- * physical model.
- * 
- * Version 0.0, Feb. 2017
- * Copyright Romain Michon GRAME/CCRMA (Stanford University) 2017
- * MIT Licence: https://opensource.org/licenses/MIT
- * 
- */
+//##################################### drums.dsp ########################################
+// Faust instrument specifically designed for `faust2smartkeyb` where 3 drums can
+// be controlled using pads. The X/Y postion of fingers is detected on each key
+// and use to control the strike postion on the virtual membrane.
+//
+// ## `SmartKeyboard` Use Strategy
+//
+// The drum physical model used here is implemented to be generic so that its
+// fundamental frequency can be changed for each voice. `SamrtKeyboard` is used
+// in polyphonic mode so each new strike on the interface corresponds to a new
+// new voice.
+//
+// TODO more here
+//
+// ## Compilation Instructions
+//
+// This Faust code will compile fine with any of the standard Faust targets. However
+// it was specifically designed to be used with `faust2smartkeyb`. For best results,
+// we recommend to use the following parameters to compile it:
+//
+// ```
+// faust2smartkeyb [-ios/-android] -nvoices 16 -effect reverb.dsp drums.dsp
+// ```
+//
+// ## Version/Licence
+//
+// Version 0.0, Feb. 2017
+// Copyright Romain Michon CCRMA (Stanford University)/GRAME 2017
+// MIT Licence: https://opensource.org/licenses/MIT
+//########################################################################################
 
 // Interface with 2 keyboards of 2 and 1 keys (3 pads)
-// Mode 1 is used so that key names are not diplayed and the
-// color of the key doesn't change when touching it.
+// Static mode is used so that keys don't change color when touched
+// Note labels are hidden
+// Piano Keyboard mode is deactivated so all the keys look the same
 declare interface "SmartKeyboard{
 	'Number of Keyboards':'2',
 	'Keyboard 0 - Number of Keys':'2',
 	'Keyboard 1 - Number of Keys':'1',
-	'Keyboard 0 - Mode':'1',
-	'Keyboard 1 - Mode':'1'
+	'Keyboard 0 - Static Mode':'1',
+	'Keyboard 1 - Static Mode':'1',
+	'Keyboard 0 - Piano Keyboard':'0',
+	'Keyboard 1 - Piano Keyboard':'0',
+	'Keyboard 0 - Key 0 - Label':'High',
+	'Keyboard 0 - Key 1 - Label':'Mid',
+	'Keyboard 1 - Key 0 - Label':'Low'
 }";
 
 import("stdfaust.lib");
@@ -37,26 +55,26 @@ y = hslider("y",1,0,1,0.001);
 keyboard = hslider("keyboard",0,0,1,1) : int;
 key = hslider("key",0,0,1,1) : int;
 
-// other parameters
-outGain = hslider("outGain",0.1,0,1,0.01);
-theta = hslider("angle",0,-1*ma.PI,ma.PI,0.001);
-t60Scaler = hslider("t60Scaler",1,0,1,0.01);
-bFreq = hslider("baseFreq",60,40,500,0.01);
-
 // drum modal physical model
-// TODO: eventually, should use the Faust physical modeling library
-// for this...
+// TODO: eventually, should use the Faust physical modeling library for this
 drum = excitation <: par(i,N,mode(i,baseFreq,t60Scaler)) :> *(outGain)
 with{
 	// number of modes
 	N = 20;
+	// angle
+	theta = 0;
+	// resonance duration
+	t60Scaler = 1;
+	// frequency of the lowest drum
+	bFreq = 60;
+	// output gain (should be changed in function of the number of drums and modes)
+	outGain = 0.1;
 	// excitation position
 	exPos = min((x*2-1 : abs),(y*2-1 : abs));
 	// retrieving pad number (0-2)
 	j = 2-(keyboard*2+key);
 	// drum root freq is computed in function of pad number
 	baseFreq = bFreq*(j+1);
-
 	// biquad taking freq and t60 as arguments
 	modeFilter(f,t60) = fi.tf2(b0,b1,b2,a1,a2)
 	with{
@@ -68,7 +86,6 @@ with{
 		a1 = -2*r*cos(w);
 		a2 = r^2;
 	};
-
 	// computing the gain of each filter
 	inGains(i) = cos((i+1)*theta)/float(i+1);
 	// computing each modes, why is this done like this, cus it sounds goooood...
