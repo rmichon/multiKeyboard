@@ -254,11 +254,9 @@
                     [[[zones objectAtIndex:i] objectAtIndex:j] setNote:[self applyScale:j+[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Lowest Key",i]] intValue] withKeyboardId:i]];
                 }
             }
-            /*
-            if([keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Key %d - Label",i,j]] string] != nil){
-                [[[zones objectAtIndex:i] objectAtIndex:j] setText:[keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Key %d - Label",i,j]] string]];
+            if(keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Key %d - Label",i,j]] != nil){
+                [[[zones objectAtIndex:i] objectAtIndex:j] setText:keyboardParameters[[NSString stringWithFormat:@"Keyboard %d - Key %d - Label",i,j]]];
             }
-             */
             [[[zones objectAtIndex:i] objectAtIndex:j] drawBackground];
             [self addSubview:[[zones objectAtIndex:i] objectAtIndex:j]];
         }
