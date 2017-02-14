@@ -6106,7 +6106,7 @@ class mydsp_poly : public dsp, public midi {
                 std::cout << "DSP is not polyphonic...\n";
                 return false;
             } else {
-                return true;;
+                return true;
             }
         }
     
