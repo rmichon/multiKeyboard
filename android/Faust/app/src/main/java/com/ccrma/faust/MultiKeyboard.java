@@ -15,11 +15,8 @@ import android.view.ViewGroup;
 import com.DspFaust.DspFaust;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,11 +95,11 @@ public class MultiKeyboard extends ViewGroup {
 
 
             String JSONInterface = dspFaust.getJSONMeta();
-            if (JSONInterface.indexOf("SmartKeyboard{") != -1) {
+            if (JSONInterface.contains("SmartKeyboard{")) {
                 String JSONSmartKeyboard = JSONInterface.substring(JSONInterface.indexOf("SmartKeyboard{") + 14);
                 JSONSmartKeyboard = JSONSmartKeyboard.substring(0, JSONSmartKeyboard.indexOf("}"));
 
-                while (JSONSmartKeyboard.indexOf("'") != -1) {
+                while (JSONSmartKeyboard.contains("'")) {
                     JSONSmartKeyboard = JSONSmartKeyboard.substring(JSONSmartKeyboard.indexOf("'") + 1);
                     String currentKey = JSONSmartKeyboard.substring(0, JSONSmartKeyboard.indexOf("'"));
                     JSONSmartKeyboard = JSONSmartKeyboard.substring(JSONSmartKeyboard.indexOf("'") + 1);
@@ -162,7 +159,6 @@ public class MultiKeyboard extends ViewGroup {
     }
 
     public void buildInterface(){
-        //cleanInterface();
         UIon = true;
 
         if((int)keyboardParameters.get("Send Sensors") == 1){
@@ -239,8 +235,6 @@ public class MultiKeyboard extends ViewGroup {
         fingersOnKeyboardsCount = new int[(int)keyboardParameters.get("Number of Keyboards")];
         monoMode_previousActiveFinger = new int[(int)keyboardParameters.get("Number of Keyboards")];
 
-        // TODO: skipping a big block here
-
         // initializing the different keyboards
         zones = new ArrayList<>();
         for(int i=0; i<(int)keyboardParameters.get("Number of Keyboards") ; i++) {
@@ -300,7 +294,7 @@ public class MultiKeyboard extends ViewGroup {
                 point.x = event.getX(pointerIndex);
                 point.y = event.getY(pointerIndex);
                 mActivePointers.put(pointerId, point);
-                touchDiff[pointerId] = 0; // TODO: note sure about this
+                touchDiff[pointerId] = 0;
                 processTouchEvent(1,point,pointerId,event);
                 break;
             }
