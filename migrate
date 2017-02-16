@@ -5,6 +5,23 @@ cp faust/faust2smartkeyb ~/reps/faust/tools/faust2appls
 
 # Doc
 cp doc/README.md ~/reps/faust/architecture/smartKeyboard
+cp LICENCE.md ~/reps/faust/architecture/smartKeyboard
+
+# Examples
+cp -r faust/examples/associatedEffects ~/reps/faust/examples/smartKeyboard
+cp faust/examples/bowed.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/crazyGuiro.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/drums.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/dubDub.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/elecGuitar.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/fm.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/frog.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/harp.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/midiOnly.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/multiSynth.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/toy.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/trumpet.dsp ~/reps/faust/examples/smartKeyboard
+cp faust/examples/turenas.dsp ~/reps/faust/examples/smartKeyboard
 
 # Android source
 cp android/Faust/build.gradle ~/reps/faust/architecture/smartKeyboard/android
