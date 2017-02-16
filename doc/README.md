@@ -502,8 +502,6 @@ Asks `faust2smartkeyb` to only generate the source of the app and to not compile
 
 ## Version/Licence
 
-* **Version**: 0.0, Feb. 2017
+Version 0.0. 
 
-* **Copyright**: Romain Michon CCRMA (Stanford University)/GRAME 2017: <https://ccrma.stanford.edu/~rmichon>
-
-* **Licence**: MIT Licence: <https://opensource.org/licenses/MIT>
+See `LICENCE.md` in the `SmartKeyboard` source code (`faust/architecture/smartKeyboard`).
