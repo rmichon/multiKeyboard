@@ -1,3 +1,0 @@
-# MultiKeyboard: Android Support
-
-Soon...

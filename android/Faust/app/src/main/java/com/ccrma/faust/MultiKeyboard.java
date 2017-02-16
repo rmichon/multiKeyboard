@@ -71,7 +71,7 @@ public class MultiKeyboard extends ViewGroup {
         context = c;
         dspFaust = dsp;
         currentPresetName = presetName;
-        borderSize = 2; // TODO this parameter should be updated in function of screen width as well as the fonts
+        borderSize = 2; // this parameter should theoretically be updated in function of screen width
         setBackgroundColor(Color.BLACK);
 
         documentsDirectory = context.getFilesDir().toString();
@@ -132,8 +132,6 @@ public class MultiKeyboard extends ViewGroup {
                 e.printStackTrace();
             }
         }
-
-        // TODO: missing cancelOnce
 
         mActivePointers = new SparseArray<PointF>();
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -796,7 +794,7 @@ public class MultiKeyboard extends ViewGroup {
                     }
                 }
                 try {
-                    Thread.sleep(60); // TODO: fix that and see where to put things at the right place
+                    Thread.sleep(roundingUpdateSpeed);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -806,12 +804,11 @@ public class MultiKeyboard extends ViewGroup {
 
     private final SensorEventListener mSensorListener = new SensorEventListener() {
         public void onSensorChanged(SensorEvent se) {
-            // TODO: not sure if this is the same mapping as on iOS...
             if (se.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 // Update mapping at sensor rate
-                dspFaust.propagateAcc(0, se.values[0]);
-                dspFaust.propagateAcc(1, se.values[1]);
-                dspFaust.propagateAcc(2, se.values[2]);
+                dspFaust.propagateAcc(0, -se.values[0]);
+                dspFaust.propagateAcc(1, -se.values[1]);
+                dspFaust.propagateAcc(2, -se.values[2]);
             }
 
             if (se.sensor.getType() == Sensor.TYPE_GYROSCOPE) {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#faust2api -android -nvoices 16 -effect synth_effect.dsp -nodoc synth.dsp
-faust2api -android -nvoices 16 -nodoc new/turenas.dsp
+faust2api -android -nvoices 16 -effect examples/associatedEffects/reverb.dsp -nodoc examples/trumpet.dsp
+#faust2api -android -nvoices 16 -nodoc accelTest.dsp
 #faust2api -android -nvoices 1 -nodoc new/toy.dsp
 
 unzip dsp-faust.zip
