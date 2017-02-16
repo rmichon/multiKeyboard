@@ -15,7 +15,8 @@
 // ## Version/Licence
 //
 // Version 0.0, Feb. 2017
-// Copyright Romain Michon CCRMA (Stanford University)/GRAME 2017: https://ccrma.stanford.edu/~rmichon
+// Copyright Romain Michon CCRMA (Stanford University)/GRAME 2017:
+// https://ccrma.stanford.edu/~rmichon
 // MIT Licence: https://opensource.org/licenses/MIT
 //########################################################################################
 

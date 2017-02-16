@@ -10,8 +10,6 @@
 // in polyphonic mode so each new strike on the interface corresponds to a new
 // new voice.
 //
-// TODO more here
-//
 // ## Compilation Instructions
 //
 // This Faust code will compile fine with any of the standard Faust targets. However
@@ -19,7 +17,7 @@
 // we recommend to use the following parameters to compile it:
 //
 // ```
-// faust2smartkeyb [-ios/-android] -nvoices 16 -effect reverb.dsp drums.dsp
+// faust2smartkeyb [-ios/-android] -effect reverb.dsp drums.dsp
 // ```
 //
 // ## Version/Licence
@@ -56,7 +54,6 @@ keyboard = hslider("keyboard",0,0,1,1) : int;
 key = hslider("key",0,0,1,1) : int;
 
 // drum modal physical model
-// TODO: eventually, should use the Faust physical modeling library for this
 drum = excitation <: par(i,N,mode(i,baseFreq,t60Scaler)) :> *(outGain)
 with{
 	// number of modes
@@ -75,33 +72,37 @@ with{
 	j = 2-(keyboard*2+key);
 	// drum root freq is computed in function of pad number
 	baseFreq = bFreq*(j+1);
-	// biquad taking freq and t60 as arguments
-	modeFilter(f,t60) = fi.tf2(b0,b1,b2,a1,a2)
-	with{
-		b0 = 1;
-		b1 = 0;
-		b2 = -1;
-		w = 2*ma.PI*f/ma.SR;
-		r = pow(0.001,1/float(t60*ma.SR));
-		a1 = -2*r*cos(w);
-		a2 = r^2;
-	};
 	// computing the gain of each filter
 	inGains(i) = cos((i+1)*theta)/float(i+1);
 	// computing each modes, why is this done like this, cus it sounds goooood...
-	mode(i,baseFreq,t60) = *(inGains(i)) : modeFilter(baseFreq+(200*i),(N-i)*t60*0.03)*(1/(i+1));
-	// noise excitation
-	noiseburst = no.noise : *(gate : ba.impulsify : trigger(P))
-	with {
-		 P = ma.SR/300;
-  		 diffgtz(x) = x != x';
-  		 decay(n,x) = x - (x>0)/n;
-  		 release(n) = + ~ decay(n);
-  		 trigger(n) = diffgtz : release(n) : > (0.0);
+	mode(i,baseFreq,t60) = *(inGains(i)) : modeFilter(baseFreq+(200*i),(N-i)*t60*0.03)*(1/(i+1))
+	with{
+		// biquad taking freq and t60 as arguments
+		modeFilter(f,t60) = fi.tf2(b0,b1,b2,a1,a2)
+		with{
+			b0 = 1;
+			b1 = 0;
+			b2 = -1;
+			w = 2*ma.PI*f/ma.SR;
+			r = pow(0.001,1/float(t60*ma.SR));
+			a1 = -2*r*cos(w);
+			a2 = r^2;
+		};
 	};
 
 	// excitation: filtered noise burst. filters change in function of x/y position
-	excitation = noiseburst : fi.highpass(2,40+exPos*500) : fi.lowpass(2,500+exPos*15000);
+	excitation = noiseburst : fi.highpass(2,40+exPos*500) : fi.lowpass(2,500+exPos*15000)
+	with{
+		// noise excitation
+		noiseburst = no.noise : *(gate : ba.impulsify : trigger(P))
+		with {
+			 P = ma.SR/300;
+  		 	 diffgtz(x) = x != x';
+  		 	 decay(n,x) = x - (x>0)/n;
+  		 	 release(n) = + ~ decay(n);
+  		 	 trigger(n) = diffgtz : release(n) : > (0.0);
+		};
+	};
 };
 
-process = drum <: _,_; // stereo for effect chain
+process = drum <: _,_;
